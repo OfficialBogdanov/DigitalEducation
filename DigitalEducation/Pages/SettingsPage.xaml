@@ -1,0 +1,330 @@
+﻿<UserControl x:Class="DigitalEducation.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent"
+             UseLayoutRounding="True">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="40">
+        <StackPanel UseLayoutRounding="True">
+            <Grid Margin="0,0,0,32" UseLayoutRounding="True">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Width="4"
+                        Height="24"
+                        Background="{StaticResource PrimaryBrush}"
+                        CornerRadius="2"
+                        VerticalAlignment="Center"
+                        Margin="0,0,12,0"
+                        UseLayoutRounding="True"
+                        SnapsToDevicePixels="True"/>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="Настройки" 
+                               Style="{StaticResource TitleTextStyle}"
+                               Foreground="{StaticResource PrimaryDarkBrush}"
+                               TextOptions.TextFormattingMode="Display"/>
+                    <TextBlock Text="Настройте приложение под свои предпочтения. Здесь вы можете управлять своими данными и прогрессом."
+                               Style="{StaticResource BodyTextStyle}"/>
+                </StackPanel>
+            </Grid>
+
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,24" UseLayoutRounding="True" SnapsToDevicePixels="True">
+                <Grid UseLayoutRounding="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="1" UseLayoutRounding="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" UseLayoutRounding="True">
+                            <TextBlock Text="Управление данными" 
+                                       Style="{StaticResource SubtitleTextStyle}"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock Text="Управляйте вашими данными и настройками приложения. Вы можете очистить прогресс обучения или сбросить настройки."
+                                       Style="{StaticResource BodyTextStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Margin="0,24,0,0" UseLayoutRounding="True">
+                            <Grid Margin="0,0,0,12" UseLayoutRounding="True">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0"
+                                        Width="28"
+                                        Height="28"
+                                        Background="Transparent"
+                                        CornerRadius="6"
+                                        Margin="6,10,6,0"
+                                        VerticalAlignment="Top">
+                                    <Image Source="/Icons/Trash.png"
+                                           Width="18"
+                                           Height="18"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                                </Border>
+
+                                <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                                    <TextBlock Text="Прогресс обучения" 
+                                               FontSize="16"
+                                               FontWeight="Medium"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               Margin="0,0,0,4"/>
+                                    <TextBlock Text="Здесь вы можете очистить весь ваш прогресс обучения, включая завершенные уроки, статистику и прогресс по курсам. Это действие нельзя отменить."
+                                               Style="{StaticResource BodyTextStyle}"
+                                               Margin="0,0,0,16"/>
+
+                                    <Button x:Name="btnClearProgress"
+                                            HorizontalAlignment="Left"
+                                            Padding="24,16"
+                                            Background="#FFFEF2F2"
+                                            BorderBrush="Transparent"
+                                            BorderThickness="0"
+                                            FontSize="14"
+                                            FontWeight="Medium"
+                                            Cursor="Hand"
+                                            Foreground="{StaticResource ErrorBrush}"
+                                            Margin="0,8,0,0">
+                                        <TextBlock Text="Очистить прогресс"
+                                                   VerticalAlignment="Center"/>
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border x:Name="border" 
+                                                                    Background="{TemplateBinding Background}"
+                                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                                    CornerRadius="8"
+                                                                    Padding="{TemplateBinding Padding}">
+                                                                <ContentPresenter HorizontalAlignment="Center" 
+                                                                                  VerticalAlignment="Center"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="border" Property="Background" Value="#FFF9E0E0"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsPressed" Value="True">
+                                                                    <Setter TargetName="border" Property="Background" Value="{StaticResource ErrorBrush}"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource TextInverseBrush}"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+
+                            <Separator Background="{StaticResource SurfaceBorderBrush}" 
+                                       Margin="0,0,0,20"/>
+
+                            <Grid UseLayoutRounding="True">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0"
+                                        Width="28"
+                                        Height="28"
+                                        Background="Transparent"
+                                        CornerRadius="6"
+                                        Margin="0,0,12,0"
+                                        VerticalAlignment="Center">
+                                    <Image Source="/Icons/Refresh.png"
+                                           Width="18"
+                                           Height="18"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                                </Border>
+
+                                <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                                    <TextBlock Text="Сброс приложения" 
+                                               FontSize="16"
+                                               FontWeight="Medium"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               Margin="0,0,0,4"/>
+                                    <TextBlock Text="Сбросить все настройки приложения к значениям по умолчанию. Это не затронет ваш прогресс обучения."
+                                               Style="{StaticResource BodyTextStyle}"
+                                               Margin="0,0,0,16"/>
+
+                                    <Button x:Name="btnResetSettings"
+                                            HorizontalAlignment="Left"
+                                            Padding="24,16"
+                                            Background="{StaticResource PrimaryLighterBrush}"
+                                            BorderBrush="Transparent"
+                                            BorderThickness="0"
+                                            FontSize="14"
+                                            FontWeight="Medium"
+                                            Cursor="Hand"
+                                            IsEnabled="True"
+                                            Foreground="{StaticResource PrimaryBrush}">
+                                        <TextBlock Text="Сбросить настройки"
+                                                   VerticalAlignment="Center"/>
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border x:Name="border" 
+                                                                    Background="{TemplateBinding Background}"
+                                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                                    CornerRadius="8"
+                                                                    Padding="{TemplateBinding Padding}">
+                                                                <ContentPresenter HorizontalAlignment="Center" 
+                                                                                  VerticalAlignment="Center"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="border" Property="Background" Value="#FFE6F2FC"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsPressed" Value="True">
+                                                                    <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource TextInverseBrush}"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource CardStyle}" UseLayoutRounding="True" SnapsToDevicePixels="True">
+                <Grid UseLayoutRounding="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="1" UseLayoutRounding="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" UseLayoutRounding="True">
+                            <TextBlock Text="Информация о приложении" 
+                                       Style="{StaticResource SubtitleTextStyle}"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock Text="Основная информация о приложении, версии и расположении данных."
+                                       Style="{StaticResource BodyTextStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Margin="0,24,0,0">
+                            <Grid Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="28"
+                                            Height="28"
+                                            Background="Transparent"
+                                            CornerRadius="6"
+                                            Margin="0,0,12,0">
+                                        <Image Source="/Icons/Info.png"
+                                               Width="18"
+                                               Height="18"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="Версия" 
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               FontSize="15"
+                                               Width="100"/>
+                                </StackPanel>
+                                <TextBlock Grid.Column="1" 
+                                           Text="1.0.0" 
+                                           FontSize="15"
+                                           FontWeight="Medium"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="28"
+                                            Height="28"
+                                            Background="Transparent"
+                                            CornerRadius="6"
+                                            Margin="0,0,12,0">
+                                        <Image Source="/Icons/User.png"
+                                               Width="18"
+                                               Height="18"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="Разработчик" 
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               FontSize="15"
+                                               Width="100"/>
+                                </StackPanel>
+                                <TextBlock Grid.Column="1" 
+                                           Text="DigitalEducation" 
+                                           FontSize="15"
+                                           FontWeight="Medium"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                            </Grid>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                                    <Border Width="28"
+                                            Height="28"
+                                            Background="Transparent"
+                                            CornerRadius="6"
+                                            Margin="0,0,12,0">
+                                        <Image Source="/Icons/FolderBlack.png"
+                                               Width="18"
+                                               Height="18"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="Данные" 
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               FontSize="15"
+                                               Width="100"/>
+                                </StackPanel>
+                                <TextBlock x:Name="txtProgressPath"
+                                           Grid.Column="1" 
+                                           FontSize="15"
+                                           FontWeight="Medium"
+                                           TextWrapping="Wrap"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

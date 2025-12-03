@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="DigitalEducation.ConfirmDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Width="400">
+
+    <Border Background="{StaticResource SurfaceBrush}"
+            CornerRadius="12"
+            BorderBrush="{StaticResource SurfaceBorderBrush}"
+            BorderThickness="1">
+        <StackPanel Margin="24">
+
+            <TextBlock x:Name="TitleText"
+                       Text="Подтверждение"
+                       Style="{StaticResource SubtitleTextStyle}"
+                       Margin="0,0,0,16"/>
+
+            <TextBlock x:Name="MessageText"
+                       Text="Вы уверены в выполнении этого действия?"
+                       Style="{StaticResource BodyTextStyle}"
+                       Margin="0,0,0,24"
+                       TextWrapping="Wrap"/>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+
+                <Button x:Name="CancelButton"
+                        Content="Отмена"
+                        MinWidth="100"
+                        Margin="0,0,12,0"
+                        Click="OnCancelClick">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource NavigationButtonStyle}">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button x:Name="ConfirmButton"
+                        Content="Подтвердить"
+                        MinWidth="100"
+                        Click="OnConfirmClick">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource NavigationButtonStyle}">
+                            <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextInverseBrush}"/>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

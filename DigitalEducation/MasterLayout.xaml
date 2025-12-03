@@ -1,0 +1,122 @@
+﻿<UserControl x:Class="DigitalEducation.MasterLayout"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="MasterLayoutControl"
+             Background="{StaticResource BackgroundBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" 
+                Background="{StaticResource SurfaceBrush}" 
+                BorderBrush="{StaticResource SurfaceBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="40,0">
+            <Grid Height="70">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="36" 
+                            Height="36" 
+                            CornerRadius="8"
+                            Background="{StaticResource PrimaryGradient}"
+                            Margin="0,0,12,0">
+                        <Image Source="/Icons/Book.png" 
+                               Width="20" 
+                               Height="20"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel>
+                        <TextBlock Text="DigitalEducation" 
+                                   FontSize="20" 
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryDarkBrush}"/>
+                        <TextBlock Text="Ваш помощник в цифровой грамотности"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <Button x:Name="btnHome" 
+                            Style="{StaticResource NavigationButtonStyle}"
+                            Margin="12,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Icons/Home.png" Width="24" Height="24" Margin="0,0,8,0"/>
+                            <TextBlock Text="Главная" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="btnCourses" 
+                            Style="{StaticResource NavigationButtonStyle}"
+                            Margin="12,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Icons/List.png" Width="24" Height="24" Margin="0,0,8,0"/>
+                            <TextBlock Text="Курсы" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="btnProgress" 
+                            Style="{StaticResource NavigationButtonStyle}"
+                            Margin="12,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Icons/Chart.png" Width="24" Height="24" Margin="0,0,8,0"/>
+                            <TextBlock Text="Прогресс" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" 
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+                    <Button x:Name="btnSettings" 
+                            Style="{StaticResource NavigationButtonStyle}"
+                            Margin="12,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Icons/Settings.png" Width="24" Height="24" Margin="0,0,8,0"/>
+                            <TextBlock Text="Настройки" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <ContentPresenter x:Name="ContentArea" 
+                          Grid.Row="1"
+                          Content="{Binding Content, ElementName=MasterLayoutControl}"/>
+
+        <Border Grid.Row="2" 
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource SurfaceBorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="40,20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="© 2025 DigitalEducation"
+                           Style="{StaticResource BodyTextStyle}"/>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="Версия 1.0.0" 
+                               Style="{StaticResource BodyTextStyle}"
+                               Margin="0,0,24,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
