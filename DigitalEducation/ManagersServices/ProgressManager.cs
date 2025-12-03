@@ -8,10 +8,16 @@ namespace DigitalEducation
 {
     public static class ProgressManager
     {
+        public static event EventHandler ProgressChanged;
         private static UserProgress _currentProgress;
         private static readonly string _progressFilePath;
         private static readonly JsonSerializerOptions _jsonOptions;
         private static readonly object _lock = new object();
+
+        private static void OnProgressChanged()
+        {
+            ProgressChanged?.Invoke(null, EventArgs.Empty);
+        }
 
         static ProgressManager()
         {
@@ -125,6 +131,7 @@ namespace DigitalEducation
                 UpdateDaysInARow();
 
                 SaveProgress();
+                OnProgressChanged();
             }
         }
 
@@ -262,6 +269,7 @@ namespace DigitalEducation
             {
                 _currentProgress = CreateDefaultProgress();
                 SaveProgress();
+                OnProgressChanged();
             }
         }
 

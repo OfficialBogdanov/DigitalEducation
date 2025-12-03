@@ -269,6 +269,17 @@
   <ItemGroup>
     <Resource Include="Icons\Success.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Moon.png" />
+    <Resource Include="Icons\ZoomIn.png" />
+    <Resource Include="Icons\ZoomOut.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\GlobeBlack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Sun.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

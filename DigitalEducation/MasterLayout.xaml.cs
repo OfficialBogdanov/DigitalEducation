@@ -40,11 +40,10 @@ namespace DigitalEducation
                 case "Courses":
                     if (btnCourses != null) btnCourses.Style = activeStyle;
                     break;
-                case "Progress":
-                    if (btnProgress != null) btnProgress.Style = activeStyle;
-                    break;
                 case "Settings":
                     if (btnSettings != null) btnSettings.Style = activeStyle;
+                    break;
+                case "CloseApp":
                     break;
             }
         }
@@ -52,6 +51,9 @@ namespace DigitalEducation
         public void HandleNavigationClick(Button clickedButton)
         {
             if (clickedButton == null) return;
+
+            if (clickedButton.Name == "btnCloseApp")
+                return;
 
             ResetAllNavigationButtons();
             clickedButton.Style = (Style)FindResource("ActiveNavigationButtonStyle");
@@ -63,7 +65,6 @@ namespace DigitalEducation
 
             if (btnHome != null) btnHome.Style = defaultStyle;
             if (btnCourses != null) btnCourses.Style = defaultStyle;
-            if (btnProgress != null) btnProgress.Style = defaultStyle;
             if (btnSettings != null) btnSettings.Style = defaultStyle;
         }
     }

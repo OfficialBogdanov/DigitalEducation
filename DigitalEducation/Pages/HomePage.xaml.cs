@@ -12,6 +12,9 @@ namespace DigitalEducation
         {
             InitializeComponent();
             InitializeEventHandlers();
+
+            ProgressManager.ProgressChanged += OnProgressChanged;
+
             this.Unloaded += OnHomePageUnloaded;
             this.Loaded += HomePage_Loaded;
         }
@@ -60,6 +63,14 @@ namespace DigitalEducation
         {
             CleanupEventHandlers();
         }
+        private void OnProgressChanged(object sender, EventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                UpdateStatistics();
+                UpdateProgress();
+            }));
+        }
 
         private void CleanupEventHandlers()
         {
@@ -76,6 +87,8 @@ namespace DigitalEducation
                     CategoryButtonClicked -= (EventHandler<string>)d;
                 }
             }
+
+            ProgressManager.ProgressChanged -= OnProgressChanged;
         }
 
         public void UpdateStatistics()
@@ -153,23 +166,19 @@ namespace DigitalEducation
         }
 
         private void UpdateProgressBars(double overallProgress,
-                                       double filesProgress,
-                                       double systemProgress,
-                                       double officeProgress,
-                                       double internetProgress)
+                               double filesProgress,
+                               double systemProgress,
+                               double officeProgress,
+                               double internetProgress)
         {
             if (OverallProgressBar != null)
             {
                 overallProgress = Math.Max(0, Math.Min(100, overallProgress));
 
-                var progressBarBorder = OverallProgressBar.Parent as Border;
-                if (progressBarBorder != null)
+                var parent = OverallProgressBar.Parent as Grid; 
+                if (parent != null)
                 {
-                    double maxWidth = progressBarBorder.ActualWidth;
-                    if (maxWidth > 0)
-                    {
-                        OverallProgressBar.Width = (overallProgress / 100) * maxWidth;
-                    }
+                    OverallProgressBar.Width = (overallProgress / 100) * parent.ActualWidth;
                 }
 
                 UpdateProgressText("OverallProgressText", $"{overallProgress:F0}% завершено");

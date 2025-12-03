@@ -45,6 +45,292 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel Grid.Row="0" UseLayoutRounding="True">
+                            <TextBlock Text="Общие настройки" 
+                                       Style="{StaticResource SubtitleTextStyle}"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock Text="Настройте внешний вид по своему вкусу"
+                                       Style="{StaticResource BodyTextStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Margin="0,24,0,0" UseLayoutRounding="True">
+                            <Grid Margin="0,0,0,12" UseLayoutRounding="True">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0"
+                                        Width="28"
+                                        Height="28"
+                                        Background="Transparent"
+                                        CornerRadius="6"
+                                        Margin="6,10,6,0"
+                                        VerticalAlignment="Top">
+                                    <Image Source="/Icons/Moon.png"
+                                           Width="18"
+                                           Height="18"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                                </Border>
+
+                                <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                                    <TextBlock Text="Тема" 
+                                               FontSize="16"
+                                               FontWeight="Medium"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               Margin="0,0,0,4"/>
+                                    <TextBlock Text="Измените цветовую палитру вашего приложения."
+                                               Style="{StaticResource BodyTextStyle}"
+                                               Margin="0,0,0,16"/>
+
+                                    <Border CornerRadius="8"
+                                            Padding="4"
+                                            HorizontalAlignment="Left">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Button x:Name="btnLightTheme"
+                                                    Grid.Column="0"
+                                                    Style="{StaticResource ActiveNavigationButtonStyle}"
+                                                    Cursor="Hand"
+                                                    Padding="20,12"
+                                                    Margin="0,0,10,0">
+                                                <StackPanel Orientation="Horizontal"
+                                                            VerticalAlignment="Center">
+                                                    <Image Source="/Icons/Sun.png"
+                                                           Width="18"
+                                                           Height="18"
+                                                           Margin="0,0,8,0"
+                                                           VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Светлая"
+                                                               FontSize="14"
+                                                               FontWeight="Medium"
+                                                               VerticalAlignment="Center"
+                                                               Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                </StackPanel>
+                                            </Button>
+
+                                            <Button x:Name="btnDarkTheme"
+                                                    Grid.Column="1"
+                                                    Style="{StaticResource NavigationButtonStyle}"
+                                                    Cursor="Hand"
+                                                    Padding="20,12"
+                                                    Margin="0,0,10,0">
+                                                <StackPanel Orientation="Horizontal"
+                                                            VerticalAlignment="Center">
+                                                    <Image Source="/Icons/Moon.png"
+                                                           Width="18"
+                                                           Height="18"
+                                                           Margin="0,0,8,0"
+                                                           VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Тёмная"
+                                                           FontSize="14"
+                                                           FontWeight="Medium"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+
+                            <Separator Background="{StaticResource SurfaceBorderBrush}" 
+                                       Margin="0,0,0,20"/>
+
+                            <Grid UseLayoutRounding="True">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0"
+                                        Width="28"
+                                        Height="28"
+                                        Background="Transparent"
+                                        CornerRadius="6"
+                                        Margin="6,10,6,0"
+                                        VerticalAlignment="Top">
+                                    <Image Source="/Icons/GlobeBlack.png"
+                                           Width="18"
+                                           Height="18"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                                </Border>
+
+                                <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                                    <TextBlock Text="Язык" 
+                                               FontSize="16"
+                                               FontWeight="Medium"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               Margin="0,0,0,4"/>
+                                    <TextBlock Text="Выберите предпочетаемый язык интерфейса приложения."
+                                               Style="{StaticResource BodyTextStyle}"
+                                               Margin="0,0,0,16"/>
+                                    <Border CornerRadius="8"
+                                            Padding="4"
+                                            HorizontalAlignment="Left"
+                                            Margin="0,0,0,20">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Button x:Name="btnRussian"
+                                                    Grid.Column="0"
+                                                    Style="{StaticResource ActiveNavigationButtonStyle}"
+                                                    Cursor="Hand"
+                                                    Padding="20,12"
+                                                    Margin="0,0,10,0">
+                                                <StackPanel Orientation="Horizontal"
+                                                            VerticalAlignment="Center">
+                                                    <Image Source="/Icons/GlobeBlack.png"
+                                                           Width="18"
+                                                           Height="18"
+                                                           Margin="0,0,8,0"
+                                                           VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Русский"
+                                                               FontSize="14"
+                                                               FontWeight="Medium"
+                                                               VerticalAlignment="Center"
+                                                               Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                </StackPanel>
+                                            </Button>
+
+                                            <Button x:Name="btnEnglish"
+                                                    Grid.Column="1"
+                                                    Style="{StaticResource NavigationButtonStyle}"
+                                                    Cursor="Hand"
+                                                    Padding="20,12"
+                                                    Margin="0,0,10,0">
+                                                <StackPanel Orientation="Horizontal"
+                                                            VerticalAlignment="Center">
+                                                    <Image Source="/Icons/GlobeBlack.png"
+                                                           Width="18"
+                                                           Height="18"
+                                                           Margin="0,0,8,0"
+                                                           VerticalAlignment="Center"/>
+                                                    <TextBlock Text="English"
+                                                               FontSize="14"
+                                                               FontWeight="Medium"
+                                                               VerticalAlignment="Center"
+                                                               Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+
+                            <Separator Background="{StaticResource SurfaceBorderBrush}" 
+                                       Margin="0,0,0,20"/>
+
+                            <Grid Margin="0,0,0,12" UseLayoutRounding="True">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0"
+                                        Width="28"
+                                        Height="28"
+                                        Background="Transparent"
+                                        CornerRadius="6"
+                                        Margin="6,10,6,0"
+                                        VerticalAlignment="Top">
+                                    <Image Source="/Icons/ZoomIn.png"
+                                           Width="18"
+                                           Height="18"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                                </Border>
+
+                                <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                                    <TextBlock Text="Масштаб" 
+                                               FontSize="16"
+                                               FontWeight="Medium"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               Margin="0,0,0,4"/>
+                                    <TextBlock Text="Настройте размер всех элементов интерфейса для комфортного просмотра."
+                                               Style="{StaticResource BodyTextStyle}"
+                                               Margin="0,0,0,16"/>
+
+                                    <Border CornerRadius="8"
+                                            Padding="4"
+                                            HorizontalAlignment="Left"
+                                            Margin="0,0,0,20">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Button x:Name="btnSmallScale"
+                                                    Grid.Column="0"
+                                                    Style="{StaticResource NavigationButtonStyle}"
+                                                    Cursor="Hand"
+                                                    Padding="16,12"
+                                                    Margin="0,0,10,0">
+                                                <TextBlock Text="Маленький 75%"
+                                                           FontSize="14"
+                                                           FontWeight="Medium"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            </Button>
+
+                                            <Button x:Name="btnMediumScale"
+                                                    Grid.Column="1"
+                                                    Style="{StaticResource ActiveNavigationButtonStyle}"
+                                                    Cursor="Hand"
+                                                    Padding="16,12"
+                                                    Margin="0,0,10,0">
+                                                <TextBlock Text="Средний 100%"
+                                                           FontSize="14"
+                                                           FontWeight="Medium"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            </Button>
+
+                                            <Button x:Name="btnLargeScale"
+                                                    Grid.Column="2"
+                                                    Style="{StaticResource NavigationButtonStyle}"
+                                                    Cursor="Hand"
+                                                    Padding="16,12"
+                                                    Margin="0,0,10,0">
+                                                <TextBlock Text="Большой 125%"
+                                                           FontSize="14"
+                                                           FontWeight="Medium"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,24" UseLayoutRounding="True" SnapsToDevicePixels="True">
+                <Grid UseLayoutRounding="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="1" UseLayoutRounding="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" UseLayoutRounding="True">
                             <TextBlock Text="Управление данными" 
                                        Style="{StaticResource SubtitleTextStyle}"
                                        Margin="0,0,0,4"/>
@@ -143,8 +429,8 @@
                                         Height="28"
                                         Background="Transparent"
                                         CornerRadius="6"
-                                        Margin="0,0,12,0"
-                                        VerticalAlignment="Center">
+                                        Margin="6,10,6,0"
+                                        VerticalAlignment="Top">
                                     <Image Source="/Icons/Refresh.png"
                                            Width="18"
                                            Height="18"
@@ -257,7 +543,7 @@
                                                Width="100"/>
                                 </StackPanel>
                                 <TextBlock Grid.Column="1" 
-                                           Text="1.0.0" 
+                                           Text="1.0.0 Beta"  
                                            FontSize="15"
                                            FontWeight="Medium"
                                            Foreground="{StaticResource TextPrimaryBrush}"/>
@@ -275,10 +561,10 @@
                                             CornerRadius="6"
                                             Margin="0,0,12,0">
                                         <Image Source="/Icons/User.png"
-                                               Width="18"
-                                               Height="18"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"/>
+                                           Width="18"
+                                           Height="18"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
                                     </Border>
                                     <TextBlock Text="Разработчик" 
                                                Foreground="{StaticResource TextSecondaryBrush}"
@@ -286,7 +572,7 @@
                                                Width="100"/>
                                 </StackPanel>
                                 <TextBlock Grid.Column="1" 
-                                           Text="DigitalEducation" 
+                                           Text="Богданов Данил и Туктаров Артем" 
                                            FontSize="15"
                                            FontWeight="Medium"
                                            Foreground="{StaticResource TextPrimaryBrush}"/>
@@ -304,10 +590,10 @@
                                             CornerRadius="6"
                                             Margin="0,0,12,0">
                                         <Image Source="/Icons/FolderBlack.png"
-                                               Width="18"
-                                               Height="18"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"/>
+                                           Width="18"
+                                           Height="18"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
                                     </Border>
                                     <TextBlock Text="Данные" 
                                                Foreground="{StaticResource TextSecondaryBrush}"

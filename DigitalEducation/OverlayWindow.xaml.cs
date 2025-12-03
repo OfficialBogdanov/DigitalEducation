@@ -4,11 +4,51 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace DigitalEducation
 {
     public partial class OverlayWindow : Window
     {
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetDesktopWindow();
+
+        [DllImport("user32.dll")]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+        [DllImport("user32.dll")]
+        private static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+
+        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+        private const int SW_MINIMIZE = 6;
+        private const int SW_FORCEMINIMIZE = 11;
+        private const int SW_SHOWNOACTIVATE = 4;
+        private const int HWND_TOPMOST = -1;
+        private const uint SWP_NOSIZE = 0x0001;
+        private const uint SWP_NOMOVE = 0x0002;
+        private const uint SWP_NOACTIVATE = 0x0010;
+        private const uint SWP_SHOWWINDOW = 0x0040;
+
         private int _currentStep = 0;
         private LessonData _currentLesson;
         private int _totalSteps;
@@ -25,6 +65,7 @@ namespace DigitalEducation
             if (Application.Current.MainWindow != null)
             {
                 Application.Current.MainWindow.WindowState = WindowState.Minimized;
+                Application.Current.MainWindow.ShowInTaskbar = false;
             }
 
             _currentLesson = LessonManager.GetLesson(lessonId);
@@ -53,10 +94,58 @@ namespace DigitalEducation
 
             this.Loaded += (s, e) =>
             {
+                MinimizeAllWindows();
+                this.Topmost = true;
+                this.Focus();
                 var screen = SystemParameters.WorkArea;
                 this.Left = screen.Width - this.ActualWidth - 40;
                 this.Top = 40;
             };
+        }
+
+        private void MinimizeAllWindows()
+        {
+            try
+            {
+                IntPtr desktopHandle = GetDesktopWindow();
+                EnumWindows(new EnumWindowsProc(EnumWindowCallback), IntPtr.Zero);
+                IntPtr taskbarHandle = FindWindow("Shell_TrayWnd", null);
+                if (taskbarHandle != IntPtr.Zero)
+                {
+                    ShowWindow(taskbarHandle, SW_MINIMIZE);
+                }
+                IntPtr secondaryTaskbar = FindWindow("NotifyIconOverflowWindow", null);
+                if (secondaryTaskbar != IntPtr.Zero)
+                {
+                    ShowWindow(secondaryTaskbar, SW_MINIMIZE);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при сворачивании окон: {ex.Message}");
+            }
+        }
+
+        private bool EnumWindowCallback(IntPtr hWnd, IntPtr lParam)
+        {
+            if (hWnd == IntPtr.Zero || hWnd == new System.Windows.Interop.WindowInteropHelper(this).Handle)
+                return true;
+
+            if (IsWindowVisible(hWnd))
+            {
+                StringBuilder sb = new StringBuilder(256);
+                GetWindowText(hWnd, sb, sb.Capacity);
+                string title = sb.ToString();
+
+                if (!string.IsNullOrEmpty(title) &&
+                    !title.Contains("Program Manager") &&
+                    !title.Contains("Microsoft Text Input Application"))
+                {
+                    ShowWindowAsync(hWnd, SW_MINIMIZE);
+                }
+            }
+
+            return true;
         }
 
         private void InitializeUI()
@@ -69,16 +158,14 @@ namespace DigitalEducation
         {
             this.Dispatcher.BeginInvoke(new Action(() =>
             {
+                this.Topmost = true;
                 var screen = SystemParameters.WorkArea;
                 this.Left = screen.Width - this.ActualWidth - 40;
                 this.Top = 40;
+                this.Focus();
+                UpdateProgressBar();
+                _lessonTimer.Start();
             }), System.Windows.Threading.DispatcherPriority.Background);
-
-            this.Focus();
-            this.Topmost = true;
-            UpdateProgressBar();
-
-            _lessonTimer.Start();
         }
 
         private void ShowCurrentStep()
@@ -110,17 +197,14 @@ namespace DigitalEducation
                 if (_totalSteps <= 0) return;
 
                 double progress = (double)(_currentStep + 1) / _totalSteps;
-
                 double containerWidth = ProgressBarContainer.ActualWidth;
 
                 if (containerWidth > 0)
                 {
                     double fillWidth = progress * containerWidth;
-
                     var animation = new System.Windows.Media.Animation.DoubleAnimation(
                         fillWidth,
                         TimeSpan.FromMilliseconds(300));
-
                     ProgressBarFill.BeginAnimation(WidthProperty, animation);
                 }
 
@@ -143,7 +227,7 @@ namespace DigitalEducation
             }
             else
             {
-                ShowCompletionMessage();
+                CompleteLesson();
             }
         }
 
@@ -183,6 +267,24 @@ namespace DigitalEducation
             StepDescription.TextAlignment = TextAlignment.Center;
             StepDescription.Margin = new Thickness(0, 0, 0, 24);
 
+            var doneButton = new Button
+            {
+                Content = "Готово",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 20),
+                Style = (Style)FindResource("NavigationButtonStyle")
+            };
+
+            doneButton.Click += (s, args) =>
+            {
+                CloseLesson(true);
+            };
+
+            if (MainContent != null && !MainContent.Children.Contains(doneButton))
+            {
+                MainContent.Children.Add(doneButton);
+            }
+
             var headerGrid = BtnClose.Parent as Grid;
             if (headerGrid != null)
             {
@@ -192,8 +294,23 @@ namespace DigitalEducation
                 BtnClose.VerticalAlignment = VerticalAlignment.Top;
                 BtnClose.Margin = new Thickness(0);
             }
+        }
 
-            CompleteLesson();
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var source = e.OriginalSource as DependencyObject;
+
+            if (source != null && !IsChildOfLessonContainer(source))
+            {
+                if (_isCompleted)
+                {
+                    CloseLesson(true);
+                }
+                else
+                {
+                    CloseLesson(false);
+                }
+            }
         }
 
         private void CompleteLesson()
@@ -210,8 +327,10 @@ namespace DigitalEducation
             );
 
             UpdateLessonStatus();
-
-            CloseLesson(true);
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                ShowCompletionMessage();
+            }), System.Windows.Threading.DispatcherPriority.Background);
         }
 
         private string GetCourseIdFromLesson(string lessonId)
@@ -230,12 +349,6 @@ namespace DigitalEducation
             {
                 mainWindow.UpdateLessonCompletion(_lessonId, true);
             }
-
-            var filesPage = Application.Current.MainWindow?.Content as FilesLessonsPage;
-            if (filesPage != null)
-            {
-                filesPage.UpdateLessonStatus(_lessonId, true);
-            }
         }
 
         private void CloseLesson(bool completed)
@@ -243,7 +356,12 @@ namespace DigitalEducation
             if (Application.Current.MainWindow != null)
             {
                 Application.Current.MainWindow.WindowState = WindowState.Normal;
+                Application.Current.MainWindow.ShowInTaskbar = true;
+                Application.Current.MainWindow.Visibility = Visibility.Visible;
+                Application.Current.MainWindow.Activate();
             }
+
+            RestoreWindows();
 
             try
             {
@@ -252,6 +370,27 @@ namespace DigitalEducation
             catch { }
 
             this.Close();
+        }
+
+        private void RestoreWindows()
+        {
+            try
+            {
+                IntPtr taskbarHandle = FindWindow("Shell_TrayWnd", null);
+                if (taskbarHandle != IntPtr.Zero)
+                {
+                    ShowWindow(taskbarHandle, 1);
+                }
+                IntPtr secondaryTaskbar = FindWindow("NotifyIconOverflowWindow", null);
+                if (secondaryTaskbar != IntPtr.Zero)
+                {
+                    ShowWindow(secondaryTaskbar, 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при восстановлении окон: {ex.Message}");
+            }
         }
 
         private bool IsChildOfLessonContainer(DependencyObject element)
@@ -297,16 +436,6 @@ namespace DigitalEducation
                     CloseLesson(false);
                     e.Handled = true;
                     break;
-            }
-        }
-
-        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var source = e.OriginalSource as DependencyObject;
-
-            if (source != null && !IsChildOfLessonContainer(source))
-            {
-                CloseLesson(false);
             }
         }
 

@@ -73,10 +73,13 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="Прогресс курса" Style="{StaticResource BodyTextStyle}"/>
-                                <TextBlock x:Name="FilesProgressPercent" Grid.Column="1" Text="100%" Foreground="{StaticResource SuccessBrush}" TextOptions.TextFormattingMode="Display"/>
+                                <TextBlock x:Name="FilesProgressPercent" Grid.Column="1" Text="100%" Foreground="{StaticResource PrimaryBrush}" TextOptions.TextFormattingMode="Display"/>
                             </Grid>
                             <Border x:Name="FilesProgressBar" Height="8" CornerRadius="4" Background="{StaticResource BackgroundDarkBrush}" UseLayoutRounding="True">
-                                <Border Height="8" CornerRadius="4" Background="{StaticResource PrimaryBrush}" UseLayoutRounding="True"/>
+                                <Grid>
+                                    <Border Height="8" CornerRadius="4" Background="{StaticResource PrimaryBrush}" 
+                                            HorizontalAlignment="Left" Width="0" UseLayoutRounding="True"/>
+                                </Grid>
                             </Border>
                         </StackPanel>
                         <WrapPanel UseLayoutRounding="True">
@@ -150,7 +153,10 @@
                                 <TextBlock x:Name="SystemProgressPercent" Grid.Column="1" Text="80%" Foreground="{StaticResource SuccessBrush}" TextOptions.TextFormattingMode="Display"/>
                             </Grid>
                             <Border x:Name="SystemProgressBar" Height="8" CornerRadius="4" Background="{StaticResource BackgroundDarkBrush}" UseLayoutRounding="True">
-                                <Border Height="8" CornerRadius="4" Background="{StaticResource SuccessBrush}" UseLayoutRounding="True"/>
+                                <Grid>
+                                    <Border Height="8" CornerRadius="4" Background="{StaticResource SuccessBrush}" 
+                                            HorizontalAlignment="Left" Width="0" UseLayoutRounding="True"/>
+                                </Grid>
                             </Border>
                         </StackPanel>
                         <WrapPanel UseLayoutRounding="True">
@@ -217,7 +223,10 @@
                                 <TextBlock x:Name="OfficeProgressPercent" Grid.Column="1" Text="0%" Foreground="{StaticResource WarningBrush}" TextOptions.TextFormattingMode="Display"/>
                             </Grid>
                             <Border x:Name="OfficeProgressBar" Height="8" CornerRadius="4" Background="{StaticResource BackgroundDarkBrush}" UseLayoutRounding="True">
-                                <Border Height="8" CornerRadius="4" Background="{StaticResource WarningBrush}" UseLayoutRounding="True"/>
+                                <Grid>
+                                    <Border Height="8" CornerRadius="4" Background="{StaticResource WarningBrush}" 
+                                            HorizontalAlignment="Left" Width="0" UseLayoutRounding="True"/>
+                                </Grid>
                             </Border>
                         </StackPanel>
                         <WrapPanel UseLayoutRounding="True">
@@ -283,7 +292,10 @@
                                 <TextBlock x:Name="InternetProgressPercent" Grid.Column="1" Text="0%" Foreground="{StaticResource ErrorBrush}" TextOptions.TextFormattingMode="Display"/>
                             </Grid>
                             <Border x:Name="InternetProgressBar" Height="8" CornerRadius="4" Background="{StaticResource BackgroundDarkBrush}" UseLayoutRounding="True">
-                                <Border Height="8" CornerRadius="4" Background="{StaticResource ErrorBrush}" UseLayoutRounding="True"/>
+                                <Grid>
+                                    <Border Height="8" CornerRadius="4" Background="{StaticResource ErrorBrush}" 
+                                            HorizontalAlignment="Left" Width="0" UseLayoutRounding="True"/>
+                                </Grid>
                             </Border>
                         </StackPanel>
                         <WrapPanel UseLayoutRounding="True">

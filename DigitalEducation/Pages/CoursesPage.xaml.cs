@@ -12,6 +12,8 @@ namespace DigitalEducation
         {
             InitializeComponent();
             Loaded += OnCoursesPageLoaded;
+
+            ProgressManager.ProgressChanged += OnProgressChanged;
         }
 
         private void OnCoursesPageLoaded(object sender, RoutedEventArgs e)
@@ -19,6 +21,19 @@ namespace DigitalEducation
             InitializeEventHandlers();
             UpdateCoursesProgress();
             Loaded -= OnCoursesPageLoaded;
+        }
+
+        private void OnProgressChanged(object sender, EventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                UpdateAllCoursesProgress();
+            }));
+        }
+
+        private void OnCoursesPageUnloaded(object sender, RoutedEventArgs e)
+        {
+            ProgressManager.ProgressChanged -= OnProgressChanged;
         }
 
         private void InitializeEventHandlers()
@@ -207,13 +222,18 @@ namespace DigitalEducation
             string progressBarName = $"{courseId}ProgressBar";
             var progressBar = FindName(progressBarName) as Border;
 
-            if (progressBar != null && progressBar.Child is Border fillBar)
+            if (progressBar != null)
             {
-                var parent = progressBar.Parent as Border;
-                if (parent != null && parent.ActualWidth > 0)
+                if (progressBar.Child is Grid grid && grid.Children.Count > 0)
                 {
-                    double maxWidth = parent.ActualWidth;
-                    fillBar.Width = (percentage / 100.0) * maxWidth;
+                    if (grid.Children[0] is Border fillBar)
+                    {
+                        double maxWidth = progressBar.ActualWidth;
+                        if (maxWidth > 0)
+                        {
+                            fillBar.Width = (percentage / 100.0) * maxWidth;
+                        }
+                    }
                 }
             }
         }

@@ -391,11 +391,14 @@
                                 Background="{StaticResource BackgroundDarkBrush}"
                                 Margin="0,0,0,8"
                                 UseLayoutRounding="True">
-                            <Border x:Name="OverallProgressBar" 
-                                    Height="12" 
-                                    CornerRadius="6"
-                                    Background="{StaticResource PrimaryGradient}"
-                                    UseLayoutRounding="True"/>
+                            <Grid>
+                                <Border x:Name="OverallProgressBar" 
+                                        Height="12" 
+                                        CornerRadius="6"
+                                        Background="{StaticResource PrimaryGradient}"
+                                        HorizontalAlignment="Left"
+                                        UseLayoutRounding="True"/>
+                            </Grid>
                         </Border>
 
                         <Grid Grid.Row="1" UseLayoutRounding="True">
@@ -470,7 +473,7 @@
 
                                 <TextBlock x:Name="InternetProgressText" Grid.Column="1" 
                                            Text="15%"
-                                           Foreground="{StaticResource WarningBrush}"
+                                           Foreground="{StaticResource ErrorBrush}"
                                            TextOptions.TextFormattingMode="Display"/>
                             </Grid>
                         </StackPanel>

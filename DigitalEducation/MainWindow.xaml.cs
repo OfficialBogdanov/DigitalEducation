@@ -2,19 +2,42 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Interop;
+using System.Runtime.InteropServices;
 
 namespace DigitalEducation
 {
     public partial class MainWindow : Window
     {
+        private const int GWL_STYLE = -16;
+        private const int WS_SYSMENU = 0x80000;
+        private const int WS_MAXIMIZEBOX = 0x10000;
+        private const int WS_MINIMIZEBOX = 0x20000;
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
         public MainWindow()
         {
             InitializeComponent();
             Loaded += OnMainWindowLoaded;
+            SourceInitialized += OnSourceInitialized;
+        }
+
+        private void OnSourceInitialized(object sender, EventArgs e)
+        {
+            var hwnd = new WindowInteropHelper(this).Handle;
+            var style = GetWindowLong(hwnd, GWL_STYLE);
+            SetWindowLong(hwnd, GWL_STYLE, style & ~WS_SYSMENU);
         }
 
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
         {
+            WindowState = WindowState.Maximized;
+
             SetupNavigationButtons();
             LoadHomePage();
             MainLayout.SetActiveNavigation("Home");
@@ -28,11 +51,11 @@ namespace DigitalEducation
             if (MainLayout.FindName("btnCourses") is Button btnCourses)
                 btnCourses.Click += OnNavigationButtonClick;
 
-            if (MainLayout.FindName("btnProgress") is Button btnProgress)
-                btnProgress.Click += OnNavigationButtonClick;
-
             if (MainLayout.FindName("btnSettings") is Button btnSettings)
                 btnSettings.Click += OnNavigationButtonClick;
+
+            if (MainLayout.FindName("btnCloseApp") is Button btnCloseApp)
+                btnCloseApp.Click += OnCloseAppButtonClick;
         }
 
         private void OnNavigationButtonClick(object sender, RoutedEventArgs e)
@@ -54,14 +77,57 @@ namespace DigitalEducation
                     case "btnCourses":
                         LoadCoursesPage();
                         break;
-                    case "btnProgress":
-                        LoadProgressPage();
-                        break;
                     case "btnSettings":
                         LoadSettingsPage();
                         break;
                 }
             }
+        }
+
+        private void OnCloseAppButtonClick(object sender, RoutedEventArgs e)
+        {
+            var dialog = new ConfirmDialog
+            {
+                Title = "Выход",
+                Message = "Вы действительно хотите выйти из приложения?",
+                ConfirmButtonText = "Выход",
+                CancelButtonText = "Отмена"
+            };
+
+            dialog.DialogResultChanged += (s, result) =>
+            {
+                if (result)
+                {
+                    Application.Current.Shutdown();
+                }
+            };
+
+            ShowDialog(dialog, null);
+        }
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            e.Cancel = true;
+
+            var dialog = new ConfirmDialog
+            {
+                Title = "Выход",
+                Message = "Вы действительно хотите выйти из приложения?",
+                ConfirmButtonText = "Выход",
+                CancelButtonText = "Отмена"
+            };
+
+            dialog.DialogResultChanged += (s, result) =>
+            {
+                if (result)
+                {
+                    Application.Current.Shutdown();
+                }
+            };
+
+            ShowDialog(dialog, null);
         }
 
         private void LoadHomePage()
@@ -76,11 +142,6 @@ namespace DigitalEducation
             var coursesPage = new CoursesPage();
             coursesPage.CourseButtonClicked += OnCourseButtonClicked;
             MainLayout.Content = coursesPage;
-        }
-
-        private void LoadProgressPage()
-        {
-            MainLayout.Content = CreateSimplePage("📈 Прогресс", "Здесь будет отображаться ваш прогресс обучения");
         }
 
         private void LoadSettingsPage()
@@ -99,9 +160,6 @@ namespace DigitalEducation
                 {
                     coursesPage.RefreshProgress();
                 }
-                else if (currentPage is HomePage homePage)
-                {
-                }
             }
         }
 
@@ -111,9 +169,6 @@ namespace DigitalEducation
             {
                 LoadFilesLessonsPage();
             }
-            else
-            {
-            }
         }
 
         private void OnCourseButtonClicked(object sender, string courseTag)
@@ -121,10 +176,6 @@ namespace DigitalEducation
             if (courseTag == "OpenFilesLessons")
             {
                 LoadFilesLessonsPage();
-            }
-            else
-            {
-                string courseName = GetCourseName(courseTag);
             }
         }
 
@@ -200,44 +251,13 @@ namespace DigitalEducation
             DialogPopup.IsOpen = false;
         }
 
-        private UIElement CreateSimplePage(string title, string description)
-        {
-            var stackPanel = new StackPanel
-            {
-                Margin = new Thickness(40)
-            };
-
-            var titleBlock = new TextBlock
-            {
-                Text = title,
-                Style = (Style)Application.Current.FindResource("TitleTextStyle"),
-                Foreground = (System.Windows.Media.Brush)Application.Current.FindResource("PrimaryDarkBrush")
-            };
-
-            var descBlock = new TextBlock
-            {
-                Text = description,
-                Style = (Style)Application.Current.FindResource("BodyTextStyle"),
-                Margin = new Thickness(0, 20, 0, 0)
-            };
-
-            stackPanel.Children.Add(titleBlock);
-            stackPanel.Children.Add(descBlock);
-
-            return new ScrollViewer
-            {
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                Content = stackPanel
-            };
-        }
-
-        private void ShowMessage(string title, string message)
-        {
-            MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
         public void UpdateLessonCompletion(string lessonId, bool isCompleted)
         {
+            if (MainLayout.Content is FilesLessonsPage filesPage)
+            {
+                filesPage.UpdateLessonStatus(lessonId, isCompleted);
+            }
+
             Console.WriteLine($"Урок {lessonId} завершен: {isCompleted}");
         }
     }

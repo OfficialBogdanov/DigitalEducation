@@ -68,12 +68,12 @@
                         </StackPanel>
                     </Button>
 
-                    <Button x:Name="btnProgress" 
+                    <Button x:Name="btnSettings" 
                             Style="{StaticResource NavigationButtonStyle}"
                             Margin="12,0">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="/Icons/Chart.png" Width="24" Height="24" Margin="0,0,8,0"/>
-                            <TextBlock Text="Прогресс" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}"/>
+                            <Image Source="/Icons/Settings.png" Width="24" Height="24" Margin="0,0,8,0"/>
+                            <TextBlock Text="Настройки" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -81,12 +81,12 @@
                 <StackPanel Grid.Column="2" 
                             Orientation="Horizontal"
                             VerticalAlignment="Center">
-                    <Button x:Name="btnSettings" 
+                    <Button x:Name="btnCloseApp" 
                             Style="{StaticResource NavigationButtonStyle}"
                             Margin="12,0">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="/Icons/Settings.png" Width="24" Height="24" Margin="0,0,8,0"/>
-                            <TextBlock Text="Настройки" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}"/>
+                            <Image Source="/Icons/Close.png" Width="24" Height="24" Margin="0,0,8,0"/>
+                            <TextBlock Text="Выход" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>

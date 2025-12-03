@@ -53,37 +53,6 @@
                             <TextBlock Text="Прогресс курса" Style="{StaticResource BodyTextStyle}"/>
                             <TextBlock x:Name="CourseProgressText" Grid.Column="1" Text="1/5 уроков" Foreground="{StaticResource SuccessBrush}" TextOptions.TextFormattingMode="Display"/>
                         </Grid>
-
-                        <WrapPanel UseLayoutRounding="True">
-                            <Border Background="{StaticResource PrimaryLighterBrush}"
-                                    CornerRadius="8"
-                                    Padding="12,8"
-                                    Margin="0,0,12,8"
-                                    BorderBrush="{StaticResource PrimarySoftBrush}"
-                                    BorderThickness="1"
-                                    UseLayoutRounding="True"
-                                    SnapsToDevicePixels="True">
-                                <TextBlock x:Name="LessonsCountText" 
-                                           Text="1 из 5 уроков" 
-                                           Foreground="{StaticResource PrimaryDarkBrush}" 
-                                           FontWeight="Medium"
-                                           TextOptions.TextFormattingMode="Display"/>
-                            </Border>
-                            <Border Background="{StaticResource PrimaryLighterBrush}"
-                                    CornerRadius="8"
-                                    Padding="12,8"
-                                    Margin="0,0,12,8"
-                                    BorderBrush="{StaticResource PrimarySoftBrush}"
-                                    BorderThickness="1"
-                                    UseLayoutRounding="True"
-                                    SnapsToDevicePixels="True">
-                                <TextBlock x:Name="CourseTimeText" 
-                                           Text="30 минут обучения" 
-                                           Foreground="{StaticResource PrimaryDarkBrush}"
-                                           FontWeight="Medium"
-                                           TextOptions.TextFormattingMode="Display"/>
-                            </Border>
-                        </WrapPanel>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -144,7 +113,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Статус урока" Style="{StaticResource BodyTextStyle}"/>
-                            <TextBlock x:Name="Lesson1Status" Grid.Column="1" Text="Не начат" Style="{StaticResource BodyTextStyle}"/>
+                            <TextBlock x:Name="Lesson1Status" Grid.Column="1" Text="Не пройден" Style="{StaticResource BodyTextStyle}"/>
                         </Grid>
 
                         <WrapPanel UseLayoutRounding="True">
@@ -216,7 +185,7 @@
                             Width="80" 
                             Height="80"
                             CornerRadius="16"
-                            Background="{StaticResource PrimaryLightBrush}"
+                            Background="{StaticResource PrimaryBrush}"
                             Margin="0,0,24,0"
                             UseLayoutRounding="True"
                             SnapsToDevicePixels="True">
@@ -234,7 +203,7 @@
                         <TextBlock Text="Корзина и восстановление"
                                    FontSize="16"
                                    FontWeight="Medium"
-                                   Foreground="{StaticResource PrimaryLightBrush}"
+                                   Foreground="{StaticResource PrimaryBrush}"
                                    Margin="0,0,0,8"
                                    TextOptions.TextFormattingMode="Display"
                                    TextOptions.TextRenderingMode="ClearType"/>
@@ -249,7 +218,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Статус урока" Style="{StaticResource BodyTextStyle}"/>
-                            <TextBlock x:Name="Lesson2Status" Grid.Column="1" Text="Не начат" Style="{StaticResource BodyTextStyle}"/>
+                            <TextBlock x:Name="Lesson2Status" Grid.Column="1" Text="Не пройден" Style="{StaticResource BodyTextStyle}"/>
                         </Grid>
 
                         <WrapPanel UseLayoutRounding="True">
@@ -321,7 +290,7 @@
                             Width="80" 
                             Height="80"
                             CornerRadius="16"
-                            Background="{StaticResource InfoBrush}"
+                            Background="{StaticResource PrimaryBrush}"
                             Margin="0,0,24,0"
                             UseLayoutRounding="True"
                             SnapsToDevicePixels="True">
@@ -339,7 +308,7 @@
                         <TextBlock Text="Типы файлов и расширения"
                                    FontSize="16"
                                    FontWeight="Medium"
-                                   Foreground="{StaticResource InfoBrush}"
+                                   Foreground="{StaticResource PrimaryBrush}"
                                    Margin="0,0,0,8"
                                    TextOptions.TextFormattingMode="Display"
                                    TextOptions.TextRenderingMode="ClearType"/>
@@ -354,7 +323,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Статус урока" Style="{StaticResource BodyTextStyle}"/>
-                            <TextBlock x:Name="Lesson3Status" Grid.Column="1" Text="Не начат" Style="{StaticResource BodyTextStyle}"/>
+                            <TextBlock x:Name="Lesson3Status" Grid.Column="1" Text="Не пройден" Style="{StaticResource BodyTextStyle}"/>
                         </Grid>
 
                         <WrapPanel UseLayoutRounding="True">
@@ -426,7 +395,7 @@
                             Width="80" 
                             Height="80"
                             CornerRadius="16"
-                            Background="{StaticResource WarningBrush}"
+                            Background="{StaticResource PrimaryBrush}"
                             Margin="0,0,24,0"
                             UseLayoutRounding="True"
                             SnapsToDevicePixels="True">
@@ -444,7 +413,7 @@
                         <TextBlock Text="Проводник Windows"
                                    FontSize="16"
                                    FontWeight="Medium"
-                                   Foreground="{StaticResource WarningBrush}"
+                                   Foreground="{StaticResource PrimaryBrush}"
                                    Margin="0,0,0,8"
                                    TextOptions.TextFormattingMode="Display"
                                    TextOptions.TextRenderingMode="ClearType"/>
@@ -459,7 +428,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Статус урока" Style="{StaticResource BodyTextStyle}"/>
-                            <TextBlock x:Name="Lesson4Status" Grid.Column="1" Text="Не начат" Style="{StaticResource BodyTextStyle}"/>
+                            <TextBlock x:Name="Lesson4Status" Grid.Column="1" Text="Не пройден" Style="{StaticResource BodyTextStyle}"/>
                         </Grid>
 
                         <WrapPanel UseLayoutRounding="True">
@@ -530,7 +499,7 @@
                             Width="80" 
                             Height="80"
                             CornerRadius="16"
-                            Background="{StaticResource SuccessBrush}"
+                            Background="{StaticResource PrimaryBrush}"
                             Margin="0,0,24,0"
                             UseLayoutRounding="True"
                             SnapsToDevicePixels="True">
@@ -548,7 +517,7 @@
                         <TextBlock Text="Копирование и перемещение файлов"
                                    FontSize="16"
                                    FontWeight="Medium"
-                                   Foreground="{StaticResource SuccessBrush}"
+                                   Foreground="{StaticResource PrimaryBrush}"
                                    Margin="0,0,0,8"
                                    TextOptions.TextFormattingMode="Display"
                                    TextOptions.TextRenderingMode="ClearType"/>
@@ -563,7 +532,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Статус урока" Style="{StaticResource BodyTextStyle}"/>
-                            <TextBlock x:Name="Lesson5Status" Grid.Column="1" Text="Не начат" Style="{StaticResource BodyTextStyle}"/>
+                            <TextBlock x:Name="Lesson5Status" Grid.Column="1" Text="Не пройден" Style="{StaticResource BodyTextStyle}"/>
                         </Grid>
 
                         <WrapPanel UseLayoutRounding="True">
