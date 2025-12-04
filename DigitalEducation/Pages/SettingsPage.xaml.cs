@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace DigitalEducation
 {
@@ -9,52 +8,49 @@ namespace DigitalEducation
     {
         public event EventHandler<string> SettingsButtonClicked;
 
-        private string _currentTheme = "Light";
+        private string _currentTheme;
         private string _currentLanguage = "Russian";
         private string _currentScale = "Medium";
 
         public SettingsPage()
         {
             InitializeComponent();
+            ThemeManager.ThemeChanged += OnThemeChanged;
             Loaded += OnSettingsPageLoaded;
         }
 
         private void OnSettingsPageLoaded(object sender, RoutedEventArgs e)
         {
             InitializeEventHandlers();
+            LoadCurrentTheme();
             LoadSettingsData();
+            UpdateAllButtons();
+            ThemeManager.UpdateAllIconsInContainer(this);
+        }
+
+        private void OnThemeChanged(object sender, string themeName)
+        {
+            _currentTheme = themeName;
             UpdateThemeButtons();
-            Loaded -= OnSettingsPageLoaded;
+            ThemeManager.UpdateAllIconsInContainer(this);
         }
 
         private void InitializeEventHandlers()
         {
-            btnClearProgress.Click -= OnClearProgressClick;
             btnClearProgress.Click += OnClearProgressClick;
-
-            btnResetSettings.Click -= OnResetSettingsClick;
             btnResetSettings.Click += OnResetSettingsClick;
-
-            btnLightTheme.Click -= OnLightThemeClick;
             btnLightTheme.Click += OnLightThemeClick;
-
-            btnDarkTheme.Click -= OnDarkThemeClick;
             btnDarkTheme.Click += OnDarkThemeClick;
-
-            btnRussian.Click -= OnRussianClick;
             btnRussian.Click += OnRussianClick;
-
-            btnEnglish.Click -= OnEnglishClick;
             btnEnglish.Click += OnEnglishClick;
-
-            btnSmallScale.Click -= OnSmallScaleClick;
             btnSmallScale.Click += OnSmallScaleClick;
-
-            btnMediumScale.Click -= OnMediumScaleClick;
             btnMediumScale.Click += OnMediumScaleClick;
-
-            btnLargeScale.Click -= OnLargeScaleClick;
             btnLargeScale.Click += OnLargeScaleClick;
+        }
+
+        private void LoadCurrentTheme()
+        {
+            _currentTheme = ThemeManager.GetCurrentTheme();
         }
 
         private void LoadSettingsData()
@@ -62,12 +58,22 @@ namespace DigitalEducation
             try
             {
                 var progressFilePath = ProgressManager.GetProgressFilePath();
-                txtProgressPath.Text = progressFilePath;
+                txtProgressPath.Text = $"Прогресс: {progressFilePath}\n";
+
+                var themeFilePath = ThemeManager.GetThemeConfigFilePath();
+                txtProgressPath.Text += $"Тема: {themeFilePath}";
             }
             catch (Exception ex)
             {
                 txtProgressPath.Text = $"Ошибка загрузки: {ex.Message}";
             }
+        }
+
+        private void UpdateAllButtons()
+        {
+            UpdateThemeButtons();
+            UpdateLanguageButtons();
+            UpdateScaleButtons();
         }
 
         private void OnSmallScaleClick(object sender, RoutedEventArgs e)
@@ -76,7 +82,6 @@ namespace DigitalEducation
             {
                 _currentScale = "Small";
                 UpdateScaleButtons();
-                SettingsButtonClicked?.Invoke(this, "ScaleChanged:Small");
             }
         }
 
@@ -86,7 +91,6 @@ namespace DigitalEducation
             {
                 _currentScale = "Medium";
                 UpdateScaleButtons();
-                SettingsButtonClicked?.Invoke(this, "ScaleChanged:Medium");
             }
         }
 
@@ -96,31 +100,17 @@ namespace DigitalEducation
             {
                 _currentScale = "Large";
                 UpdateScaleButtons();
-                SettingsButtonClicked?.Invoke(this, "ScaleChanged:Large");
             }
         }
 
         private void UpdateScaleButtons()
         {
-            var activeStyle = (Style)FindResource("ActiveNavigationButtonStyle");
-            var defaultStyle = (Style)FindResource("NavigationButtonStyle");
+            var activeStyle = (Style)TryFindResource("ActiveNavigationButtonStyle");
+            var defaultStyle = (Style)TryFindResource("NavigationButtonStyle");
 
-            btnSmallScale.Style = defaultStyle;
-            btnMediumScale.Style = defaultStyle;
-            btnLargeScale.Style = defaultStyle;
-
-            switch (_currentScale)
-            {
-                case "Small":
-                    btnSmallScale.Style = activeStyle;
-                    break;
-                case "Medium":
-                    btnMediumScale.Style = activeStyle;
-                    break;
-                case "Large":
-                    btnLargeScale.Style = activeStyle;
-                    break;
-            }
+            if (btnSmallScale != null) btnSmallScale.Style = _currentScale == "Small" ? activeStyle : defaultStyle;
+            if (btnMediumScale != null) btnMediumScale.Style = _currentScale == "Medium" ? activeStyle : defaultStyle;
+            if (btnLargeScale != null) btnLargeScale.Style = _currentScale == "Large" ? activeStyle : defaultStyle;
         }
 
         private void OnRussianClick(object sender, RoutedEventArgs e)
@@ -129,7 +119,6 @@ namespace DigitalEducation
             {
                 _currentLanguage = "Russian";
                 UpdateLanguageButtons();
-                SettingsButtonClicked?.Invoke(this, "LanguageChanged:Russian");
             }
         }
 
@@ -139,25 +128,16 @@ namespace DigitalEducation
             {
                 _currentLanguage = "English";
                 UpdateLanguageButtons();
-                SettingsButtonClicked?.Invoke(this, "LanguageChanged:English");
             }
         }
 
         private void UpdateLanguageButtons()
         {
-            var activeStyle = (Style)FindResource("ActiveNavigationButtonStyle");
-            var defaultStyle = (Style)FindResource("NavigationButtonStyle");
+            var activeStyle = (Style)TryFindResource("ActiveNavigationButtonStyle");
+            var defaultStyle = (Style)TryFindResource("NavigationButtonStyle");
 
-            if (_currentLanguage == "Russian")
-            {
-                btnRussian.Style = activeStyle;
-                btnEnglish.Style = defaultStyle;
-            }
-            else
-            {
-                btnEnglish.Style = activeStyle;
-                btnRussian.Style = defaultStyle;
-            }
+            if (btnRussian != null) btnRussian.Style = _currentLanguage == "Russian" ? activeStyle : defaultStyle;
+            if (btnEnglish != null) btnEnglish.Style = _currentLanguage == "English" ? activeStyle : defaultStyle;
         }
 
         private void OnLightThemeClick(object sender, RoutedEventArgs e)
@@ -165,6 +145,7 @@ namespace DigitalEducation
             if (_currentTheme != "Light")
             {
                 _currentTheme = "Light";
+                ThemeManager.ApplyTheme("Light");
                 UpdateThemeButtons();
                 SettingsButtonClicked?.Invoke(this, "ThemeChanged:Light");
             }
@@ -175,6 +156,7 @@ namespace DigitalEducation
             if (_currentTheme != "Dark")
             {
                 _currentTheme = "Dark";
+                ThemeManager.ApplyTheme("Dark");
                 UpdateThemeButtons();
                 SettingsButtonClicked?.Invoke(this, "ThemeChanged:Dark");
             }
@@ -182,19 +164,11 @@ namespace DigitalEducation
 
         private void UpdateThemeButtons()
         {
-            var activeStyle = (Style)FindResource("ActiveNavigationButtonStyle");
-            var defaultStyle = (Style)FindResource("NavigationButtonStyle");
+            var activeStyle = (Style)TryFindResource("ActiveNavigationButtonStyle");
+            var defaultStyle = (Style)TryFindResource("NavigationButtonStyle");
 
-            if (_currentTheme == "Light")
-            {
-                btnLightTheme.Style = activeStyle;
-                btnDarkTheme.Style = defaultStyle;
-            }
-            else
-            {
-                btnDarkTheme.Style = activeStyle;
-                btnLightTheme.Style = defaultStyle;
-            }
+            if (btnLightTheme != null) btnLightTheme.Style = _currentTheme == "Light" ? activeStyle : defaultStyle;
+            if (btnDarkTheme != null) btnDarkTheme.Style = _currentTheme == "Dark" ? activeStyle : defaultStyle;
         }
 
         private void OnClearProgressClick(object sender, RoutedEventArgs e)
@@ -220,26 +194,6 @@ namespace DigitalEducation
                         ExecuteClearProgress();
                     }
                 });
-            }
-            else
-            {
-                var result = MessageBox.Show(
-                    "Вы уверены, что хотите очистить весь прогресс?\n\n" +
-                    "Это действие удалит:\n" +
-                    "• Все завершенные уроки\n" +
-                    "• Статистику обучения\n" +
-                    "• Прогресс по всем курсам\n\n" +
-                    "Это действие нельзя отменить.",
-                    "Очистка прогресса",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning,
-                    MessageBoxResult.No
-                );
-
-                if (result == MessageBoxResult.Yes)
-                {
-                    ExecuteClearProgress();
-                }
             }
         }
 
@@ -276,36 +230,65 @@ namespace DigitalEducation
             dialog.ConfirmButtonText = "Хорошо";
             dialog.CancelButtonText = null;
 
-            if (dialog.FindName("CancelButton") is Button cancelButton)
-            {
-                cancelButton.Visibility = Visibility.Collapsed;
-            }
-
             if (Window.GetWindow(this) is MainWindow mainWindow)
             {
-                mainWindow.ShowDialog(dialog, (s, result) =>
-                {
-                });
-            }
-            else
-            {
-                MessageBox.Show(
-                    message,
-                    title,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information
-                );
+                mainWindow.ShowDialog(dialog, null);
             }
         }
 
         private void OnResetSettingsClick(object sender, RoutedEventArgs e)
         {
+            var dialog = new ConfirmDialog();
+
+            dialog.Title = "Сброс настроек";
+            dialog.Message = "Вы уверены, что хотите сбросить все настройки приложения?\n\n" +
+                           "Это действие вернет:\n" +
+                           "• Тему на светлую\n" +
+                           "• Язык на русский\n" +
+                           "• Масштаб на средний\n\n" +
+                           "Ваш прогресс обучения не будет затронут.";
+            dialog.ConfirmButtonText = "Сбросить";
+            dialog.CancelButtonText = "Отмена";
+
+            if (Window.GetWindow(this) is MainWindow mainWindow)
+            {
+                mainWindow.ShowDialog(dialog, (s, result) =>
+                {
+                    if (result)
+                    {
+                        ExecuteResetSettings();
+                    }
+                });
+            }
         }
 
-        public void RefreshSettings()
+        private void ExecuteResetSettings()
         {
-            LoadSettingsData();
-            UpdateThemeButtons();
+            try
+            {
+                _currentTheme = "Light";
+                _currentLanguage = "Russian";
+                _currentScale = "Medium";
+
+                ThemeManager.ApplyTheme("Light");
+
+                UpdateAllButtons();
+                ThemeManager.UpdateAllIconsInContainer(this);
+
+                SettingsButtonClicked?.Invoke(this, "ThemeChanged:Light");
+
+                ShowSuccessDialog("Настройки сброшены",
+                    "Все настройки приложения были успешно сброшены к значениям по умолчанию.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Ошибка при сбросе настроек: {ex.Message}",
+                    "Ошибка",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
         }
     }
 }

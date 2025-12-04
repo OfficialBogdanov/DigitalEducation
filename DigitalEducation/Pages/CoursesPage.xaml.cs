@@ -14,12 +14,17 @@ namespace DigitalEducation
             Loaded += OnCoursesPageLoaded;
 
             ProgressManager.ProgressChanged += OnProgressChanged;
+
+            ThemeManager.ThemeChanged += OnThemeChanged;
         }
 
         private void OnCoursesPageLoaded(object sender, RoutedEventArgs e)
         {
             InitializeEventHandlers();
             UpdateCoursesProgress();
+
+            UpdateIcons();
+
             Loaded -= OnCoursesPageLoaded;
         }
 
@@ -34,6 +39,17 @@ namespace DigitalEducation
         private void OnCoursesPageUnloaded(object sender, RoutedEventArgs e)
         {
             ProgressManager.ProgressChanged -= OnProgressChanged;
+            ThemeManager.ThemeChanged -= OnThemeChanged;
+        }
+
+        private void OnThemeChanged(object sender, string themeName)
+        {
+            UpdateIcons();
+        }
+
+        private void UpdateIcons()
+        {
+            ThemeManager.UpdateAllIconsInContainer(this);
         }
 
         private void InitializeEventHandlers()

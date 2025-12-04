@@ -11,7 +11,7 @@
         ResizeMode="NoResize"
         WindowStyle="None">
 
-    <Grid>
+    <Grid Background="{DynamicResource BackgroundBrush}">
         <local:MasterLayout x:Name="MainLayout"/>
 
         <Popup x:Name="DialogPopup"

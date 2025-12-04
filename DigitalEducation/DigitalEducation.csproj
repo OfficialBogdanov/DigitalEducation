@@ -132,6 +132,7 @@
     </Compile>
     <Compile Include="ManagersServices\LessonData.cs" />
     <Compile Include="ManagersServices\LessonManager.cs" />
+    <Compile Include="ManagersServices\ThemeManager.cs" />
     <Compile Include="Pages\CoursesPage.xaml.cs">
       <DependentUpon>CoursesPage.xaml</DependentUpon>
     </Compile>
@@ -189,6 +190,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\DarkTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\LightTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OverlayWindow.xaml.cs">
@@ -226,59 +235,63 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Chart.png" />
-    <Resource Include="Icons\Home.png" />
-    <Resource Include="Icons\List.png" />
-    <Resource Include="Icons\Settings.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\Logo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\Book.png" />
-    <Resource Include="Icons\Folder.png" />
-    <Resource Include="Icons\Monitor.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\Document.png" />
-    <Resource Include="Icons\Globe.png" />
-    <Resource Include="Icons\Right.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Lessons\OsLessons\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\ChevronLeft.png" />
-    <Resource Include="Icons\ChevronRight.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\Close.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\FolderBlack.png" />
     <Resource Include="Icons\Icon.ico" />
-    <Resource Include="Icons\Info.png" />
-    <Resource Include="Icons\Refresh.png" />
-    <Resource Include="Icons\Trash.png" />
-    <Resource Include="Icons\TrendingUp.png" />
-    <Resource Include="Icons\User.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Success.png" />
+    <Resource Include="Icons\Black\Book.png" />
+    <Resource Include="Icons\Black\Chart.png" />
+    <Resource Include="Icons\Black\ChevronLeft.png" />
+    <Resource Include="Icons\Black\ChevronRight.png" />
+    <Resource Include="Icons\Black\Close.png" />
+    <Resource Include="Icons\Black\Document.png" />
+    <Resource Include="Icons\Black\Folder.png" />
+    <Resource Include="Icons\Black\Globe.png" />
+    <Resource Include="Icons\Black\Home.png" />
+    <Resource Include="Icons\Black\Info.png" />
+    <Resource Include="Icons\Black\List.png" />
+    <Resource Include="Icons\Black\Monitor.png" />
+    <Resource Include="Icons\Black\Moon.png" />
+    <Resource Include="Icons\Black\Refresh.png" />
+    <Resource Include="Icons\Black\Right.png" />
+    <Resource Include="Icons\Black\Settings.png" />
+    <Resource Include="Icons\Black\Success.png" />
+    <Resource Include="Icons\Black\Sun.png" />
+    <Resource Include="Icons\Black\Trash.png" />
+    <Resource Include="Icons\Black\TrendingUp.png" />
+    <Resource Include="Icons\Black\User.png" />
+    <Resource Include="Icons\Black\ZoomIn.png" />
+    <Resource Include="Icons\Black\ZoomOut.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Moon.png" />
-    <Resource Include="Icons\ZoomIn.png" />
-    <Resource Include="Icons\ZoomOut.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\GlobeBlack.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\Sun.png" />
+    <Resource Include="Icons\White\Book.png" />
+    <Resource Include="Icons\White\Chart.png" />
+    <Resource Include="Icons\White\ChevronLeft.png" />
+    <Resource Include="Icons\White\ChevronRight.png" />
+    <Resource Include="Icons\White\Close.png" />
+    <Resource Include="Icons\White\Document.png" />
+    <Resource Include="Icons\White\Folder.png" />
+    <Resource Include="Icons\White\Globe.png" />
+    <Resource Include="Icons\White\Home.png" />
+    <Resource Include="Icons\White\Info.png" />
+    <Resource Include="Icons\White\List.png" />
+    <Resource Include="Icons\White\Monitor.png" />
+    <Resource Include="Icons\White\Moon.png" />
+    <Resource Include="Icons\White\Refresh.png" />
+    <Resource Include="Icons\White\Right.png" />
+    <Resource Include="Icons\White\Settings.png" />
+    <Resource Include="Icons\White\Success.png" />
+    <Resource Include="Icons\White\Sun.png" />
+    <Resource Include="Icons\White\Trash.png" />
+    <Resource Include="Icons\White\TrendingUp.png" />
+    <Resource Include="Icons\White\User.png" />
+    <Resource Include="Icons\White\ZoomIn.png" />
+    <Resource Include="Icons\White\ZoomOut.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

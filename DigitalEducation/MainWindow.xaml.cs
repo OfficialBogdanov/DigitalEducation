@@ -22,7 +22,11 @@ namespace DigitalEducation
 
         public MainWindow()
         {
+            string savedTheme = ThemeManager.GetCurrentTheme();
+            ThemeManager.ApplyTheme(savedTheme);
+
             InitializeComponent();
+
             Loaded += OnMainWindowLoaded;
             SourceInitialized += OnSourceInitialized;
         }
@@ -161,6 +165,20 @@ namespace DigitalEducation
                     coursesPage.RefreshProgress();
                 }
             }
+            else if (action.StartsWith("ThemeChanged:"))
+            {
+                ReloadCurrentPage();
+
+                if (MainLayout is MasterLayout layout)
+                {
+                    if (MainLayout.Content is HomePage)
+                        layout.SetActiveNavigation("Home");
+                    else if (MainLayout.Content is CoursesPage)
+                        layout.SetActiveNavigation("Courses");
+                    else if (MainLayout.Content is SettingsPage)
+                        layout.SetActiveNavigation("Settings");
+                }
+            }
         }
 
         private void OnCategoryButtonClicked(object sender, string categoryName)
@@ -183,6 +201,26 @@ namespace DigitalEducation
         {
             var filesLessonsPage = new FilesLessonsPage();
             MainLayout.Content = filesLessonsPage;
+        }
+
+        public void ReloadCurrentPage()
+        {
+            if (MainLayout.Content is HomePage)
+            {
+                LoadHomePage();
+            }
+            else if (MainLayout.Content is CoursesPage)
+            {
+                LoadCoursesPage();
+            }
+            else if (MainLayout.Content is SettingsPage)
+            {
+                LoadSettingsPage();
+            }
+            else if (MainLayout.Content is FilesLessonsPage)
+            {
+                LoadFilesLessonsPage();
+            }
         }
 
         private string GetCourseName(string tag)

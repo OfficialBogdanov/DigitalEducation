@@ -14,7 +14,7 @@
 
                 <Border Width="4"
                         Height="24"
-                        Background="{StaticResource PrimaryBrush}"
+                        Background="{DynamicResource PrimaryBrush}"
                         CornerRadius="2"
                         VerticalAlignment="Center"
                         Margin="0,0,12,0"
@@ -23,15 +23,15 @@
 
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                     <TextBlock Text="Настройки" 
-                               Style="{StaticResource TitleTextStyle}"
-                               Foreground="{StaticResource PrimaryDarkBrush}"
+                               Style="{DynamicResource TitleTextStyle}"
+                               Foreground="{DynamicResource PrimaryDarkBrush}"
                                TextOptions.TextFormattingMode="Display"/>
                     <TextBlock Text="Настройте приложение под свои предпочтения. Здесь вы можете управлять своими данными и прогрессом."
-                               Style="{StaticResource BodyTextStyle}"/>
+                               Style="{DynamicResource BodyTextStyle}"/>
                 </StackPanel>
             </Grid>
 
-            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,24" UseLayoutRounding="True" SnapsToDevicePixels="True">
+            <Border Style="{DynamicResource CardStyle}" Margin="0,0,0,24" UseLayoutRounding="True" SnapsToDevicePixels="True">
                 <Grid UseLayoutRounding="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -46,10 +46,10 @@
 
                         <StackPanel Grid.Row="0" UseLayoutRounding="True">
                             <TextBlock Text="Общие настройки" 
-                                       Style="{StaticResource SubtitleTextStyle}"
+                                       Style="{DynamicResource SubtitleTextStyle}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="Настройте внешний вид по своему вкусу"
-                                       Style="{StaticResource BodyTextStyle}"/>
+                                       Style="{DynamicResource BodyTextStyle}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Margin="0,24,0,0" UseLayoutRounding="True">
@@ -66,7 +66,8 @@
                                         CornerRadius="6"
                                         Margin="6,10,6,0"
                                         VerticalAlignment="Top">
-                                    <Image Source="/Icons/Moon.png"
+                                    <Image x:Name="ThemeSectionIcon"
+                                           Tag="Moon"
                                            Width="18"
                                            Height="18"
                                            HorizontalAlignment="Center"
@@ -77,10 +78,10 @@
                                     <TextBlock Text="Тема" 
                                                FontSize="16"
                                                FontWeight="Medium"
-                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"
                                                Margin="0,0,0,4"/>
                                     <TextBlock Text="Измените цветовую палитру вашего приложения."
-                                               Style="{StaticResource BodyTextStyle}"
+                                               Style="{DynamicResource BodyTextStyle}"
                                                Margin="0,0,0,16"/>
 
                                     <Border CornerRadius="8"
@@ -94,13 +95,14 @@
 
                                             <Button x:Name="btnLightTheme"
                                                     Grid.Column="0"
-                                                    Style="{StaticResource ActiveNavigationButtonStyle}"
+                                                    Style="{DynamicResource NavigationButtonStyle}"
                                                     Cursor="Hand"
                                                     Padding="20,12"
                                                     Margin="0,0,10,0">
                                                 <StackPanel Orientation="Horizontal"
                                                             VerticalAlignment="Center">
-                                                    <Image Source="/Icons/Sun.png"
+                                                    <Image x:Name="LightThemeIcon"
+                                                           Tag="Sun"
                                                            Width="18"
                                                            Height="18"
                                                            Margin="0,0,8,0"
@@ -109,19 +111,20 @@
                                                                FontSize="14"
                                                                FontWeight="Medium"
                                                                VerticalAlignment="Center"
-                                                               Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                                                 </StackPanel>
                                             </Button>
 
                                             <Button x:Name="btnDarkTheme"
                                                     Grid.Column="1"
-                                                    Style="{StaticResource NavigationButtonStyle}"
+                                                    Style="{DynamicResource NavigationButtonStyle}"
                                                     Cursor="Hand"
                                                     Padding="20,12"
                                                     Margin="0,0,10,0">
                                                 <StackPanel Orientation="Horizontal"
                                                             VerticalAlignment="Center">
-                                                    <Image Source="/Icons/Moon.png"
+                                                    <Image x:Name="DarkThemeIcon"
+                                                           Tag="Moon"
                                                            Width="18"
                                                            Height="18"
                                                            Margin="0,0,8,0"
@@ -130,7 +133,7 @@
                                                            FontSize="14"
                                                            FontWeight="Medium"
                                                            VerticalAlignment="Center"
-                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
                                                 </StackPanel>
                                             </Button>
                                         </Grid>
@@ -138,7 +141,7 @@
                                 </StackPanel>
                             </Grid>
 
-                            <Separator Background="{StaticResource SurfaceBorderBrush}" 
+                            <Separator Background="{DynamicResource SurfaceBorderBrush}" 
                                        Margin="0,0,0,20"/>
 
                             <Grid UseLayoutRounding="True">
@@ -154,7 +157,8 @@
                                         CornerRadius="6"
                                         Margin="6,10,6,0"
                                         VerticalAlignment="Top">
-                                    <Image Source="/Icons/GlobeBlack.png"
+                                    <Image x:Name="LanguageSectionIcon"
+                                           Tag="Globe"
                                            Width="18"
                                            Height="18"
                                            HorizontalAlignment="Center"
@@ -165,10 +169,10 @@
                                     <TextBlock Text="Язык" 
                                                FontSize="16"
                                                FontWeight="Medium"
-                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"
                                                Margin="0,0,0,4"/>
                                     <TextBlock Text="Выберите предпочетаемый язык интерфейса приложения."
-                                               Style="{StaticResource BodyTextStyle}"
+                                               Style="{DynamicResource BodyTextStyle}"
                                                Margin="0,0,0,16"/>
                                     <Border CornerRadius="8"
                                             Padding="4"
@@ -182,13 +186,14 @@
 
                                             <Button x:Name="btnRussian"
                                                     Grid.Column="0"
-                                                    Style="{StaticResource ActiveNavigationButtonStyle}"
+                                                    Style="{DynamicResource NavigationButtonStyle}"
                                                     Cursor="Hand"
                                                     Padding="20,12"
                                                     Margin="0,0,10,0">
                                                 <StackPanel Orientation="Horizontal"
                                                             VerticalAlignment="Center">
-                                                    <Image Source="/Icons/GlobeBlack.png"
+                                                    <Image x:Name="RussianIcon"
+                                                           Tag="Globe"
                                                            Width="18"
                                                            Height="18"
                                                            Margin="0,0,8,0"
@@ -197,19 +202,20 @@
                                                                FontSize="14"
                                                                FontWeight="Medium"
                                                                VerticalAlignment="Center"
-                                                               Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                                                 </StackPanel>
                                             </Button>
 
                                             <Button x:Name="btnEnglish"
                                                     Grid.Column="1"
-                                                    Style="{StaticResource NavigationButtonStyle}"
+                                                    Style="{DynamicResource NavigationButtonStyle}"
                                                     Cursor="Hand"
                                                     Padding="20,12"
                                                     Margin="0,0,10,0">
                                                 <StackPanel Orientation="Horizontal"
                                                             VerticalAlignment="Center">
-                                                    <Image Source="/Icons/GlobeBlack.png"
+                                                    <Image x:Name="EnglishIcon"
+                                                           Tag="Globe"
                                                            Width="18"
                                                            Height="18"
                                                            Margin="0,0,8,0"
@@ -218,7 +224,7 @@
                                                                FontSize="14"
                                                                FontWeight="Medium"
                                                                VerticalAlignment="Center"
-                                                               Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                                                 </StackPanel>
                                             </Button>
                                         </Grid>
@@ -226,7 +232,7 @@
                                 </StackPanel>
                             </Grid>
 
-                            <Separator Background="{StaticResource SurfaceBorderBrush}" 
+                            <Separator Background="{DynamicResource SurfaceBorderBrush}" 
                                        Margin="0,0,0,20"/>
 
                             <Grid Margin="0,0,0,12" UseLayoutRounding="True">
@@ -242,7 +248,8 @@
                                         CornerRadius="6"
                                         Margin="6,10,6,0"
                                         VerticalAlignment="Top">
-                                    <Image Source="/Icons/ZoomIn.png"
+                                    <Image x:Name="ScaleSectionIcon"
+                                           Tag="ZoomIn"
                                            Width="18"
                                            Height="18"
                                            HorizontalAlignment="Center"
@@ -253,10 +260,10 @@
                                     <TextBlock Text="Масштаб" 
                                                FontSize="16"
                                                FontWeight="Medium"
-                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"
                                                Margin="0,0,0,4"/>
                                     <TextBlock Text="Настройте размер всех элементов интерфейса для комфортного просмотра."
-                                               Style="{StaticResource BodyTextStyle}"
+                                               Style="{DynamicResource BodyTextStyle}"
                                                Margin="0,0,0,16"/>
 
                                     <Border CornerRadius="8"
@@ -272,7 +279,7 @@
 
                                             <Button x:Name="btnSmallScale"
                                                     Grid.Column="0"
-                                                    Style="{StaticResource NavigationButtonStyle}"
+                                                    Style="{DynamicResource NavigationButtonStyle}"
                                                     Cursor="Hand"
                                                     Padding="16,12"
                                                     Margin="0,0,10,0">
@@ -280,12 +287,12 @@
                                                            FontSize="14"
                                                            FontWeight="Medium"
                                                            VerticalAlignment="Center"
-                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
                                             </Button>
 
                                             <Button x:Name="btnMediumScale"
                                                     Grid.Column="1"
-                                                    Style="{StaticResource ActiveNavigationButtonStyle}"
+                                                    Style="{DynamicResource NavigationButtonStyle}"
                                                     Cursor="Hand"
                                                     Padding="16,12"
                                                     Margin="0,0,10,0">
@@ -293,12 +300,12 @@
                                                            FontSize="14"
                                                            FontWeight="Medium"
                                                            VerticalAlignment="Center"
-                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
                                             </Button>
 
                                             <Button x:Name="btnLargeScale"
                                                     Grid.Column="2"
-                                                    Style="{StaticResource NavigationButtonStyle}"
+                                                    Style="{DynamicResource NavigationButtonStyle}"
                                                     Cursor="Hand"
                                                     Padding="16,12"
                                                     Margin="0,0,10,0">
@@ -306,7 +313,7 @@
                                                            FontSize="14"
                                                            FontWeight="Medium"
                                                            VerticalAlignment="Center"
-                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
                                             </Button>
                                         </Grid>
                                     </Border>
@@ -317,7 +324,7 @@
                 </Grid>
             </Border>
 
-            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,24" UseLayoutRounding="True" SnapsToDevicePixels="True">
+            <Border Style="{DynamicResource CardStyle}" Margin="0,0,0,24" UseLayoutRounding="True" SnapsToDevicePixels="True">
                 <Grid UseLayoutRounding="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -332,10 +339,10 @@
 
                         <StackPanel Grid.Row="0" UseLayoutRounding="True">
                             <TextBlock Text="Управление данными" 
-                                       Style="{StaticResource SubtitleTextStyle}"
-                                       Margin="0,0,0,4"/>
+                           Style="{DynamicResource SubtitleTextStyle}"
+                           Margin="0,0,0,4"/>
                             <TextBlock Text="Управляйте вашими данными и настройками приложения. Вы можете очистить прогресс обучения или сбросить настройки."
-                                       Style="{StaticResource BodyTextStyle}"/>
+                           Style="{DynamicResource BodyTextStyle}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Margin="0,24,0,0" UseLayoutRounding="True">
@@ -346,77 +353,57 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Border Grid.Column="0"
-                                        Width="28"
-                                        Height="28"
-                                        Background="Transparent"
-                                        CornerRadius="6"
-                                        Margin="6,10,6,0"
-                                        VerticalAlignment="Top">
-                                    <Image Source="/Icons/Trash.png"
-                                           Width="18"
-                                           Height="18"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
+                            Width="28"
+                            Height="28"
+                            Background="Transparent"
+                            CornerRadius="6"
+                            Margin="6,10,6,0"
+                            VerticalAlignment="Top">
+                                    <Image x:Name="TrashIcon"
+                               Tag="Trash"
+                               Width="18"
+                               Height="18"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
                                 </Border>
 
                                 <StackPanel Grid.Column="1" UseLayoutRounding="True">
                                     <TextBlock Text="Прогресс обучения" 
-                                               FontSize="16"
-                                               FontWeight="Medium"
-                                               Foreground="{StaticResource TextPrimaryBrush}"
-                                               Margin="0,0,0,4"/>
+                                   FontSize="16"
+                                   FontWeight="Medium"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Margin="0,0,0,4"/>
                                     <TextBlock Text="Здесь вы можете очистить весь ваш прогресс обучения, включая завершенные уроки, статистику и прогресс по курсам. Это действие нельзя отменить."
-                                               Style="{StaticResource BodyTextStyle}"
-                                               Margin="0,0,0,16"/>
+                                   Style="{DynamicResource BodyTextStyle}"
+                                   Margin="0,0,0,16"/>
 
                                     <Button x:Name="btnClearProgress"
-                                            HorizontalAlignment="Left"
-                                            Padding="24,16"
-                                            Background="#FFFEF2F2"
-                                            BorderBrush="Transparent"
-                                            BorderThickness="0"
-                                            FontSize="14"
-                                            FontWeight="Medium"
-                                            Cursor="Hand"
-                                            Foreground="{StaticResource ErrorBrush}"
-                                            Margin="0,8,0,0">
-                                        <TextBlock Text="Очистить прогресс"
-                                                   VerticalAlignment="Center"/>
-                                        <Button.Style>
-                                            <Style TargetType="Button">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="Button">
-                                                            <Border x:Name="border" 
-                                                                    Background="{TemplateBinding Background}"
-                                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                                    CornerRadius="8"
-                                                                    Padding="{TemplateBinding Padding}">
-                                                                <ContentPresenter HorizontalAlignment="Center" 
-                                                                                  VerticalAlignment="Center"/>
-                                                            </Border>
-                                                            <ControlTemplate.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter TargetName="border" Property="Background" Value="#FFF9E0E0"/>
-                                                                    <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
-                                                                </Trigger>
-                                                                <Trigger Property="IsPressed" Value="True">
-                                                                    <Setter TargetName="border" Property="Background" Value="{StaticResource ErrorBrush}"/>
-                                                                    <Setter Property="Foreground" Value="{StaticResource TextInverseBrush}"/>
-                                                                </Trigger>
-                                                            </ControlTemplate.Triggers>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </Button.Style>
+                                Style="{DynamicResource NavigationButtonStyle}"
+                                Background="{DynamicResource ErrorBrush}"
+                                HorizontalAlignment="Left"
+                                Padding="24,16"
+                                Cursor="Hand"
+                                Margin="0,8,0,0">
+                                        <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                            <Image x:Name="ClearProgressIcon"
+                                       Tag="Trash"
+                                       Width="18"
+                                       Height="18"
+                                       Margin="0,0,8,0"
+                                       VerticalAlignment="Center"/>
+                                            <TextBlock Text="Очистить прогресс"
+                                           FontSize="14"
+                                           FontWeight="Medium"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        </StackPanel>
                                     </Button>
                                 </StackPanel>
                             </Grid>
 
-                            <Separator Background="{StaticResource SurfaceBorderBrush}" 
-                                       Margin="0,0,0,20"/>
+                            <Separator Background="{DynamicResource SurfaceBorderBrush}" 
+                           Margin="0,0,0,20"/>
 
                             <Grid UseLayoutRounding="True">
                                 <Grid.ColumnDefinitions>
@@ -425,71 +412,49 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Border Grid.Column="0"
-                                        Width="28"
-                                        Height="28"
-                                        Background="Transparent"
-                                        CornerRadius="6"
-                                        Margin="6,10,6,0"
-                                        VerticalAlignment="Top">
-                                    <Image Source="/Icons/Refresh.png"
-                                           Width="18"
-                                           Height="18"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
+                            Width="28"
+                            Height="28"
+                            Background="Transparent"
+                            CornerRadius="6"
+                            Margin="6,10,6,0"
+                            VerticalAlignment="Top">
+                                    <Image x:Name="RefreshIcon"
+                               Tag="Refresh"
+                               Width="18"
+                               Height="18"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
                                 </Border>
 
                                 <StackPanel Grid.Column="1" UseLayoutRounding="True">
                                     <TextBlock Text="Сброс приложения" 
-                                               FontSize="16"
-                                               FontWeight="Medium"
-                                               Foreground="{StaticResource TextPrimaryBrush}"
-                                               Margin="0,0,0,4"/>
+                                   FontSize="16"
+                                   FontWeight="Medium"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Margin="0,0,0,4"/>
                                     <TextBlock Text="Сбросить все настройки приложения к значениям по умолчанию. Это не затронет ваш прогресс обучения."
-                                               Style="{StaticResource BodyTextStyle}"
-                                               Margin="0,0,0,16"/>
+                                   Style="{DynamicResource BodyTextStyle}"
+                                   Margin="0,0,0,16"/>
 
                                     <Button x:Name="btnResetSettings"
-                                            HorizontalAlignment="Left"
-                                            Padding="24,16"
-                                            Background="{StaticResource PrimaryLighterBrush}"
-                                            BorderBrush="Transparent"
-                                            BorderThickness="0"
-                                            FontSize="14"
-                                            FontWeight="Medium"
-                                            Cursor="Hand"
-                                            IsEnabled="True"
-                                            Foreground="{StaticResource PrimaryBrush}">
-                                        <TextBlock Text="Сбросить настройки"
-                                                   VerticalAlignment="Center"/>
-                                        <Button.Style>
-                                            <Style TargetType="Button">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="Button">
-                                                            <Border x:Name="border" 
-                                                                    Background="{TemplateBinding Background}"
-                                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                                    CornerRadius="8"
-                                                                    Padding="{TemplateBinding Padding}">
-                                                                <ContentPresenter HorizontalAlignment="Center" 
-                                                                                  VerticalAlignment="Center"/>
-                                                            </Border>
-                                                            <ControlTemplate.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter TargetName="border" Property="Background" Value="#FFE6F2FC"/>
-                                                                    <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
-                                                                </Trigger>
-                                                                <Trigger Property="IsPressed" Value="True">
-                                                                    <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryBrush}"/>
-                                                                    <Setter Property="Foreground" Value="{StaticResource TextInverseBrush}"/>
-                                                                </Trigger>
-                                                            </ControlTemplate.Triggers>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </Button.Style>
+                                Style="{DynamicResource NavigationButtonStyle}"
+                                HorizontalAlignment="Left"
+                                Padding="24,16"
+                                Cursor="Hand">
+                                        <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                            <Image x:Name="ResetSettingsIcon"
+                                       Tag="Refresh"
+                                       Width="18"
+                                       Height="18"
+                                       Margin="0,0,8,0"
+                                       VerticalAlignment="Center"/>
+                                            <TextBlock Text="Сбросить настройки"
+                                           FontSize="14"
+                                           FontWeight="Medium"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        </StackPanel>
                                     </Button>
                                 </StackPanel>
                             </Grid>
@@ -498,7 +463,7 @@
                 </Grid>
             </Border>
 
-            <Border Style="{StaticResource CardStyle}" UseLayoutRounding="True" SnapsToDevicePixels="True">
+            <Border Style="{DynamicResource CardStyle}" UseLayoutRounding="True" SnapsToDevicePixels="True">
                 <Grid UseLayoutRounding="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -513,10 +478,10 @@
 
                         <StackPanel Grid.Row="0" UseLayoutRounding="True">
                             <TextBlock Text="Информация о приложении" 
-                                       Style="{StaticResource SubtitleTextStyle}"
+                                       Style="{DynamicResource SubtitleTextStyle}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Text="Основная информация о приложении, версии и расположении данных."
-                                       Style="{StaticResource BodyTextStyle}"/>
+                                       Style="{DynamicResource BodyTextStyle}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Margin="0,24,0,0">
@@ -531,14 +496,15 @@
                                             Background="Transparent"
                                             CornerRadius="6"
                                             Margin="0,0,12,0">
-                                        <Image Source="/Icons/Info.png"
+                                        <Image x:Name="InfoIcon"
+                                               Tag="Info"
                                                Width="18"
                                                Height="18"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"/>
                                     </Border>
                                     <TextBlock Text="Версия" 
-                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
                                                FontSize="15"
                                                Width="100"/>
                                 </StackPanel>
@@ -546,7 +512,7 @@
                                            Text="1.0.0 Beta"  
                                            FontSize="15"
                                            FontWeight="Medium"
-                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
                             </Grid>
 
                             <Grid Margin="0,0,0,16">
@@ -560,14 +526,15 @@
                                             Background="Transparent"
                                             CornerRadius="6"
                                             Margin="0,0,12,0">
-                                        <Image Source="/Icons/User.png"
-                                           Width="18"
-                                           Height="18"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
+                                        <Image x:Name="UserIcon"
+                                               Tag="User"
+                                               Width="18"
+                                               Height="18"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
                                     </Border>
                                     <TextBlock Text="Разработчик" 
-                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
                                                FontSize="15"
                                                Width="100"/>
                                 </StackPanel>
@@ -575,7 +542,7 @@
                                            Text="Богданов Данил и Туктаров Артем" 
                                            FontSize="15"
                                            FontWeight="Medium"
-                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
                             </Grid>
 
                             <Grid>
@@ -589,14 +556,15 @@
                                             Background="Transparent"
                                             CornerRadius="6"
                                             Margin="0,0,12,0">
-                                        <Image Source="/Icons/FolderBlack.png"
-                                           Width="18"
-                                           Height="18"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
+                                        <Image x:Name="FolderIcon"
+                                               Tag="Folder"
+                                               Width="18"
+                                               Height="18"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
                                     </Border>
                                     <TextBlock Text="Данные" 
-                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
                                                FontSize="15"
                                                Width="100"/>
                                 </StackPanel>
@@ -605,7 +573,7 @@
                                            FontSize="15"
                                            FontWeight="Medium"
                                            TextWrapping="Wrap"
-                                           Foreground="{StaticResource TextPrimaryBrush}"/>
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
                             </Grid>
                         </StackPanel>
                     </Grid>

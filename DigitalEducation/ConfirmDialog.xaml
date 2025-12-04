@@ -31,7 +31,7 @@
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource NavigationButtonStyle}">
                             <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
                         </Style>
                     </Button.Style>
                 </Button>
@@ -42,8 +42,8 @@
                         Click="OnConfirmClick">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource NavigationButtonStyle}">
-                            <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
-                            <Setter Property="Foreground" Value="{StaticResource TextInverseBrush}"/>
+                            <Setter Property="Background" Value="{StaticResource PrimaryLighterBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
                         </Style>
                     </Button.Style>
                 </Button>

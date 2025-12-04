@@ -47,7 +47,7 @@
                             Margin="0,0,24,0"
                             UseLayoutRounding="True"
                             SnapsToDevicePixels="True">
-                        <Image Source="/Icons/Folder.png"
+                        <Image Source="/Icons/White/Folder.png"
                                Width="32"
                                Height="32"
                                HorizontalAlignment="Center"
@@ -92,19 +92,29 @@
                         </WrapPanel>
                     </StackPanel>
 
-                    <Button Grid.Column="2" x:Name="btnFilesCourse"
-                            Style="{StaticResource NavigationButtonStyle}"
+                    <Button Grid.Column="2" 
+                            x:Name="btnFilesCourse"
+                            Style="{DynamicResource NavigationButtonStyle}"
                             Height="80"
                             VerticalAlignment="Center"
                             Padding="24,0"
                             Margin="24,0,0,0"
                             Tag="Files"
-                            UseLayoutRounding="True">
+                            UseLayoutRounding="True"
+                            Cursor="Hand">
                         <StackPanel Orientation="Horizontal" UseLayoutRounding="True">
-                            <Image Source="/Icons/Right.png" Width="24" Height="24" Margin="0,0,8,0" RenderOptions.BitmapScalingMode="HighQuality"/>
-                            <TextBlock Text="Перейти" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}" TextOptions.TextFormattingMode="Display"/>
+                            <Image x:Name="FilesCourseIcon" 
+                                   Tag="Right"
+                                   Width="24" 
+                                   Height="24" 
+                                   Margin="0,0,8,0"/>
+                                <TextBlock Text="Начать" 
+                                           VerticalAlignment="Center" 
+                                           Foreground="{DynamicResource TextPrimaryBrush}" 
+                                           TextOptions.TextFormattingMode="Display"/>
                         </StackPanel>
                     </Button>
+                    
                 </Grid>
             </Border>
 
@@ -124,7 +134,7 @@
                             Margin="0,0,24,0"
                             UseLayoutRounding="True"
                             SnapsToDevicePixels="True">
-                        <Image Source="/Icons/Monitor.png"
+                        <Image Source="/Icons/White/Monitor.png"
                                Width="32"
                                Height="32"
                                HorizontalAlignment="Center"
@@ -169,10 +179,26 @@
                         </WrapPanel>
                     </StackPanel>
 
-                    <Button Grid.Column="2" Style="{StaticResource NavigationButtonStyle}" Height="80" VerticalAlignment="Center" Padding="24,0" Margin="24,0,0,0" Tag="System" UseLayoutRounding="True">
+                    <Button Grid.Column="2" 
+                            x:Name="btnSystemCourse"
+                            Style="{DynamicResource NavigationButtonStyle}" 
+                            Height="80" 
+                            VerticalAlignment="Center" 
+                            Padding="24,0" 
+                            Margin="24,0,0,0" 
+                            Tag="System" 
+                            UseLayoutRounding="True"
+                            Cursor="Hand">  
                         <StackPanel Orientation="Horizontal" UseLayoutRounding="True">
-                            <Image Source="/Icons/Right.png" Width="24" Height="24" Margin="0,0,8,0" RenderOptions.BitmapScalingMode="HighQuality"/>
-                            <TextBlock Text="Перейти" VerticalAlignment="Center" Foreground="{StaticResource TextPrimaryBrush}" TextOptions.TextFormattingMode="Display"/>
+                            <Image x:Name="SystemCourseIcon" 
+                                   Tag="Right"
+                                   Width="24" 
+                                   Height="24" 
+                                   Margin="0,0,8,0"/>
+                            <TextBlock Text="Начать" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}" 
+                                       TextOptions.TextFormattingMode="Display"/>
                         </StackPanel>
                     </Button>
                 </Grid>
@@ -194,7 +220,7 @@
                             Margin="0,0,24,0"
                             UseLayoutRounding="True"
                             SnapsToDevicePixels="True">
-                        <Image Source="/Icons/Document.png"
+                        <Image Source="/Icons/White/Document.png"
                                Width="32"
                                Height="32"
                                HorizontalAlignment="Center"
@@ -263,7 +289,7 @@
                             Margin="0,0,24,0"
                             UseLayoutRounding="True"
                             SnapsToDevicePixels="True">
-                        <Image Source="/Icons/Globe.png"
+                        <Image Source="/Icons/White/Globe.png"
                                Width="32"
                                Height="32"
                                HorizontalAlignment="Center"

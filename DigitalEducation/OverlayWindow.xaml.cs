@@ -101,6 +101,20 @@ namespace DigitalEducation
                 this.Left = screen.Width - this.ActualWidth - 40;
                 this.Top = 40;
             };
+
+            ThemeManager.ThemeChanged += OnThemeChanged;
+
+            this.Loaded += (s, e) => UpdateIcons();
+        }
+
+        private void UpdateIcons()
+        {
+            ThemeManager.UpdateAllIconsInContainer(this);
+        }
+
+        private void OnThemeChanged(object sender, string themeName)
+        {
+            UpdateIcons();
         }
 
         private void MinimizeAllWindows()
@@ -442,6 +456,11 @@ namespace DigitalEducation
         private void ProgressBar_MouseDown(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            ThemeManager.ThemeChanged -= OnThemeChanged;
         }
     }
 }

@@ -11,6 +11,8 @@ namespace DigitalEducation
         {
             InitializeComponent();
             this.Loaded += FilesLessonsPage_Loaded;
+
+            ThemeManager.ThemeChanged += OnThemeChanged;
         }
 
         private void FilesLessonsPage_Loaded(object sender, RoutedEventArgs e)
@@ -20,15 +22,31 @@ namespace DigitalEducation
                 FindAndSubscribeToLessonButtons();
                 UpdateLessonCards();
                 UpdateCourseProgress();
+                UpdateIcons();
             }
             catch (Exception ex)
             {
             }
         }
 
+        private void UpdateIcons()
+        {
+            ThemeManager.UpdateAllIconsInContainer(this);
+        }
+
+        private void OnThemeChanged(object sender, string themeName)
+        {
+            UpdateIcons();
+        }
+
         private void FindAndSubscribeToLessonButtons()
         {
             ProcessVisualTree(this);
+        }
+
+        private void FilesLessonsPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ThemeManager.ThemeChanged -= OnThemeChanged;
         }
 
         private void ProcessVisualTree(DependencyObject parent)
@@ -220,7 +238,7 @@ namespace DigitalEducation
                 }
                 else
                 {
-                    statusText.Text = "Не начат";
+                    statusText.Text = "Не пройден";
                     statusText.Foreground = new SolidColorBrush(Colors.Gray);
                     statusText.FontWeight = FontWeights.Normal;
                 }

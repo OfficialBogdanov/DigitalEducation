@@ -181,7 +181,7 @@
                                                         Margin="0,0,0,16"
                                                         UseLayoutRounding="True"
                                                         SnapsToDevicePixels="True">
-                                                    <Image Source="/Icons/Folder.png"
+                                                    <Image Source="/Icons/White/Folder.png"
                                                            Width="32"
                                                            Height="32"
                                                            HorizontalAlignment="Center"
@@ -292,7 +292,7 @@
                                                         Margin="0,0,0,16"
                                                         UseLayoutRounding="True"
                                                         SnapsToDevicePixels="True">
-                                                    <Image Source="/Icons/Monitor.png"
+                                                    <Image Source="/Icons/White/Monitor.png"
                                                            Width="32"
                                                            Height="32"
                                                            HorizontalAlignment="Center"
