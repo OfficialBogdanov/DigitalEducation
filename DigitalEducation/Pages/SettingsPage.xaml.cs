@@ -9,7 +9,6 @@ namespace DigitalEducation
         public event EventHandler<string> SettingsButtonClicked;
 
         private string _currentTheme;
-        private string _currentLanguage = "Russian";
         private string _currentScale = "Medium";
 
         public SettingsPage()
@@ -28,6 +27,11 @@ namespace DigitalEducation
             ThemeManager.UpdateAllIconsInContainer(this);
         }
 
+        private void LoadCurrentTheme()
+        {
+            _currentTheme = ThemeManager.GetCurrentTheme();
+        }
+
         private void OnThemeChanged(object sender, string themeName)
         {
             _currentTheme = themeName;
@@ -41,16 +45,9 @@ namespace DigitalEducation
             btnResetSettings.Click += OnResetSettingsClick;
             btnLightTheme.Click += OnLightThemeClick;
             btnDarkTheme.Click += OnDarkThemeClick;
-            btnRussian.Click += OnRussianClick;
-            btnEnglish.Click += OnEnglishClick;
             btnSmallScale.Click += OnSmallScaleClick;
             btnMediumScale.Click += OnMediumScaleClick;
             btnLargeScale.Click += OnLargeScaleClick;
-        }
-
-        private void LoadCurrentTheme()
-        {
-            _currentTheme = ThemeManager.GetCurrentTheme();
         }
 
         private void LoadSettingsData()
@@ -72,8 +69,38 @@ namespace DigitalEducation
         private void UpdateAllButtons()
         {
             UpdateThemeButtons();
-            UpdateLanguageButtons();
             UpdateScaleButtons();
+        }
+
+        private void OnLightThemeClick(object sender, RoutedEventArgs e)
+        {
+            if (_currentTheme != "Light")
+            {
+                _currentTheme = "Light";
+                ThemeManager.ApplyTheme("Light");
+                UpdateThemeButtons();
+                SettingsButtonClicked?.Invoke(this, "ThemeChanged:Light");
+            }
+        }
+
+        private void OnDarkThemeClick(object sender, RoutedEventArgs e)
+        {
+            if (_currentTheme != "Dark")
+            {
+                _currentTheme = "Dark";
+                ThemeManager.ApplyTheme("Dark");
+                UpdateThemeButtons();
+                SettingsButtonClicked?.Invoke(this, "ThemeChanged:Dark");
+            }
+        }
+
+        private void UpdateThemeButtons()
+        {
+            var activeStyle = (Style)TryFindResource("ActiveNavigationButtonStyle");
+            var defaultStyle = (Style)TryFindResource("NavigationButtonStyle");
+
+            if (btnLightTheme != null) btnLightTheme.Style = _currentTheme == "Light" ? activeStyle : defaultStyle;
+            if (btnDarkTheme != null) btnDarkTheme.Style = _currentTheme == "Dark" ? activeStyle : defaultStyle;
         }
 
         private void OnSmallScaleClick(object sender, RoutedEventArgs e)
@@ -111,64 +138,6 @@ namespace DigitalEducation
             if (btnSmallScale != null) btnSmallScale.Style = _currentScale == "Small" ? activeStyle : defaultStyle;
             if (btnMediumScale != null) btnMediumScale.Style = _currentScale == "Medium" ? activeStyle : defaultStyle;
             if (btnLargeScale != null) btnLargeScale.Style = _currentScale == "Large" ? activeStyle : defaultStyle;
-        }
-
-        private void OnRussianClick(object sender, RoutedEventArgs e)
-        {
-            if (_currentLanguage != "Russian")
-            {
-                _currentLanguage = "Russian";
-                UpdateLanguageButtons();
-            }
-        }
-
-        private void OnEnglishClick(object sender, RoutedEventArgs e)
-        {
-            if (_currentLanguage != "English")
-            {
-                _currentLanguage = "English";
-                UpdateLanguageButtons();
-            }
-        }
-
-        private void UpdateLanguageButtons()
-        {
-            var activeStyle = (Style)TryFindResource("ActiveNavigationButtonStyle");
-            var defaultStyle = (Style)TryFindResource("NavigationButtonStyle");
-
-            if (btnRussian != null) btnRussian.Style = _currentLanguage == "Russian" ? activeStyle : defaultStyle;
-            if (btnEnglish != null) btnEnglish.Style = _currentLanguage == "English" ? activeStyle : defaultStyle;
-        }
-
-        private void OnLightThemeClick(object sender, RoutedEventArgs e)
-        {
-            if (_currentTheme != "Light")
-            {
-                _currentTheme = "Light";
-                ThemeManager.ApplyTheme("Light");
-                UpdateThemeButtons();
-                SettingsButtonClicked?.Invoke(this, "ThemeChanged:Light");
-            }
-        }
-
-        private void OnDarkThemeClick(object sender, RoutedEventArgs e)
-        {
-            if (_currentTheme != "Dark")
-            {
-                _currentTheme = "Dark";
-                ThemeManager.ApplyTheme("Dark");
-                UpdateThemeButtons();
-                SettingsButtonClicked?.Invoke(this, "ThemeChanged:Dark");
-            }
-        }
-
-        private void UpdateThemeButtons()
-        {
-            var activeStyle = (Style)TryFindResource("ActiveNavigationButtonStyle");
-            var defaultStyle = (Style)TryFindResource("NavigationButtonStyle");
-
-            if (btnLightTheme != null) btnLightTheme.Style = _currentTheme == "Light" ? activeStyle : defaultStyle;
-            if (btnDarkTheme != null) btnDarkTheme.Style = _currentTheme == "Dark" ? activeStyle : defaultStyle;
         }
 
         private void OnClearProgressClick(object sender, RoutedEventArgs e)
@@ -221,21 +190,6 @@ namespace DigitalEducation
             }
         }
 
-        private void ShowSuccessDialog(string title, string message)
-        {
-            var dialog = new ConfirmDialog();
-
-            dialog.Title = title;
-            dialog.Message = message;
-            dialog.ConfirmButtonText = "Хорошо";
-            dialog.CancelButtonText = null;
-
-            if (Window.GetWindow(this) is MainWindow mainWindow)
-            {
-                mainWindow.ShowDialog(dialog, null);
-            }
-        }
-
         private void OnResetSettingsClick(object sender, RoutedEventArgs e)
         {
             var dialog = new ConfirmDialog();
@@ -267,7 +221,6 @@ namespace DigitalEducation
             try
             {
                 _currentTheme = "Light";
-                _currentLanguage = "Russian";
                 _currentScale = "Medium";
 
                 ThemeManager.ApplyTheme("Light");
@@ -288,6 +241,21 @@ namespace DigitalEducation
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
+            }
+        }
+
+        private void ShowSuccessDialog(string title, string message)
+        {
+            var dialog = new ConfirmDialog();
+
+            dialog.Title = title;
+            dialog.Message = message;
+            dialog.ConfirmButtonText = "Хорошо";
+            dialog.CancelButtonText = null;
+
+            if (Window.GetWindow(this) is MainWindow mainWindow)
+            {
+                mainWindow.ShowDialog(dialog, null);
             }
         }
     }

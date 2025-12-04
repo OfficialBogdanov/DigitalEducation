@@ -21,65 +21,6 @@ namespace DigitalEducation
             LoadAllLessons();
         }
 
-        private static void LoadAllLessons()
-        {
-            LoadLessonsFromCategory("FilesLessons");
-            LoadLessonsFromCategory("OsLessons");
-        }
-
-        private static void LoadLessonsFromCategory(string category)
-        {
-            string projectRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..");
-            string lessonsPath = Path.GetFullPath(Path.Combine(projectRoot, "Lessons", category));
-
-            if (!Directory.Exists(lessonsPath))
-            {
-                Directory.CreateDirectory(lessonsPath);
-                return;
-            }
-
-            var jsonFiles = Directory.GetFiles(lessonsPath, "*.json");
-
-            foreach (var filePath in jsonFiles)
-            {
-                try
-                {
-                    string jsonContent = File.ReadAllText(filePath, Encoding.UTF8);
-                    var lesson = JsonSerializer.Deserialize<LessonData>(jsonContent, _jsonOptions);
-
-                    if (lesson != null && !string.IsNullOrEmpty(lesson.Id))
-                    {
-                        if (lesson.Steps == null)
-                        {
-                            lesson.Steps = new List<LessonStep>();
-                        }
-
-                        if (string.IsNullOrEmpty(lesson.CourseId))
-                        {
-                            lesson.CourseId = GetCourseIdFromLessonId(lesson.Id);
-                        }
-
-                        _lessons[lesson.Id] = lesson;
-                    }
-                }
-                catch (JsonException)
-                {
-                }
-                catch
-                {
-                }
-            }
-        }
-
-        private static string GetCourseIdFromLessonId(string lessonId)
-        {
-            if (lessonId.StartsWith("FilesLesson")) return "Files";
-            if (lessonId.StartsWith("OsLesson")) return "System";
-            if (lessonId.StartsWith("OfficeLesson")) return "Office";
-            if (lessonId.StartsWith("InternetLesson")) return "Internet";
-            return "Other";
-        }
-
         public static LessonData GetLesson(string lessonId)
         {
             if (_lessons.TryGetValue(lessonId, out var lesson))
@@ -177,6 +118,65 @@ namespace DigitalEducation
                     progress.TotalLessons = course.Value;
                 }
             }
+        }
+
+        private static void LoadAllLessons()
+        {
+            LoadLessonsFromCategory("FilesLessons");
+            LoadLessonsFromCategory("OsLessons");
+        }
+
+        private static void LoadLessonsFromCategory(string category)
+        {
+            string projectRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..");
+            string lessonsPath = Path.GetFullPath(Path.Combine(projectRoot, "Lessons", category));
+
+            if (!Directory.Exists(lessonsPath))
+            {
+                Directory.CreateDirectory(lessonsPath);
+                return;
+            }
+
+            var jsonFiles = Directory.GetFiles(lessonsPath, "*.json");
+
+            foreach (var filePath in jsonFiles)
+            {
+                try
+                {
+                    string jsonContent = File.ReadAllText(filePath, Encoding.UTF8);
+                    var lesson = JsonSerializer.Deserialize<LessonData>(jsonContent, _jsonOptions);
+
+                    if (lesson != null && !string.IsNullOrEmpty(lesson.Id))
+                    {
+                        if (lesson.Steps == null)
+                        {
+                            lesson.Steps = new List<LessonStep>();
+                        }
+
+                        if (string.IsNullOrEmpty(lesson.CourseId))
+                        {
+                            lesson.CourseId = GetCourseIdFromLessonId(lesson.Id);
+                        }
+
+                        _lessons[lesson.Id] = lesson;
+                    }
+                }
+                catch (JsonException)
+                {
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        private static string GetCourseIdFromLessonId(string lessonId)
+        {
+            if (lessonId.StartsWith("FilesLesson")) return "Files";
+            if (lessonId.StartsWith("OsLesson")) return "System";
+            if (lessonId.StartsWith("OfficeLesson")) return "Office";
+            if (lessonId.StartsWith("InternetLesson")) return "Internet";
+            return "Other";
         }
     }
 }

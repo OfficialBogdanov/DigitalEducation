@@ -155,6 +155,12 @@ namespace DigitalEducation
             MainLayout.Content = settingsPage;
         }
 
+        private void LoadFilesLessonsPage()
+        {
+            var filesLessonsPage = new FilesLessonsPage();
+            MainLayout.Content = filesLessonsPage;
+        }
+
         private void OnSettingsButtonClicked(object sender, string action)
         {
             if (action == "ProgressReset")
@@ -195,12 +201,6 @@ namespace DigitalEducation
             {
                 LoadFilesLessonsPage();
             }
-        }
-
-        private void LoadFilesLessonsPage()
-        {
-            var filesLessonsPage = new FilesLessonsPage();
-            MainLayout.Content = filesLessonsPage;
         }
 
         public void ReloadCurrentPage()

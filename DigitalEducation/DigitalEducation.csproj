@@ -220,6 +220,25 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="Fonts\Comfortaa\Comfortaa-Bold.ttf" />
+    <Resource Include="Fonts\Comfortaa\Comfortaa-Light.ttf" />
+    <Resource Include="Fonts\Comfortaa\Comfortaa-Medium.ttf" />
+    <Resource Include="Fonts\Comfortaa\Comfortaa-Regular.ttf" />
+    <Resource Include="Fonts\Comfortaa\Comfortaa-SemiBold.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-Black.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-BlackItalic.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-Bold.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-BoldItalic.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-ExtraBold.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-ExtraBoldItalic.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-Italic.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-Light.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-LightItalic.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-Medium.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-MediumItalic.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-Regular.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-SemiBold.ttf" />
+    <Resource Include="Fonts\Rubik\Rubik-SemiBoldItalic.ttf" />
     <None Include="Lessons\FilesLessons\FilesLesson4.json" />
     <None Include="Lessons\FilesLessons\FilesLesson1.json" />
     <None Include="packages.config" />
@@ -292,6 +311,12 @@
     <Resource Include="Icons\White\User.png" />
     <Resource Include="Icons\White\ZoomIn.png" />
     <Resource Include="Icons\White\ZoomOut.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Black\Search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\White\Search.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

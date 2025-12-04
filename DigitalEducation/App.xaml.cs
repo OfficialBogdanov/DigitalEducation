@@ -39,7 +39,6 @@ namespace DigitalEducation
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error applying theme on startup: {ex.Message}");
             }
         }
     }

@@ -12,9 +12,7 @@ namespace DigitalEducation
         {
             InitializeComponent();
             Loaded += OnCoursesPageLoaded;
-
             ProgressManager.ProgressChanged += OnProgressChanged;
-
             ThemeManager.ThemeChanged += OnThemeChanged;
         }
 
@@ -22,18 +20,8 @@ namespace DigitalEducation
         {
             InitializeEventHandlers();
             UpdateCoursesProgress();
-
             UpdateIcons();
-
             Loaded -= OnCoursesPageLoaded;
-        }
-
-        private void OnProgressChanged(object sender, EventArgs e)
-        {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                UpdateAllCoursesProgress();
-            }));
         }
 
         private void OnCoursesPageUnloaded(object sender, RoutedEventArgs e)
@@ -75,6 +63,14 @@ namespace DigitalEducation
             }
         }
 
+        public void SubscribeToButton(Button button)
+        {
+            if (button != null && button.Tag != null)
+            {
+                button.Click += OnCourseButtonClick;
+            }
+        }
+
         private System.Collections.Generic.IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)
@@ -98,12 +94,12 @@ namespace DigitalEducation
             }
         }
 
-        public void SubscribeToButton(Button button)
+        private void OnProgressChanged(object sender, EventArgs e)
         {
-            if (button != null && button.Tag != null)
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                button.Click += OnCourseButtonClick;
-            }
+                UpdateAllCoursesProgress();
+            }));
         }
 
         private void UpdateCoursesProgress()
@@ -113,6 +109,11 @@ namespace DigitalEducation
                 UpdateCourseProgress("Files", btnFilesCourse);
                 UpdateAllCoursesProgress();
             }));
+        }
+
+        public void RefreshProgress()
+        {
+            UpdateCoursesProgress();
         }
 
         private void UpdateCourseProgress(string courseId, Button courseButton)
@@ -252,11 +253,6 @@ namespace DigitalEducation
                     }
                 }
             }
-        }
-
-        public void RefreshProgress()
-        {
-            UpdateCoursesProgress();
         }
     }
 }

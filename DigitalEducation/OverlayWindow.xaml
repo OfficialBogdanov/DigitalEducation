@@ -57,7 +57,7 @@
                             UseLayoutRounding="True"
                             SnapsToDevicePixels="True">
                         <Image x:Name="LessonIcon"
-                               Source="/Icons/White/Folder.png"
+                               Source="/Icons/White/Info.png"
                                Width="18"
                                Height="18"
                                HorizontalAlignment="Center"

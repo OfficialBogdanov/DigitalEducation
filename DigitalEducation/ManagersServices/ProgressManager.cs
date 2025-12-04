@@ -8,16 +8,12 @@ namespace DigitalEducation
 {
     public static class ProgressManager
     {
-        public static event EventHandler ProgressChanged;
         private static UserProgress _currentProgress;
         private static readonly string _progressFilePath;
         private static readonly JsonSerializerOptions _jsonOptions;
         private static readonly object _lock = new object();
 
-        private static void OnProgressChanged()
-        {
-            ProgressChanged?.Invoke(null, EventArgs.Empty);
-        }
+        public static event EventHandler ProgressChanged;
 
         static ProgressManager()
         {
@@ -62,23 +58,6 @@ namespace DigitalEducation
                     _currentProgress = CreateDefaultProgress();
                 }
             }
-        }
-
-        private static UserProgress CreateDefaultProgress()
-        {
-            return new UserProgress
-            {
-                LastUpdated = DateTime.UtcNow,
-                CompletedLessons = new List<CompletedLesson>(),
-                Statistics = new UserStatistics(),
-                CourseProgress = new Dictionary<string, CourseProgress>
-                {
-                    { "Files", new CourseProgress { TotalLessons = 5 } },
-                    { "System", new CourseProgress { TotalLessons = 10 } },
-                    { "Office", new CourseProgress { TotalLessons = 8 } },
-                    { "Internet", new CourseProgress { TotalLessons = 6 } }
-                }
-            };
         }
 
         public static void SaveProgress()
@@ -133,75 +112,6 @@ namespace DigitalEducation
                 SaveProgress();
                 OnProgressChanged();
             }
-        }
-
-        private static void UpdateStatistics()
-        {
-            _currentProgress.Statistics.TotalLessonsCompleted = _currentProgress.CompletedLessons.Count;
-
-            double totalTime = 0;
-            foreach (var lesson in _currentProgress.CompletedLessons)
-            {
-                totalTime += lesson.TimeSpentMinutes;
-            }
-            _currentProgress.Statistics.TotalTimeSpentMinutes = totalTime;
-
-            _currentProgress.Statistics.TotalCoursesCompleted = 0;
-            foreach (var course in _currentProgress.CourseProgress)
-            {
-                if (course.Value.CompletionPercentage >= 100)
-                {
-                    _currentProgress.Statistics.TotalCoursesCompleted++;
-                }
-            }
-        }
-
-        private static void UpdateCourseProgress(string courseId)
-        {
-            if (!_currentProgress.CourseProgress.ContainsKey(courseId))
-                return;
-
-            int completedCount = 0;
-            double totalTime = 0;
-
-            foreach (var lesson in _currentProgress.CompletedLessons)
-            {
-                if (lesson.CourseId == courseId)
-                {
-                    completedCount++;
-                    totalTime += lesson.TimeSpentMinutes;
-                }
-            }
-
-            var course = _currentProgress.CourseProgress[courseId];
-            course.CompletedLessons = completedCount;
-            course.TotalTimeMinutes = totalTime;
-
-            if (course.TotalLessons > 0)
-            {
-                course.CompletionPercentage = (int)((double)completedCount / course.TotalLessons * 100);
-            }
-        }
-
-        private static void UpdateDaysInARow()
-        {
-            var today = DateTime.UtcNow.Date;
-            var lastDate = _currentProgress.Statistics.LastLearningDate?.Date;
-
-            if (lastDate == null)
-            {
-                _currentProgress.Statistics.DaysInARow = 1;
-            }
-            else if (lastDate == today.AddDays(-1))
-            {
-                _currentProgress.Statistics.DaysInARow++;
-            }
-            else if (lastDate < today.AddDays(-1))
-            {
-                _currentProgress.Statistics.DaysInARow = 1;
-            }
-
-            _currentProgress.Statistics.LastLearningDate = today;
         }
 
         public static bool IsLessonCompleted(string lessonId)
@@ -276,6 +186,97 @@ namespace DigitalEducation
         public static string GetProgressFilePath()
         {
             return _progressFilePath;
+        }
+
+        private static void OnProgressChanged()
+        {
+            ProgressChanged?.Invoke(null, EventArgs.Empty);
+        }
+
+        private static UserProgress CreateDefaultProgress()
+        {
+            return new UserProgress
+            {
+                LastUpdated = DateTime.UtcNow,
+                CompletedLessons = new List<CompletedLesson>(),
+                Statistics = new UserStatistics(),
+                CourseProgress = new Dictionary<string, CourseProgress>
+                {
+                    { "Files", new CourseProgress { TotalLessons = 5 } },
+                    { "System", new CourseProgress { TotalLessons = 10 } },
+                    { "Office", new CourseProgress { TotalLessons = 8 } },
+                    { "Internet", new CourseProgress { TotalLessons = 6 } }
+                }
+            };
+        }
+
+        private static void UpdateStatistics()
+        {
+            _currentProgress.Statistics.TotalLessonsCompleted = _currentProgress.CompletedLessons.Count;
+
+            double totalTime = 0;
+            foreach (var lesson in _currentProgress.CompletedLessons)
+            {
+                totalTime += lesson.TimeSpentMinutes;
+            }
+            _currentProgress.Statistics.TotalTimeSpentMinutes = totalTime;
+
+            _currentProgress.Statistics.TotalCoursesCompleted = 0;
+            foreach (var course in _currentProgress.CourseProgress)
+            {
+                if (course.Value.CompletionPercentage >= 100)
+                {
+                    _currentProgress.Statistics.TotalCoursesCompleted++;
+                }
+            }
+        }
+
+        private static void UpdateCourseProgress(string courseId)
+        {
+            if (!_currentProgress.CourseProgress.ContainsKey(courseId))
+                return;
+
+            int completedCount = 0;
+            double totalTime = 0;
+
+            foreach (var lesson in _currentProgress.CompletedLessons)
+            {
+                if (lesson.CourseId == courseId)
+                {
+                    completedCount++;
+                    totalTime += lesson.TimeSpentMinutes;
+                }
+            }
+
+            var course = _currentProgress.CourseProgress[courseId];
+            course.CompletedLessons = completedCount;
+            course.TotalTimeMinutes = totalTime;
+
+            if (course.TotalLessons > 0)
+            {
+                course.CompletionPercentage = (int)((double)completedCount / course.TotalLessons * 100);
+            }
+        }
+
+        private static void UpdateDaysInARow()
+        {
+            var today = DateTime.UtcNow.Date;
+            var lastDate = _currentProgress.Statistics.LastLearningDate?.Date;
+
+            if (lastDate == null)
+            {
+                _currentProgress.Statistics.DaysInARow = 1;
+            }
+            else if (lastDate == today.AddDays(-1))
+            {
+                _currentProgress.Statistics.DaysInARow++;
+            }
+            else if (lastDate < today.AddDays(-1))
+            {
+                _currentProgress.Statistics.DaysInARow = 1;
+            }
+
+            _currentProgress.Statistics.LastLearningDate = today;
         }
     }
 }

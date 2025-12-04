@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace DigitalEducation
 {
@@ -107,67 +107,6 @@ namespace DigitalEducation
             this.Loaded += (s, e) => UpdateIcons();
         }
 
-        private void UpdateIcons()
-        {
-            ThemeManager.UpdateAllIconsInContainer(this);
-        }
-
-        private void OnThemeChanged(object sender, string themeName)
-        {
-            UpdateIcons();
-        }
-
-        private void MinimizeAllWindows()
-        {
-            try
-            {
-                IntPtr desktopHandle = GetDesktopWindow();
-                EnumWindows(new EnumWindowsProc(EnumWindowCallback), IntPtr.Zero);
-                IntPtr taskbarHandle = FindWindow("Shell_TrayWnd", null);
-                if (taskbarHandle != IntPtr.Zero)
-                {
-                    ShowWindow(taskbarHandle, SW_MINIMIZE);
-                }
-                IntPtr secondaryTaskbar = FindWindow("NotifyIconOverflowWindow", null);
-                if (secondaryTaskbar != IntPtr.Zero)
-                {
-                    ShowWindow(secondaryTaskbar, SW_MINIMIZE);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка при сворачивании окон: {ex.Message}");
-            }
-        }
-
-        private bool EnumWindowCallback(IntPtr hWnd, IntPtr lParam)
-        {
-            if (hWnd == IntPtr.Zero || hWnd == new System.Windows.Interop.WindowInteropHelper(this).Handle)
-                return true;
-
-            if (IsWindowVisible(hWnd))
-            {
-                StringBuilder sb = new StringBuilder(256);
-                GetWindowText(hWnd, sb, sb.Capacity);
-                string title = sb.ToString();
-
-                if (!string.IsNullOrEmpty(title) &&
-                    !title.Contains("Program Manager") &&
-                    !title.Contains("Microsoft Text Input Application"))
-                {
-                    ShowWindowAsync(hWnd, SW_MINIMIZE);
-                }
-            }
-
-            return true;
-        }
-
-        private void InitializeUI()
-        {
-            this.Loaded += Window_Loaded;
-            this.KeyDown += OverlayWindow_KeyDown;
-        }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.Dispatcher.BeginInvoke(new Action(() =>
@@ -180,6 +119,110 @@ namespace DigitalEducation
                 UpdateProgressBar();
                 _lessonTimer.Start();
             }), System.Windows.Threading.DispatcherPriority.Background);
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            ThemeManager.ThemeChanged -= OnThemeChanged;
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var source = e.OriginalSource as DependencyObject;
+
+            if (source != null && !IsChildOfLessonContainer(source))
+            {
+                if (_isCompleted)
+                {
+                    CloseLesson(true);
+                }
+                else
+                {
+                    CloseLesson(false);
+                }
+            }
+        }
+
+        private void OverlayWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Right:
+                case Key.Enter:
+                case Key.Space:
+                    if (_currentStep < _totalSteps - 1)
+                    {
+                        BtnNext_Click(null, null);
+                        e.Handled = true;
+                    }
+                    else if (_currentStep == _totalSteps - 1)
+                    {
+                        BtnNext_Click(null, null);
+                        e.Handled = true;
+                    }
+                    break;
+
+                case Key.Left:
+                    if (_currentStep > 0)
+                    {
+                        BtnBack_Click(null, null);
+                        e.Handled = true;
+                    }
+                    break;
+
+                case Key.Escape:
+                    CloseLesson(false);
+                    e.Handled = true;
+                    break;
+            }
+        }
+
+        private void BtnNext_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentStep < _totalSteps - 1)
+            {
+                _currentStep++;
+                ShowCurrentStep();
+            }
+            else
+            {
+                CompleteLesson();
+            }
+        }
+
+        private void BtnBack_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentStep > 0)
+            {
+                _currentStep--;
+                ShowCurrentStep();
+            }
+        }
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        {
+            CloseLesson(false);
+        }
+
+        private void ProgressBar_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void OnThemeChanged(object sender, string themeName)
+        {
+            UpdateIcons();
+        }
+
+        private void UpdateIcons()
+        {
+            ThemeManager.UpdateAllIconsInContainer(this);
+        }
+
+        private void InitializeUI()
+        {
+            this.Loaded += Window_Loaded;
+            this.KeyDown += OverlayWindow_KeyDown;
         }
 
         private void ShowCurrentStep()
@@ -232,31 +275,42 @@ namespace DigitalEducation
             StepProgress.Text = $"Шаг {_currentStep + 1} из {_totalSteps} ({percentage}%)";
         }
 
-        private void BtnNext_Click(object sender, RoutedEventArgs e)
+        private void CompleteLesson()
         {
-            if (_currentStep < _totalSteps - 1)
+            _lessonTimer.Stop();
+            double minutesSpent = _lessonTimer.Elapsed.TotalMinutes;
+
+            string courseId = GetCourseIdFromLesson(_lessonId);
+
+            ProgressManager.SaveLessonCompletion(
+                lessonId: _lessonId,
+                courseId: courseId,
+                timeSpentMinutes: minutesSpent
+            );
+
+            UpdateLessonStatus();
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                _currentStep++;
-                ShowCurrentStep();
-            }
-            else
-            {
-                CompleteLesson();
-            }
+                ShowCompletionMessage();
+            }), System.Windows.Threading.DispatcherPriority.Background);
         }
 
-        private void BtnBack_Click(object sender, RoutedEventArgs e)
+        private string GetCourseIdFromLesson(string lessonId)
         {
-            if (_currentStep > 0)
-            {
-                _currentStep--;
-                ShowCurrentStep();
-            }
+            if (lessonId.StartsWith("FilesLesson")) return "Files";
+            if (lessonId.StartsWith("OsLesson")) return "System";
+            if (lessonId.StartsWith("OfficeLesson")) return "Office";
+            if (lessonId.StartsWith("InternetLesson")) return "Internet";
+            return "Other";
         }
 
-        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        private void UpdateLessonStatus()
         {
-            CloseLesson(false);
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.UpdateLessonCompletion(_lessonId, true);
+            }
         }
 
         private void ShowCompletionMessage()
@@ -310,61 +364,6 @@ namespace DigitalEducation
             }
         }
 
-        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var source = e.OriginalSource as DependencyObject;
-
-            if (source != null && !IsChildOfLessonContainer(source))
-            {
-                if (_isCompleted)
-                {
-                    CloseLesson(true);
-                }
-                else
-                {
-                    CloseLesson(false);
-                }
-            }
-        }
-
-        private void CompleteLesson()
-        {
-            _lessonTimer.Stop();
-            double minutesSpent = _lessonTimer.Elapsed.TotalMinutes;
-
-            string courseId = GetCourseIdFromLesson(_lessonId);
-
-            ProgressManager.SaveLessonCompletion(
-                lessonId: _lessonId,
-                courseId: courseId,
-                timeSpentMinutes: minutesSpent
-            );
-
-            UpdateLessonStatus();
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                ShowCompletionMessage();
-            }), System.Windows.Threading.DispatcherPriority.Background);
-        }
-
-        private string GetCourseIdFromLesson(string lessonId)
-        {
-            if (lessonId.StartsWith("FilesLesson")) return "Files";
-            if (lessonId.StartsWith("OsLesson")) return "System";
-            if (lessonId.StartsWith("OfficeLesson")) return "Office";
-            if (lessonId.StartsWith("InternetLesson")) return "Internet";
-            return "Other";
-        }
-
-        private void UpdateLessonStatus()
-        {
-            var mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.UpdateLessonCompletion(_lessonId, true);
-            }
-        }
-
         private void CloseLesson(bool completed)
         {
             if (Application.Current.MainWindow != null)
@@ -386,6 +385,40 @@ namespace DigitalEducation
             this.Close();
         }
 
+        private bool IsChildOfLessonContainer(DependencyObject element)
+        {
+            while (element != null)
+            {
+                if (element == LessonContainer)
+                    return true;
+
+                element = VisualTreeHelper.GetParent(element);
+            }
+            return false;
+        }
+
+        private void MinimizeAllWindows()
+        {
+            try
+            {
+                IntPtr desktopHandle = GetDesktopWindow();
+                EnumWindows(new EnumWindowsProc(EnumWindowCallback), IntPtr.Zero);
+                IntPtr taskbarHandle = FindWindow("Shell_TrayWnd", null);
+                if (taskbarHandle != IntPtr.Zero)
+                {
+                    ShowWindow(taskbarHandle, SW_MINIMIZE);
+                }
+                IntPtr secondaryTaskbar = FindWindow("NotifyIconOverflowWindow", null);
+                if (secondaryTaskbar != IntPtr.Zero)
+                {
+                    ShowWindow(secondaryTaskbar, SW_MINIMIZE);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
         private void RestoreWindows()
         {
             try
@@ -403,64 +436,29 @@ namespace DigitalEducation
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка при восстановлении окон: {ex.Message}");
             }
         }
 
-        private bool IsChildOfLessonContainer(DependencyObject element)
+        private bool EnumWindowCallback(IntPtr hWnd, IntPtr lParam)
         {
-            while (element != null)
+            if (hWnd == IntPtr.Zero || hWnd == new System.Windows.Interop.WindowInteropHelper(this).Handle)
+                return true;
+
+            if (IsWindowVisible(hWnd))
             {
-                if (element == LessonContainer)
-                    return true;
+                StringBuilder sb = new StringBuilder(256);
+                GetWindowText(hWnd, sb, sb.Capacity);
+                string title = sb.ToString();
 
-                element = VisualTreeHelper.GetParent(element);
+                if (!string.IsNullOrEmpty(title) &&
+                    !title.Contains("Program Manager") &&
+                    !title.Contains("Microsoft Text Input Application"))
+                {
+                    ShowWindowAsync(hWnd, SW_MINIMIZE);
+                }
             }
-            return false;
-        }
 
-        private void OverlayWindow_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Right:
-                case Key.Enter:
-                case Key.Space:
-                    if (_currentStep < _totalSteps - 1)
-                    {
-                        BtnNext_Click(null, null);
-                        e.Handled = true;
-                    }
-                    else if (_currentStep == _totalSteps - 1)
-                    {
-                        BtnNext_Click(null, null);
-                        e.Handled = true;
-                    }
-                    break;
-
-                case Key.Left:
-                    if (_currentStep > 0)
-                    {
-                        BtnBack_Click(null, null);
-                        e.Handled = true;
-                    }
-                    break;
-
-                case Key.Escape:
-                    CloseLesson(false);
-                    e.Handled = true;
-                    break;
-            }
-        }
-
-        private void ProgressBar_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            ThemeManager.ThemeChanged -= OnThemeChanged;
+            return true;
         }
     }
 }

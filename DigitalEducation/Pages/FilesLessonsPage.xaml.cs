@@ -11,7 +11,6 @@ namespace DigitalEducation
         {
             InitializeComponent();
             this.Loaded += FilesLessonsPage_Loaded;
-
             ThemeManager.ThemeChanged += OnThemeChanged;
         }
 
@@ -29,9 +28,9 @@ namespace DigitalEducation
             }
         }
 
-        private void UpdateIcons()
+        private void FilesLessonsPage_Unloaded(object sender, RoutedEventArgs e)
         {
-            ThemeManager.UpdateAllIconsInContainer(this);
+            ThemeManager.ThemeChanged -= OnThemeChanged;
         }
 
         private void OnThemeChanged(object sender, string themeName)
@@ -39,14 +38,14 @@ namespace DigitalEducation
             UpdateIcons();
         }
 
+        private void UpdateIcons()
+        {
+            ThemeManager.UpdateAllIconsInContainer(this);
+        }
+
         private void FindAndSubscribeToLessonButtons()
         {
             ProcessVisualTree(this);
-        }
-
-        private void FilesLessonsPage_Unloaded(object sender, RoutedEventArgs e)
-        {
-            ThemeManager.ThemeChanged -= OnThemeChanged;
         }
 
         private void ProcessVisualTree(DependencyObject parent)

@@ -2,13 +2,6 @@
 
 namespace DigitalEducation
 {
-    public class LessonStep
-    {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Hint { get; set; }
-    }
-
     public class LessonData
     {
         public string Id { get; set; }
@@ -16,5 +9,12 @@ namespace DigitalEducation
         public string CourseId { get; set; }
         public List<LessonStep> Steps { get; set; }
         public string CompletionMessage { get; set; }
+    }
+
+    public class LessonStep
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Hint { get; set; }
     }
 }

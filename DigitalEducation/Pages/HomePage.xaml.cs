@@ -31,6 +31,25 @@ namespace DigitalEducation
             btnSystem.Click += OnCategoryButtonClick;
         }
 
+        private void CleanupEventHandlers()
+        {
+            btnFiles.Click -= OnCategoryButtonClick;
+            btnSystem.Click -= OnCategoryButtonClick;
+
+            this.Unloaded -= OnHomePageUnloaded;
+            this.Loaded -= HomePage_Loaded;
+
+            if (CategoryButtonClicked != null)
+            {
+                foreach (Delegate d in CategoryButtonClicked.GetInvocationList())
+                {
+                    CategoryButtonClicked -= (EventHandler<string>)d;
+                }
+            }
+
+            ProgressManager.ProgressChanged -= OnProgressChanged;
+        }
+
         private void OnCategoryButtonClick(object sender, RoutedEventArgs e)
         {
             if (sender is Button button)
@@ -63,6 +82,7 @@ namespace DigitalEducation
         {
             CleanupEventHandlers();
         }
+
         private void OnProgressChanged(object sender, EventArgs e)
         {
             Dispatcher.BeginInvoke(new Action(() =>
@@ -70,25 +90,6 @@ namespace DigitalEducation
                 UpdateStatistics();
                 UpdateProgress();
             }));
-        }
-
-        private void CleanupEventHandlers()
-        {
-            btnFiles.Click -= OnCategoryButtonClick;
-            btnSystem.Click -= OnCategoryButtonClick;
-
-            this.Unloaded -= OnHomePageUnloaded;
-            this.Loaded -= HomePage_Loaded;
-
-            if (CategoryButtonClicked != null)
-            {
-                foreach (Delegate d in CategoryButtonClicked.GetInvocationList())
-                {
-                    CategoryButtonClicked -= (EventHandler<string>)d;
-                }
-            }
-
-            ProgressManager.ProgressChanged -= OnProgressChanged;
         }
 
         public void UpdateStatistics()
@@ -175,7 +176,7 @@ namespace DigitalEducation
             {
                 overallProgress = Math.Max(0, Math.Min(100, overallProgress));
 
-                var parent = OverallProgressBar.Parent as Grid; 
+                var parent = OverallProgressBar.Parent as Grid;
                 if (parent != null)
                 {
                     OverallProgressBar.Width = (overallProgress / 100) * parent.ActualWidth;
@@ -216,14 +217,14 @@ namespace DigitalEducation
             UpdateProgress();
         }
 
-        private void btnFiles_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
         public void RefreshAll()
         {
             UpdateStatistics();
             UpdateProgress();
+        }
+
+        private void btnFiles_Click(object sender, RoutedEventArgs e)
+        {
         }
     }
 }
