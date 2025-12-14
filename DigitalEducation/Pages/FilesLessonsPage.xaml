@@ -103,7 +103,7 @@
                                    TextOptions.TextFormattingMode="Display"
                                    TextOptions.TextRenderingMode="ClearType"/>
 
-                        <TextBlock Text="Знакомство с рабочим пространством. Создание и наименование папок в Windows"
+                        <TextBlock Text="Знакомство с папками. Создание и наименование папок в Windows"
                                    Style="{DynamicResource BodyTextStyle}"
                                    Margin="0,0,0,12"/>
 
@@ -125,7 +125,7 @@
                                     BorderThickness="1"
                                     UseLayoutRounding="True"
                                     SnapsToDevicePixels="True">
-                                <TextBlock Text="10-15 минут" 
+                                <TextBlock Text="2-4 минуты" 
                                            Foreground="{DynamicResource PrimaryDarkBrush}"
                                            FontWeight="Medium"
                                            TextOptions.TextFormattingMode="Display"/>
@@ -138,7 +138,7 @@
                                     BorderThickness="1"
                                     UseLayoutRounding="True"
                                     SnapsToDevicePixels="True">
-                                <TextBlock Text="5 практических шагов" 
+                                <TextBlock Text="8 практических шагов" 
                                            Foreground="{DynamicResource PrimaryDarkBrush}"
                                            FontWeight="Medium"
                                            TextOptions.TextFormattingMode="Display"/>
@@ -209,7 +209,7 @@
                                    TextOptions.TextFormattingMode="Display"
                                    TextOptions.TextRenderingMode="ClearType"/>
 
-                        <TextBlock Text="Работа с корзиной Windows, восстановление удаленных файлов, безопасное удаление"
+                        <TextBlock Text="Работа с корзиной Windows, удаление и восстановление файлов"
                                    Style="{DynamicResource BodyTextStyle}"
                                    Margin="0,0,0,12"/>
 
@@ -231,7 +231,7 @@
                                     BorderThickness="1"
                                     UseLayoutRounding="True"
                                     SnapsToDevicePixels="True">
-                                <TextBlock Text="8-12 минут" 
+                                <TextBlock Text="5-10 минут" 
                                            Foreground="{DynamicResource PrimaryDarkBrush}"
                                            FontWeight="Medium"
                                            TextOptions.TextFormattingMode="Display"/>
@@ -244,7 +244,7 @@
                                     BorderThickness="1"
                                     UseLayoutRounding="True"
                                     SnapsToDevicePixels="True">
-                                <TextBlock Text="4 практических шага" 
+                                <TextBlock Text="17 практических шагов" 
                                            Foreground="{DynamicResource PrimaryDarkBrush}"
                                            FontWeight="Medium"
                                            TextOptions.TextFormattingMode="Display"/>
@@ -307,7 +307,7 @@
                     </Border>
 
                     <StackPanel Grid.Column="1" UseLayoutRounding="True">
-                        <TextBlock Text="Типы файлов и расширения"
+                        <TextBlock Text="Текстовый файл"
                                    FontSize="16"
                                    FontWeight="Medium"
                                    Foreground="{DynamicResource PrimaryBrush}"
@@ -315,7 +315,7 @@
                                    TextOptions.TextFormattingMode="Display"
                                    TextOptions.TextRenderingMode="ClearType"/>
 
-                        <TextBlock Text="Распознавание форматов файлов, ассоциации программ и изменение расширений"
+                        <TextBlock Text="Работа с текстовым файлом в Windows"
                                    Style="{DynamicResource BodyTextStyle}"
                                    Margin="0,0,0,12"/>
 
@@ -337,7 +337,7 @@
                                     BorderThickness="1"
                                     UseLayoutRounding="True"
                                     SnapsToDevicePixels="True">
-                                <TextBlock Text="12-15 минут" 
+                                <TextBlock Text="5-15 минут" 
                                            Foreground="{DynamicResource PrimaryDarkBrush}"
                                            FontWeight="Medium"
                                            TextOptions.TextFormattingMode="Display"/>
@@ -350,7 +350,7 @@
                                     BorderThickness="1"
                                     UseLayoutRounding="True"
                                     SnapsToDevicePixels="True">
-                                <TextBlock Text="6 практических шагов" 
+                                <TextBlock Text="13 практических шагов" 
                                            Foreground="{DynamicResource PrimaryDarkBrush}"
                                            FontWeight="Medium"
                                            TextOptions.TextFormattingMode="Display"/>
@@ -421,7 +421,7 @@
                                    TextOptions.TextFormattingMode="Display"
                                    TextOptions.TextRenderingMode="ClearType"/>
 
-                        <TextBlock Text="Основные элементы и навигация, работа с библиотеками, поиск файлов"
+                        <TextBlock Text="Основные элементы и навигация"
                                    Style="{DynamicResource BodyTextStyle}"
                                    Margin="0,0,0,12"/>
 
@@ -443,7 +443,7 @@
                                     BorderThickness="1"
                                     UseLayoutRounding="True"
                                     SnapsToDevicePixels="True">
-                                <TextBlock Text="15-20 минут" 
+                                <TextBlock Text="5-10 минут" 
                                            Foreground="{DynamicResource PrimaryDarkBrush}"
                                            FontWeight="Medium"
                                            TextOptions.TextFormattingMode="Display"/>
@@ -456,7 +456,7 @@
                                     BorderThickness="1"
                                     UseLayoutRounding="True"
                                     SnapsToDevicePixels="True">
-                                <TextBlock Text="8 практических шагов" 
+                                <TextBlock Text="15 практических шагов" 
                                            Foreground="{DynamicResource PrimaryDarkBrush}"
                                            FontWeight="Medium"
                                            TextOptions.TextFormattingMode="Display"/>
@@ -526,7 +526,7 @@
                                    TextOptions.TextFormattingMode="Display"
                                    TextOptions.TextRenderingMode="ClearType"/>
 
-                        <TextBlock Text="Различные способы копирования и перемещения файлов между папками и дисками"
+                        <TextBlock Text="Различные способы копирования и перемещения файлов между папками"
                                    Style="{DynamicResource BodyTextStyle}"
                                    Margin="0,0,0,12"/>
 
@@ -561,7 +561,7 @@
                                     BorderThickness="1"
                                     UseLayoutRounding="True"
                                     SnapsToDevicePixels="True">
-                                <TextBlock Text="5 практических шагов" 
+                                <TextBlock Text="21 практических шагов" 
                                            Foreground="{DynamicResource PrimaryDarkBrush}"
                                            FontWeight="Medium"
                                            TextOptions.TextFormattingMode="Display"/>
