@@ -7,10 +7,14 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <!-- Верхняя панель -->
             <RowDefinition Height="*"/>
+            <!-- Основной контент -->
             <RowDefinition Height="Auto"/>
+            <!-- Нижняя панель -->
         </Grid.RowDefinitions>
 
+        <!-- Верхняя панель с навигацией -->
         <Border Grid.Row="0" 
                 Background="{DynamicResource SurfaceBrush}" 
                 BorderBrush="{DynamicResource SurfaceBorderBrush}"
@@ -23,6 +27,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
+                <!-- Логотип и название -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                     <Border Width="36" 
                             Height="36" 
@@ -46,6 +51,7 @@
                     </StackPanel>
                 </StackPanel>
 
+                <!-- Навигационные кнопки -->
                 <StackPanel Grid.Column="1" 
                             Orientation="Horizontal" 
                             HorizontalAlignment="Center"
@@ -96,6 +102,7 @@
                     </Button>
                 </StackPanel>
 
+                <!-- Кнопка выхода -->
                 <StackPanel Grid.Column="2" 
                             Orientation="Horizontal"
                             VerticalAlignment="Center">
@@ -117,10 +124,12 @@
             </Grid>
         </Border>
 
+        <!-- Область для контента -->
         <ContentPresenter x:Name="ContentArea" 
                           Grid.Row="1"
                           Content="{Binding Content, ElementName=MasterLayoutControl}"/>
 
+        <!-- Нижняя панель -->
         <Border Grid.Row="2" 
                 Background="{DynamicResource SurfaceBrush}"
                 BorderBrush="{DynamicResource SurfaceBorderBrush}"

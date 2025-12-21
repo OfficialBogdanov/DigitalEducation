@@ -9,6 +9,7 @@ namespace DigitalEducation
     public static class LessonManager
     {
         private static readonly Dictionary<string, LessonData> _lessons = new Dictionary<string, LessonData>();
+
         private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,

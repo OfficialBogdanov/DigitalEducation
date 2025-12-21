@@ -22,17 +22,20 @@ namespace DigitalEducation
 
         public MainWindow()
         {
+            // Загрузка сохраненной темы интерфейса
             string savedTheme = ThemeManager.GetCurrentTheme();
             ThemeManager.ApplyTheme(savedTheme);
 
             InitializeComponent();
 
+            // Подписка на события загрузки и инициализации окна
             Loaded += OnMainWindowLoaded;
             SourceInitialized += OnSourceInitialized;
         }
 
         private void OnSourceInitialized(object sender, EventArgs e)
         {
+            // Удаление системного меню через WinAPI
             var hwnd = new WindowInteropHelper(this).Handle;
             var style = GetWindowLong(hwnd, GWL_STYLE);
             SetWindowLong(hwnd, GWL_STYLE, style & ~WS_SYSMENU);
@@ -40,8 +43,10 @@ namespace DigitalEducation
 
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
         {
+            // Развертывание окна на весь экран
             WindowState = WindowState.Maximized;
 
+            // Настройка навигации и загрузка начальной страницы
             SetupNavigationButtons();
             LoadHomePage();
             MainLayout.SetActiveNavigation("Home");

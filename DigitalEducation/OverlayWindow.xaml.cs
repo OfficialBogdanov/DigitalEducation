@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
+using DigitalEducation.ComputerVision.Services;
 
 namespace DigitalEducation
 {
@@ -49,6 +53,11 @@ namespace DigitalEducation
         private const uint SWP_NOACTIVATE = 0x0010;
         private const uint SWP_SHOWWINDOW = 0x0040;
 
+        private VisionService _visionService;
+        private DispatcherTimer _visionCheckTimer;
+        private DispatcherTimer _hintTimer;
+        private bool _isVisionChecking = false;
+
         private int _currentStep = 0;
         private LessonData _currentLesson;
         private int _totalSteps;
@@ -61,6 +70,9 @@ namespace DigitalEducation
         {
             InitializeComponent();
             _lessonId = lessonId;
+
+            InitializeVisionService();
+            _hintTimer = new DispatcherTimer();
 
             if (Application.Current.MainWindow != null)
             {
@@ -103,8 +115,216 @@ namespace DigitalEducation
             };
 
             ThemeManager.ThemeChanged += OnThemeChanged;
-
             this.Loaded += (s, e) => UpdateIcons();
+        }
+
+        private void InitializeVisionService()
+        {
+            try
+            {
+                string templatesPath = App.GetTemplatesPath();
+
+                Console.WriteLine($"Путь к шаблонам: {templatesPath}");
+
+                if (!Directory.Exists(templatesPath))
+                {
+                    Console.WriteLine("Папка Templates не существует!");
+                    return;
+                }
+
+                var desktopPath = Path.Combine(templatesPath, "Desktop");
+                if (Directory.Exists(desktopPath))
+                {
+                    var files = Directory.GetFiles(desktopPath, "*.png");
+                    Console.WriteLine($"Найдено {files.Length} PNG файлов в Desktop:");
+                    foreach (var file in files)
+                    {
+                        Console.WriteLine($"  - {Path.GetFileName(file)}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Папка Desktop не существует!");
+                }
+
+                _visionService = new VisionService(templatesPath);
+
+                _visionCheckTimer = new DispatcherTimer();
+                _visionCheckTimer.Interval = TimeSpan.FromMilliseconds(500);
+                _visionCheckTimer.Tick += async (s, e) => await CheckVisionStepAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Не удалось инициализировать VisionService: {ex.Message}");
+            }
+        }
+
+        private async Task ShowHintAsync(LessonStep step)
+        {
+            if (_visionService == null || string.IsNullOrEmpty(step.VisionHint))
+            {
+                Console.WriteLine($"Не могу показать подсказку: VisionService={_visionService}, VisionHint={step.VisionHint}");
+                return;
+            }
+
+            try
+            {
+                Console.WriteLine($"=== ПОИСК ПОДСКАЗКИ ===");
+                Console.WriteLine($"Элемент: {step.VisionHint}");
+                Console.WriteLine($"Confidence: {step.HintConfidence}");
+
+                var hintResult = await _visionService.FindElementAsync(
+                    step.VisionHint,
+                    step.HintConfidence
+                );
+
+                Console.WriteLine($"Найден: {hintResult.IsDetected}");
+                Console.WriteLine($"Уверенность: {hintResult.Confidence}");
+                Console.WriteLine($"Координаты: X={hintResult.Location.X}, Y={hintResult.Location.Y}");
+                Console.WriteLine($"Размер: {hintResult.Size.Width}x{hintResult.Size.Height}");
+
+                if (hintResult.IsDetected)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        Console.WriteLine($"Создаем прямоугольник подсветки...");
+
+                        var screenBounds = new System.Windows.Rect(
+                            hintResult.Location.X,
+                            hintResult.Location.Y,
+                            hintResult.Size.Width,
+                            hintResult.Size.Height
+                        );
+
+                        Console.WriteLine($"Прямоугольник: X={screenBounds.X}, Y={screenBounds.Y}, W={screenBounds.Width}, H={screenBounds.Height}");
+
+                        var hintRect = new System.Windows.Shapes.Rectangle
+                        {
+                            Width = screenBounds.Width,
+                            Height = screenBounds.Height,
+                            Stroke = Brushes.DodgerBlue,
+                            StrokeThickness = 3,
+                            Fill = Brushes.Transparent,
+                            StrokeDashArray = new DoubleCollection(new double[] { 4, 4 })
+                        };
+
+                        Canvas.SetLeft(hintRect, screenBounds.X);
+                        Canvas.SetTop(hintRect, screenBounds.Y);
+
+                        Console.WriteLine($"Добавляем на Canvas...");
+                        Console.WriteLine($"Детей в HintCanvas до: {HintCanvas.Children.Count}");
+
+                        HintCanvas.Children.Clear();
+                        HintCanvas.Children.Add(hintRect);
+
+                        Console.WriteLine($"Детей в HintCanvas после: {HintCanvas.Children.Count}");
+                        Console.WriteLine("=== ПОДСКАЗКА ОТОБРАЖЕНА ===");
+                    });
+                }
+                else
+                {
+                    Console.WriteLine($"Подсказка не найдена на экране");
+                    Console.WriteLine($"Проверьте: 1) Файл {step.VisionHint}.png в папке Desktop");
+                    Console.WriteLine($"           2) Confidence threshold может быть слишком высоким");
+                    Console.WriteLine($"           3) Элемент виден на экране прямо сейчас");
+                    Console.WriteLine("=== ПОДСКАЗКА НЕ НАЙДЕНА ===");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ОШИБКА при показе подсказки: {ex.Message}");
+                Console.WriteLine($"StackTrace: {ex.StackTrace}");
+            }
+        }
+
+        private void ClearHint()
+        {
+            Console.WriteLine($"Очищаем подсказку. Детей в HintCanvas: {HintCanvas.Children.Count}");
+            HintCanvas.Children.Clear();
+            _hintTimer?.Stop();
+        }
+
+        private async Task CheckVisionStepAsync()
+        {
+            if (_isVisionChecking || _currentLesson == null || _currentStep < 0 || _currentStep >= _totalSteps)
+                return;
+
+            var currentStepData = _currentLesson.Steps[_currentStep];
+
+            bool hasVisionValidation = currentStepData.RequiresVisionValidation &&
+                (!string.IsNullOrEmpty(currentStepData.VisionTarget) ||
+                 !string.IsNullOrEmpty(currentStepData.VisionTargetFolder));
+
+            if (!hasVisionValidation)
+            {
+                return;
+            }
+
+            _isVisionChecking = true;
+
+            try
+            {
+                bool isDetected = false;
+
+                if (!string.IsNullOrEmpty(currentStepData.VisionTargetFolder))
+                {
+                    Console.WriteLine($"=== ПРОВЕРКА ПАПКИ ===");
+                    Console.WriteLine($"Папка: {currentStepData.VisionTargetFolder}");
+                    Console.WriteLine($"Требуется элементов: {currentStepData.RequiredMatches}");
+
+                    isDetected = await _visionService.ValidateFolderElementsAsync(
+                        currentStepData.VisionTargetFolder,
+                        currentStepData.RequiredMatches,
+                        currentStepData.VisionConfidence
+                    );
+
+                    Console.WriteLine($"Результат: {isDetected}");
+                    Console.WriteLine($"====================");
+                }
+                else if (!string.IsNullOrEmpty(currentStepData.VisionTarget))
+                {
+                    Console.WriteLine($"Ищем элемент: {currentStepData.VisionTarget}");
+
+                    var result = await _visionService.FindElementAsync(
+                        currentStepData.VisionTarget,
+                        currentStepData.VisionConfidence
+                    );
+
+                    Console.WriteLine($"Результат: Найден={result.IsDetected}, Уверенность={result.Confidence}");
+                    isDetected = result.IsDetected;
+                }
+
+                if (isDetected)
+                {
+                    await Dispatcher.Invoke(async () =>
+                    {
+                        _visionCheckTimer?.Stop();
+                        await Task.Delay(500);
+                        AutoProceedToNextStep();
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка проверки Vision: {ex.Message}");
+            }
+            finally
+            {
+                _isVisionChecking = false;
+            }
+        }
+
+        private void AutoProceedToNextStep()
+        {
+            if (_currentStep < _totalSteps - 1)
+            {
+                _currentStep++;
+                ShowCurrentStep();
+            }
+            else
+            {
+                CompleteLesson();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -179,6 +399,17 @@ namespace DigitalEducation
 
         private void BtnNext_Click(object sender, RoutedEventArgs e)
         {
+            ClearHint();
+
+            var currentStepData = _currentLesson?.Steps[_currentStep];
+            if (currentStepData?.RequiresVisionValidation == true &&
+                !string.IsNullOrEmpty(currentStepData.VisionTarget))
+            {
+                return;
+            }
+
+            _visionCheckTimer?.Stop();
+
             if (_currentStep < _totalSteps - 1)
             {
                 _currentStep++;
@@ -192,6 +423,9 @@ namespace DigitalEducation
 
         private void BtnBack_Click(object sender, RoutedEventArgs e)
         {
+            ClearHint();
+            _visionCheckTimer?.Stop();
+
             if (_currentStep > 0)
             {
                 _currentStep--;
@@ -225,7 +459,7 @@ namespace DigitalEducation
             this.KeyDown += OverlayWindow_KeyDown;
         }
 
-        private void ShowCurrentStep()
+        private async void ShowCurrentStep()
         {
             if (_currentLesson == null || _currentStep < 0 || _currentStep >= _totalSteps)
                 return;
@@ -242,6 +476,37 @@ namespace DigitalEducation
             if (btnNextText != null)
             {
                 btnNextText.Text = _currentStep == _totalSteps - 1 ? "Завершить" : "Далее";
+            }
+
+            Console.WriteLine($"\n=== ШАГ {_currentStep + 1} ===");
+            Console.WriteLine($"Заголовок: {step.Title}");
+            Console.WriteLine($"VisionTarget: {step.VisionTarget}");
+            Console.WriteLine($"VisionTargetFolder: {step.VisionTargetFolder}");
+            Console.WriteLine($"RequiredMatches: {step.RequiredMatches}");
+            Console.WriteLine($"VisionHint: {step.VisionHint}");
+            Console.WriteLine($"ShowHint: {step.ShowHint}");
+
+            ClearHint();
+
+            if (step.ShowHint && !string.IsNullOrEmpty(step.VisionHint))
+            {
+                Console.WriteLine($"Показываем подсказку...");
+                await ShowHintAsync(step);
+            }
+
+            if (step.RequiresVisionValidation &&
+                (!string.IsNullOrEmpty(step.VisionTarget) || !string.IsNullOrEmpty(step.VisionTargetFolder)))
+            {
+                Console.WriteLine($"Включена валидация Vision");
+                BtnNext.Visibility = Visibility.Collapsed;
+                _visionCheckTimer?.Start();
+            }
+            else
+            {
+                Console.WriteLine($"Валидация не требуется");
+                BtnNext.Visibility = Visibility.Visible;
+                BtnNext.IsEnabled = true;
+                _visionCheckTimer?.Stop();
             }
 
             UpdateProgressBar();
@@ -366,6 +631,12 @@ namespace DigitalEducation
 
         private void CloseLesson(bool completed)
         {
+            ClearHint();
+            _hintTimer?.Stop();
+            _visionCheckTimer?.Stop();
+            _visionService?.Dispose();
+            _visionService = null;
+
             if (Application.Current.MainWindow != null)
             {
                 Application.Current.MainWindow.WindowState = WindowState.Normal;
@@ -383,6 +654,15 @@ namespace DigitalEducation
             catch { }
 
             this.Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            _visionService?.Dispose();
+            _visionCheckTimer?.Stop();
+            _hintTimer?.Stop();
+            _hintTimer = null;
         }
 
         private bool IsChildOfLessonContainer(DependencyObject element)

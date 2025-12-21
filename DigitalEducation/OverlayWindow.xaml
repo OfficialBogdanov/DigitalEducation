@@ -11,6 +11,12 @@
         SizeToContent="WidthAndHeight">
 
     <Grid>
+        <Canvas x:Name="HintCanvas"
+        Panel.ZIndex="9999"
+        IsHitTestVisible="False"
+        Background="Transparent"/>
+
+
         <Rectangle Fill="{StaticResource OverlayBrush}"/>
 
         <Border x:Name="LessonContainer"
