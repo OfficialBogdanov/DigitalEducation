@@ -8,7 +8,6 @@ namespace DigitalEducation
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            // Существующий код инициализации тем
             ThemeManager.Initialize();
 
             string savedTheme = ThemeManager.GetCurrentTheme();
@@ -17,13 +16,11 @@ namespace DigitalEducation
                 ApplyThemeOnStartup(savedTheme);
             }
 
-            // НОВЫЙ КОД: Проверка папки шаблонов компьютерного зрения
             CheckVisionTemplatesFolder();
 
             base.OnStartup(e);
         }
 
-        // НОВЫЙ МЕТОД: Проверка и создание папки для шаблонов
         private void CheckVisionTemplatesFolder()
         {
             string templatesPath = GetTemplatesPath();
@@ -32,30 +29,16 @@ namespace DigitalEducation
             {
                 try
                 {
-                    // Создаем базовую структуру папок
                     Directory.CreateDirectory(templatesPath);
                     Directory.CreateDirectory(Path.Combine(templatesPath, "Desktop"));
-
-                    // Можно показать сообщение (опционально)
-                    /*
-                    MessageBox.Show(
-                        $"Создана папка для шаблонов: {templatesPath}\n" +
-                        "Добавьте PNG файлы элементов интерфейса для работы системы компьютерного зрения.",
-                        "Информация",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
-                    */
                 }
                 catch (Exception ex)
                 {
-                    // Можно залогировать ошибку, но не прерывать работу
                     Console.WriteLine($"Не удалось создать папку шаблонов: {ex.Message}");
                 }
             }
         }
 
-        // НОВЫЙ МЕТОД: Получение пути к папке шаблонов
         public static string GetTemplatesPath()
         {
             return Path.Combine(
@@ -65,7 +48,6 @@ namespace DigitalEducation
             );
         }
 
-        // Существующий метод без изменений
         private void ApplyThemeOnStartup(string themeName)
         {
             try
@@ -87,7 +69,6 @@ namespace DigitalEducation
             }
             catch (Exception ex)
             {
-                // Обработка ошибок темы
             }
         }
     }
