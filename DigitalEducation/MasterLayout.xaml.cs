@@ -15,6 +15,28 @@ namespace DigitalEducation
             set { SetValue(ContentProperty, value); }
         }
 
+        public void SetActiveNavigation(string pageName)
+        {
+            ResetAllNavigationButtons();
+
+            var activeStyle = (Style)FindResource("ActiveNavigationButtonStyle");
+
+            switch (pageName)
+            {
+                case "Home":
+                    if (btnHome != null) btnHome.Style = activeStyle;
+                    break;
+                case "Courses":
+                    if (btnCourses != null) btnCourses.Style = activeStyle;
+                    break;
+                case "Settings":
+                    if (btnSettings != null) btnSettings.Style = activeStyle;
+                    break;
+                case "CloseApp":
+                    break;
+            }
+        }
+
         public MasterLayout()
         {
             InitializeComponent();
@@ -41,28 +63,6 @@ namespace DigitalEducation
         {
             var layout = (MasterLayout)d;
             layout.ContentArea.Content = e.NewValue;
-        }
-
-        public void SetActiveNavigation(string pageName)
-        {
-            ResetAllNavigationButtons();
-
-            var activeStyle = (Style)FindResource("ActiveNavigationButtonStyle");
-
-            switch (pageName)
-            {
-                case "Home":
-                    if (btnHome != null) btnHome.Style = activeStyle;
-                    break;
-                case "Courses":
-                    if (btnCourses != null) btnCourses.Style = activeStyle;
-                    break;
-                case "Settings":
-                    if (btnSettings != null) btnSettings.Style = activeStyle;
-                    break;
-                case "CloseApp":
-                    break;
-            }
         }
 
         public void HandleNavigationClick(Button clickedButton)

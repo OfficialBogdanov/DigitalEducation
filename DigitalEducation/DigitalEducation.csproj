@@ -166,11 +166,18 @@
     <Compile Include="ConfirmDialog.xaml.cs">
       <DependentUpon>ConfirmDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ManagersServices\DialogService.cs" />
     <Compile Include="ManagersServices\LessonData.cs" />
     <Compile Include="ManagersServices\LessonManager.cs" />
     <Compile Include="ManagersServices\ThemeManager.cs" />
     <Compile Include="Pages\CoursesPage.xaml.cs">
       <DependentUpon>CoursesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CreateLessonPage.xaml.cs">
+      <DependentUpon>CreateLessonPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CustomLessonsPage.xaml.cs">
+      <DependentUpon>CustomLessonsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\FilesLessonsPage.xaml.cs">
       <DependentUpon>FilesLessonsPage.xaml</DependentUpon>
@@ -191,6 +198,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\CoursesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\CreateLessonPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\CustomLessonsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -296,6 +311,7 @@
     <Resource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Lessons\CustomLessons\" />
     <Folder Include="Lessons\OsLessons\" />
   </ItemGroup>
   <ItemGroup>
@@ -403,6 +419,12 @@
     <Resource Include="ComputerVision\Templates\Desktop\right_click_menu4.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Black\Plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\White\Plus.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

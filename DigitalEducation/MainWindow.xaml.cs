@@ -31,6 +31,8 @@ namespace DigitalEducation
             SourceInitialized += OnSourceInitialized;
         }
 
+
+
         private void OnSourceInitialized(object sender, EventArgs e)
         {
             var hwnd = new WindowInteropHelper(this).Handle;
@@ -90,23 +92,18 @@ namespace DigitalEducation
 
         private void OnCloseAppButtonClick(object sender, RoutedEventArgs e)
         {
-            var dialog = new ConfirmDialog
-            {
-                Title = "Выход",
-                Message = "Вы действительно хотите выйти из приложения?",
-                ConfirmButtonText = "Выход",
-                CancelButtonText = "Отмена"
-            };
+            var result = DialogService.ShowConfirmDialog(
+                "Выход",
+                "Вы действительно хотите выйти из приложения?",
+                "Выход",
+                "Отмена",
+                this
+            );
 
-            dialog.DialogResultChanged += (s, result) =>
+            if (result == true)
             {
-                if (result)
-                {
-                    Application.Current.Shutdown();
-                }
-            };
-
-            ShowDialog(dialog, null);
+                Application.Current.Shutdown();
+            }
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -115,23 +112,22 @@ namespace DigitalEducation
 
             e.Cancel = true;
 
-            var dialog = new ConfirmDialog
-            {
-                Title = "Выход",
-                Message = "Вы действительно хотите выйти из приложения?",
-                ConfirmButtonText = "Выход",
-                CancelButtonText = "Отмена"
-            };
+            var result = DialogService.ShowConfirmDialog(
+                "Выход",
+                "Вы действительно хотите выйти из приложения?",
+                "Выход",
+                "Отмена",
+                this
+            );
 
-            dialog.DialogResultChanged += (s, result) =>
+            if (result == true)
             {
-                if (result)
-                {
-                    Application.Current.Shutdown();
-                }
-            };
+                Application.Current.Shutdown();
+            }
+            else
+            {
 
-            ShowDialog(dialog, null);
+            }
         }
 
         private void LoadHomePage()
@@ -159,6 +155,18 @@ namespace DigitalEducation
         {
             var filesLessonsPage = new FilesLessonsPage();
             MainLayout.Content = filesLessonsPage;
+        }
+
+
+        public void LoadCustomLessonsPage()
+        {
+            var customLessonsPage = new CustomLessonsPage();
+            MainLayout.Content = customLessonsPage;
+
+            if (MainLayout is MasterLayout layout)
+            {
+                layout.SetActiveNavigation("Courses");
+            }
         }
 
         private void OnSettingsButtonClicked(object sender, string action)
@@ -193,6 +201,11 @@ namespace DigitalEducation
             {
                 LoadFilesLessonsPage();
             }
+
+            if (categoryName == "Custom")
+            {
+                LoadCustomLessonsPage();
+            }
         }
 
         private void OnCourseButtonClicked(object sender, string courseTag)
@@ -200,6 +213,10 @@ namespace DigitalEducation
             if (courseTag == "OpenFilesLessons")
             {
                 LoadFilesLessonsPage();
+            }
+            else if (courseTag == "Custom")
+            {
+                LoadCustomLessonsPage();
             }
         }
 
@@ -238,55 +255,6 @@ namespace DigitalEducation
                 default:
                     return "Неизвестный курс";
             }
-        }
-
-        public void ShowDialog(UIElement dialogContent, EventHandler<bool> resultHandler)
-        {
-            var dialogWindow = new Window
-            {
-                Owner = this,
-                WindowStyle = WindowStyle.None,
-                AllowsTransparency = true,
-                Background = Brushes.Transparent,
-                ShowInTaskbar = false,
-                SizeToContent = SizeToContent.WidthAndHeight,
-                ResizeMode = ResizeMode.NoResize,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-
-            var border = new Border
-            {
-                Child = dialogContent,
-                Background = Brushes.White,
-                CornerRadius = new CornerRadius(12),
-                BorderBrush = Brushes.LightGray,
-                BorderThickness = new Thickness(1),
-                Effect = new System.Windows.Media.Effects.DropShadowEffect
-                {
-                    Color = Colors.Black,
-                    BlurRadius = 20,
-                    ShadowDepth = 0,
-                    Opacity = 0.3
-                }
-            };
-
-            dialogWindow.Content = border;
-
-            if (dialogContent is ConfirmDialog confirmDialog)
-            {
-                confirmDialog.DialogResultChanged += (s, result) =>
-                {
-                    dialogWindow.Close();
-                    resultHandler?.Invoke(s, result);
-                };
-            }
-
-            dialogWindow.ShowDialog();
-        }
-
-        public void HideDialog()
-        {
-            DialogPopup.IsOpen = false;
         }
 
         public void UpdateLessonCompletion(string lessonId, bool isCompleted)

@@ -12,6 +12,7 @@
     <Color x:Key="WarningColor">#FFC107</Color>
     <Color x:Key="ErrorColor">#DC3545</Color>
     <Color x:Key="InfoColor">#17A2B8</Color>
+    <Color x:Key="CustomColor">#B4674D</Color>
 
     <Color x:Key="BackgroundColor">#FFFFFF</Color>
     <Color x:Key="BackgroundLightColor">#F8F9FA</Color>
@@ -64,6 +65,7 @@
     <SolidColorBrush x:Key="WarningBrush" Color="{DynamicResource WarningColor}"/>
     <SolidColorBrush x:Key="ErrorBrush" Color="{DynamicResource ErrorColor}"/>
     <SolidColorBrush x:Key="InfoBrush" Color="{DynamicResource InfoColor}"/>
+    <SolidColorBrush x:Key="CustomBrush" Color="{DynamicResource CustomColor}"/>
 
     <SolidColorBrush x:Key="HoverBrush" Color="{DynamicResource HoverColor}"/>
     <SolidColorBrush x:Key="PressedBrush" Color="{DynamicResource PressedColor}"/>
@@ -191,5 +193,4 @@
     <Style TargetType="Image">
         <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality"/>
     </Style>
-
 </ResourceDictionary>

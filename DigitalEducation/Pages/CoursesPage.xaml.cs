@@ -200,7 +200,7 @@ namespace DigitalEducation
 
         private void UpdateAllCoursesProgress()
         {
-            string[] courseIds = { "Files", "System", "Office", "Internet" };
+            string[] courseIds = { "Files", "System", "Office", "Internet", "Custom" };
 
             foreach (string courseId in courseIds)
             {
@@ -217,10 +217,18 @@ namespace DigitalEducation
             string learningTimeName = $"{courseId}LearningTime";
 
             UpdateTextBlock(progressPercentName, $"{progress.CompletionPercentage}%");
-            UpdateTextBlock(lessonsCountName, $"{progress.CompletedLessons} из {progress.TotalLessons} уроков");
 
-            int hours = (int)(progress.TotalTimeMinutes / 60);
-            UpdateTextBlock(learningTimeName, hours > 0 ? $"{hours} часов обучения" : "0 часов обучения");
+            if (courseId == "Custom")
+            {
+                UpdateTextBlock(lessonsCountName, $"{progress.CompletedLessons} созданных уроков");
+                UpdateTextBlock(learningTimeName, "Персонализированное обучение");
+            }
+            else
+            {
+                UpdateTextBlock(lessonsCountName, $"{progress.CompletedLessons} из {progress.TotalLessons} уроков");
+                int hours = (int)(progress.TotalTimeMinutes / 60);
+                UpdateTextBlock(learningTimeName, hours > 0 ? $"{hours} часов обучения" : "0 часов обучения");
+            }
 
             UpdateProgressBar(courseId, progress.CompletionPercentage);
         }

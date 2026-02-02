@@ -142,27 +142,22 @@ namespace DigitalEducation
 
         private void OnClearProgressClick(object sender, RoutedEventArgs e)
         {
-            var dialog = new ConfirmDialog();
+            var result = DialogService.ShowConfirmDialog(
+                "Очистка прогресса",
+                "Вы уверены, что хотите очистить весь прогресс?\n\n" +
+                "Это действие удалит:\n" +
+                "• Все завершенные уроки\n" +
+                "• Статистику обучения\n" +
+                "• Прогресс по всем курсам\n\n" +
+                "Это действие нельзя отменить.",
+                "Очистить",
+                "Отмена",
+                Window.GetWindow(this)
+            );
 
-            dialog.Title = "Очистка прогресса";
-            dialog.Message = "Вы уверены, что хотите очистить весь прогресс?\n\n" +
-                           "Это действие удалит:\n" +
-                           "• Все завершенные уроки\n" +
-                           "• Статистику обучения\n" +
-                           "• Прогресс по всем курсам\n\n" +
-                           "Это действие нельзя отменить.";
-            dialog.ConfirmButtonText = "Очистить";
-            dialog.CancelButtonText = "Отмена";
-
-            if (Window.GetWindow(this) is MainWindow mainWindow)
+            if (result == true)
             {
-                mainWindow.ShowDialog(dialog, (s, result) =>
-                {
-                    if (result)
-                    {
-                        ExecuteClearProgress();
-                    }
-                });
+                ExecuteClearProgress();
             }
         }
 
@@ -173,46 +168,39 @@ namespace DigitalEducation
                 ProgressManager.ResetProgress();
                 LoadSettingsData();
 
-                ShowSuccessDialog("Прогресс очищен",
-                    "Все данные о вашем обучении были успешно удалены.\n" +
-                    "Теперь вы можете начать обучение заново.");
+                DialogService.ShowSuccessDialog(
+                    "Все данные о вашем обучении были успешно удалены.\nТеперь вы можете начать обучение заново.",
+                    Window.GetWindow(this)
+                );
 
                 SettingsButtonClicked?.Invoke(this, "ProgressReset");
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
+                DialogService.ShowErrorDialog(
                     $"Ошибка при очистке прогресса: {ex.Message}",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
+                    Window.GetWindow(this)
                 );
             }
         }
 
         private void OnResetSettingsClick(object sender, RoutedEventArgs e)
         {
-            var dialog = new ConfirmDialog();
+            var result = DialogService.ShowConfirmDialog(
+                "Сброс настроек",
+                "Вы уверены, что хотите сбросить все настройки приложения?\n\n" +
+                "Это действие вернет:\n" +
+                "• Тему на светлую\n" +
+                "• Масштаб на средний\n\n" +
+                "Ваш прогресс обучения не будет затронут.",
+                "Сбросить",
+                "Отмена",
+                Window.GetWindow(this)
+            );
 
-            dialog.Title = "Сброс настроек";
-            dialog.Message = "Вы уверены, что хотите сбросить все настройки приложения?\n\n" +
-                           "Это действие вернет:\n" +
-                           "• Тему на светлую\n" +
-                           "• Язык на русский\n" +
-                           "• Масштаб на средний\n\n" +
-                           "Ваш прогресс обучения не будет затронут.";
-            dialog.ConfirmButtonText = "Сбросить";
-            dialog.CancelButtonText = "Отмена";
-
-            if (Window.GetWindow(this) is MainWindow mainWindow)
+            if (result == true)
             {
-                mainWindow.ShowDialog(dialog, (s, result) =>
-                {
-                    if (result)
-                    {
-                        ExecuteResetSettings();
-                    }
-                });
+                ExecuteResetSettings();
             }
         }
 
@@ -230,32 +218,17 @@ namespace DigitalEducation
 
                 SettingsButtonClicked?.Invoke(this, "ThemeChanged:Light");
 
-                ShowSuccessDialog("Настройки сброшены",
-                    "Все настройки приложения были успешно сброшены к значениям по умолчанию.");
+                DialogService.ShowSuccessDialog(
+                    "Все настройки приложения были успешно сброшены к значениям по умолчанию.",
+                    Window.GetWindow(this)
+                );
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
+                DialogService.ShowErrorDialog(
                     $"Ошибка при сбросе настроек: {ex.Message}",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
+                    Window.GetWindow(this)
                 );
-            }
-        }
-
-        private void ShowSuccessDialog(string title, string message)
-        {
-            var dialog = new ConfirmDialog();
-
-            dialog.Title = title;
-            dialog.Message = message;
-            dialog.ConfirmButtonText = "Хорошо";
-            dialog.CancelButtonText = null;
-
-            if (Window.GetWindow(this) is MainWindow mainWindow)
-            {
-                mainWindow.ShowDialog(dialog, null);
             }
         }
     }

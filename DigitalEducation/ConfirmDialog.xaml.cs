@@ -37,6 +37,12 @@ namespace DigitalEducation
             set => CancelButton.Content = value;
         }
 
+        public bool ShowCancelButton
+        {
+            get => CancelButton.Visibility == Visibility.Visible;
+            set => CancelButton.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         private void OnConfirmClick(object sender, RoutedEventArgs e)
         {
             DialogResultChanged?.Invoke(this, true);

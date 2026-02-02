@@ -43,6 +43,81 @@
                             Width="80" 
                             Height="80"
                             CornerRadius="16"
+                            Background="{StaticResource CustomBrush}"
+                            Margin="0,0,24,0"
+                            UseLayoutRounding="True"
+                            SnapsToDevicePixels="True">
+                        <Image Source="/Icons/White/Book.png"
+                               Width="32"
+                               Height="32"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                        <TextBlock Text="Пользовательские уроки" 
+                                   FontSize="20"
+                                   Foreground="{StaticResource CustomBrush}"
+                                   FontWeight="Medium"
+                                   Margin="0,0,0,8"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"/>
+                        <TextBlock Text="Создавайте собственные уроки и добавляйте материалы. Персонализируйте свое обучение под свои задачи."
+                                   Style="{StaticResource BodyTextStyle}"
+                                   Margin="0,0,0,12"/>
+                        <StackPanel Margin="0,0,0,16" UseLayoutRounding="True">
+                            <Grid Margin="0,0,0,4" UseLayoutRounding="True">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+                        </StackPanel>
+                        <WrapPanel UseLayoutRounding="True">
+                            <Border Background="{StaticResource BackgroundLightBrush}" CornerRadius="8" Padding="12,8" Margin="0,0,12,8" UseLayoutRounding="True">
+                                <TextBlock x:Name="CustomLearningTime" Text="Персонализированное обучение" Foreground="{StaticResource TextPrimaryBrush}" TextOptions.TextFormattingMode="Display"/>
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <Button Grid.Column="2" 
+                            x:Name="btnCustomCourse"
+                            Style="{DynamicResource NavigationButtonStyle}"
+                            Height="80"
+                            VerticalAlignment="Center"
+                            Padding="24,0"
+                            Margin="24,0,0,0"
+                            Tag="Custom"
+                            UseLayoutRounding="True"
+                            Cursor="Hand">
+                        <StackPanel Orientation="Horizontal" UseLayoutRounding="True">
+                            <Image x:Name="CustomCourseIcon" 
+                                   Tag="Right"
+                                   Width="24" 
+                                   Height="24" 
+                                   Margin="0,0,8,0"/>
+                            <TextBlock Text="Открыть" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}" 
+                                       TextOptions.TextFormattingMode="Display"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,24" UseLayoutRounding="True" SnapsToDevicePixels="True">
+                <Grid UseLayoutRounding="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" 
+                            Width="80" 
+                            Height="80"
+                            CornerRadius="16"
                             Background="{StaticResource PrimaryBrush}"
                             Margin="0,0,24,0"
                             UseLayoutRounding="True"
@@ -108,13 +183,13 @@
                                    Width="24" 
                                    Height="24" 
                                    Margin="0,0,8,0"/>
-                                <TextBlock Text="Начать" 
+                            <TextBlock Text="Начать" 
                                            VerticalAlignment="Center" 
                                            Foreground="{DynamicResource TextPrimaryBrush}" 
                                            TextOptions.TextFormattingMode="Display"/>
                         </StackPanel>
                     </Button>
-                    
+
                 </Grid>
             </Border>
 
@@ -188,7 +263,7 @@
                             Margin="24,0,0,0" 
                             Tag="System" 
                             UseLayoutRounding="True"
-                            Cursor="Hand">  
+                            Cursor="Hand">
                         <StackPanel Orientation="Horizontal" UseLayoutRounding="True">
                             <Image x:Name="SystemCourseIcon" 
                                    Tag="Right"
@@ -273,7 +348,7 @@
                 </Grid>
             </Border>
 
-            <Border Style="{StaticResource CardStyle}" UseLayoutRounding="True" SnapsToDevicePixels="True">
+            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,24" UseLayoutRounding="True" SnapsToDevicePixels="True">
                 <Grid UseLayoutRounding="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>

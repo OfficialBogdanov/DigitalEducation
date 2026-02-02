@@ -25,6 +25,10 @@ namespace DigitalEducation
             }
             catch (Exception ex)
             {
+                DialogService.ShowErrorDialog(
+                $"Ошибка при загрузке страницы уроков: {ex.Message}",
+                Window.GetWindow(this)
+                );
             }
         }
 
@@ -84,6 +88,25 @@ namespace DigitalEducation
             if (sender is Button button && button.Tag != null)
             {
                 string lessonTag = button.Tag.ToString();
+                string lessonName = GetLessonName(lessonTag);
+
+                bool isCompleted = ProgressManager.IsLessonCompleted(lessonTag);
+
+                if (isCompleted)
+                {
+                    var result = DialogService.ShowConfirmDialog(
+                        "Повторное прохождение",
+                        $"Вы уже завершили урок.\nХотите пройти его снова?",
+                        "Повторить",
+                        "Отмена",
+                        Window.GetWindow(this)
+                    );
+
+                    if (result != true)
+                    {
+                        return;
+                    }
+                }
 
                 if (LessonManager.LessonExists(lessonTag))
                 {
@@ -124,12 +147,23 @@ namespace DigitalEducation
             }
             catch (Exception ex)
             {
+                string lessonName = GetLessonName(lessonId);
+                DialogService.ShowErrorDialog(
+                    $"Не удалось запустить урок: {ex.Message}",
+                    Window.GetWindow(this)
+                );
             }
         }
 
         private void ShowLessonNotAvailable(string lessonTag)
         {
             string lessonName = GetLessonName(lessonTag);
+            DialogService.ShowMessageDialog(
+                "Урок недоступен",
+                $"Урок временно недоступен.\nПожалуйста, попробуйте позже.",
+                "OK",
+                Window.GetWindow(this)
+            );
         }
 
         private string GetLessonName(string lessonTag)

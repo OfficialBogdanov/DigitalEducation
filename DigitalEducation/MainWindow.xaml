@@ -13,41 +13,6 @@
 
     <Grid Background="{DynamicResource BackgroundBrush}">
         <local:MasterLayout x:Name="MainLayout"/>
-
-        <Popup x:Name="DialogPopup"
-               Placement="Center"
-               PlacementTarget="{Binding ElementName=MainLayout}"
-               StaysOpen="False"
-               AllowsTransparency="True"
-               PopupAnimation="Fade">
-            <Popup.Resources>
-                <Style TargetType="Popup">
-                    <Setter Property="Opacity" Value="0"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsOpen" Value="True">
-                            <Trigger.EnterActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                         From="0" To="1"
-                                                         Duration="0:0:0.2"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
-                            <Trigger.ExitActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                         From="1" To="0"
-                                                         Duration="0:0:0.2"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.ExitActions>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Popup.Resources>
-        </Popup>
     </Grid>
 
 </Window>

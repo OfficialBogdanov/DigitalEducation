@@ -302,7 +302,7 @@ namespace DigitalEducation.ComputerVision.Services
                     if (result.IsDetected)
                     {
                         foundCount++;
-                        Console.WriteLine($"    ✓ Найден (уверенность: {result.Confidence})");
+                        Console.WriteLine($"    Найден (уверенность: {result.Confidence})");
 
                         if (foundCount >= requiredMatches)
                         {
@@ -312,7 +312,7 @@ namespace DigitalEducation.ComputerVision.Services
                     }
                     else
                     {
-                        Console.WriteLine($"    ✗ Не найден");
+                        Console.WriteLine($"    Не найден");
                     }
                 }
             }
