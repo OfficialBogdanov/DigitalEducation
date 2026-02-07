@@ -1,29 +1,33 @@
 ﻿using DigitalEducation.Pages;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Microsoft.Win32;
 
 namespace DigitalEducation.Pages
 {
     public partial class CreateLessonPage : UserControl
     {
         private readonly List<LessonStep> _steps = new List<LessonStep>();
-        private string _selectedImagePath = "";
         private readonly string _customLessonsPath;
         private readonly string _templatesPath;
         private Border _addStepBlock;
         private bool _isMousePressed = false;
 
-        public CreateLessonPage()
+        private string _editingLessonId;
+        private bool _isEditMode = false;
+        private LessonData _originalLesson;
+        private Dictionary<int, string> _originalStepImages = new Dictionary<int, string>();
+
+        public CreateLessonPage(string lessonId = null)
         {
             InitializeComponent();
 
@@ -33,6 +37,11 @@ namespace DigitalEducation.Pages
 
             Directory.CreateDirectory(_customLessonsPath);
             Directory.CreateDirectory(_templatesPath);
+            if (!string.IsNullOrEmpty(lessonId))
+            {
+                _isEditMode = true;
+                _editingLessonId = lessonId;
+            }
 
             this.Loaded += CreateLessonPage_Loaded;
             this.Unloaded += CreateLessonPage_Unloaded;
@@ -43,7 +52,7 @@ namespace DigitalEducation.Pages
             ThemeManager.ThemeChanged += OnThemeChanged;
             ThemeManager.UpdateAllIconsInContainer(this);
 
-            _addStepBlock = FindAddStepBlock();
+            _addStepBlock = this.FindName("AddStepBlock") as Border;
 
             if (_addStepBlock != null)
             {
@@ -53,7 +62,16 @@ namespace DigitalEducation.Pages
                 _addStepBlock.MouseLeave += AddStepBlock_MouseLeave;
             }
 
-            UpdateStepsDisplay();
+            ConfigureUIForMode();
+
+            if (_isEditMode)
+            {
+                LoadLessonForEditing();
+            }
+            else
+            {
+                UpdateStepsDisplay();
+            }
         }
 
         private void CreateLessonPage_Unloaded(object sender, RoutedEventArgs e)
@@ -69,34 +87,123 @@ namespace DigitalEducation.Pages
             }
         }
 
+        private void ConfigureUIForMode()
+        {
+            if (_isEditMode)
+            {
+                var saveButtonText = SaveButton.Content as StackPanel;
+                if (saveButtonText != null && saveButtonText.Children.Count > 1)
+                {
+                    var textBlock = saveButtonText.Children[1] as TextBlock;
+                    if (textBlock != null)
+                    {
+                        textBlock.Text = "Обновить урок";
+                    }
+                }
+
+                var titleGrid = MainGrid.Children[0] as ScrollViewer;
+                if (titleGrid != null)
+                {
+                    var stackPanel = titleGrid.Content as StackPanel;
+                    if (stackPanel != null)
+                    {
+                        var grid = stackPanel.Children[0] as Grid;
+                        if (grid != null)
+                        {
+                            var titleStack = grid.Children[1] as StackPanel;
+                            if (titleStack != null)
+                            {
+                                var titleText = titleStack.Children[0] as TextBlock;
+                                if (titleText != null)
+                                {
+                                    titleText.Text = "Редактирование урока";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadLessonForEditing()
+        {
+            try
+            {
+                string lessonFilePath = Path.Combine(_customLessonsPath, $"{_editingLessonId}.json");
+
+                if (!File.Exists(lessonFilePath))
+                {
+                    DialogService.ShowErrorDialog("Файл урока не найден", Window.GetWindow(this));
+                    ReturnToLessonsPage();
+                    return;
+                }
+
+                string jsonContent = File.ReadAllText(lessonFilePath, Encoding.UTF8);
+                _originalLesson = JsonSerializer.Deserialize<LessonData>(jsonContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (_originalLesson != null)
+                {
+                    TitleTextBox.Text = _originalLesson.Title;
+                    CompletionMessageTextBox.Text = _originalLesson.CompletionMessage ?? "";
+
+                    if (_originalLesson.Steps != null)
+                    {
+                        _steps.Clear();
+                        _originalStepImages.Clear();
+
+                        int stepIndex = 0;
+                        foreach (var step in _originalLesson.Steps)
+                        {
+                            _steps.Add(new LessonStep
+                            {
+                                Title = step.Title,
+                                Description = step.Description,
+                                Hint = step.Hint,
+                                VisionTarget = step.VisionTarget,
+                                VisionTargetFolder = step.VisionTargetFolder,
+                                RequiresVisionValidation = step.RequiresVisionValidation,
+                                VisionConfidence = step.VisionConfidence,
+                                RequiredMatches = step.RequiredMatches
+                            });
+
+                            if (!string.IsNullOrEmpty(step.VisionTarget))
+                            {
+                                _originalStepImages[stepIndex] = step.VisionTarget;
+                            }
+
+                            stepIndex++;
+                        }
+                    }
+
+                    UpdateStepsDisplay();
+                }
+                else
+                {
+                    DialogService.ShowErrorDialog("Не удалось загрузить данные урока", Window.GetWindow(this));
+                    ReturnToLessonsPage();
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogService.ShowErrorDialog($"Ошибка загрузки урока: {ex.Message}", Window.GetWindow(this));
+                ReturnToLessonsPage();
+            }
+        }
+
+        private void ReturnToLessonsPage()
+        {
+            if (Window.GetWindow(this) is MainWindow mainWindow)
+            {
+                mainWindow.LoadCustomLessonsPage();
+            }
+        }
+
         private void OnThemeChanged(object sender, string themeName)
         {
             ThemeManager.UpdateAllIconsInContainer(this);
-        }
-
-        private Border FindAddStepBlock()
-        {
-            return this.FindName("AddStepBlock") as Border;
-        }
-
-        private T FindVisualChild<T>(DependencyObject parent, Func<T, bool> predicate) where T : DependencyObject
-        {
-            if (parent == null) return null;
-
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-            {
-                var child = VisualTreeHelper.GetChild(parent, i);
-
-                if (child is T t && predicate(t))
-                {
-                    return t;
-                }
-
-                var result = FindVisualChild(child, predicate);
-                if (result != null) return result;
-            }
-
-            return null;
         }
 
         private void AddStepBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -140,6 +247,58 @@ namespace DigitalEducation.Pages
             _isMousePressed = false;
         }
 
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ValidateLesson())
+            {
+                return;
+            }
+
+            string dialogTitle = _isEditMode ? "Обновление урока" : "Сохранение урока";
+            string dialogMessage = _isEditMode
+                ? "Вы уверены, что хотите обновить урок?"
+                : "Вы уверены, что хотите сохранить урок?";
+            string confirmButton = _isEditMode ? "Обновить" : "Сохранить";
+
+            var result = DialogService.ShowConfirmDialog(
+                dialogTitle,
+                dialogMessage,
+                confirmButton,
+                "Отмена",
+                Window.GetWindow(this)
+            );
+
+            if (result == true)
+            {
+                if (_isEditMode)
+                    UpdateLessonFile();
+                else
+                    SaveLessonToFile();
+            }
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            string dialogTitle = _isEditMode ? "Отмена редактирования" : "Отмена создания";
+            string dialogMessage = _isEditMode
+                ? "Вы уверены, что хотите отменить редактирование урока? Все несохраненные изменения будут потеряны."
+                : "Вы уверены, что хотите отменить создание урока? Все несохраненные данные будут потеряны.";
+            string confirmButton = _isEditMode ? "Отменить редактирование" : "Отменить создание";
+
+            var result = DialogService.ShowConfirmDialog(
+                dialogTitle,
+                dialogMessage,
+                confirmButton,
+                "Продолжить",
+                Window.GetWindow(this)
+            );
+
+            if (result == true)
+            {
+                ReturnToLessonsPage();
+            }
+        }
+
         private void AddNewStep()
         {
             var step = new LessonStep
@@ -148,12 +307,10 @@ namespace DigitalEducation.Pages
                 Description = "",
                 Hint = "",
                 VisionTarget = "",
-                VisionConfidence = 0.85,
-                RequiresVisionValidation = false,
                 VisionTargetFolder = "",
-                RequiredMatches = 1,
-                ShowHint = true,
-                HintConfidence = 0.8
+                RequiresVisionValidation = false,
+                VisionConfidence = 0.85,
+                RequiredMatches = 1
             };
 
             _steps.Add(step);
@@ -166,13 +323,12 @@ namespace DigitalEducation.Pages
 
             for (int i = 0; i < _steps.Count; i++)
             {
-                var step = _steps[i];
-                var stepCard = CreateStepCard(step, i + 1);
+                var stepCard = CreateStepCard(_steps[i], i + 1, i);
                 StepsContainer.Children.Add(stepCard);
             }
         }
 
-        private Border CreateStepCard(LessonStep step, int stepNumber)
+        private Border CreateStepCard(LessonStep step, int stepNumber, int stepIndex)
         {
             var card = new Border
             {
@@ -198,6 +354,114 @@ namespace DigitalEducation.Pages
             titleGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             titleGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
+            var iconBorder = CreateStepIcon(stepNumber);
+            Grid.SetColumn(iconBorder, 0);
+
+            var titleStack = CreateStepTitleStack(step, stepNumber);
+            Grid.SetColumn(titleStack, 1);
+
+            var deleteButton = CreateDeleteButton(step, stepIndex);
+            Grid.SetColumn(deleteButton, 2);
+
+            titleGrid.Children.Add(iconBorder);
+            titleGrid.Children.Add(titleStack);
+            titleGrid.Children.Add(deleteButton);
+
+            var contentStack = new StackPanel
+            {
+                UseLayoutRounding = true
+            };
+
+            var descriptionPanel = CreateDescriptionPanel(step, stepIndex);
+            var hintPanel = CreateHintPanel(step, stepIndex);
+            var imagePanel = CreateImagePanel(step, stepIndex);
+
+            contentStack.Children.Add(descriptionPanel);
+            contentStack.Children.Add(hintPanel);
+            contentStack.Children.Add(imagePanel);
+
+            mainStack.Children.Add(titleGrid);
+            mainStack.Children.Add(contentStack);
+
+            card.Child = mainStack;
+            return card;
+        }
+
+        private Button CreateDeleteButton(LessonStep step, int stepIndex)
+        {
+            var deleteButton = new Button
+            {
+                Style = (Style)FindResource("NavigationButtonStyle"),
+                Padding = new Thickness(16, 0, 0, 0),
+                Margin = new Thickness(8, 0, 0, 0),
+                UseLayoutRounding = true,
+                Cursor = Cursors.Hand,
+                ToolTip = "Удалить шаг"
+            };
+
+            var stackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            var deleteIcon = new Image
+            {
+                Tag = "Trash",
+                Width = 18,
+                Height = 18,
+                Margin = new Thickness(0, 0, 8, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            ThemeManager.UpdateImageSource(deleteIcon, "Trash");
+
+            var deleteText = new TextBlock
+            {
+                Text = "Удалить",
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 14,
+                FontWeight = FontWeights.Medium,
+                Foreground = (Brush)FindResource("TextPrimaryBrush")
+            };
+
+            stackPanel.Children.Add(deleteIcon);
+            stackPanel.Children.Add(deleteText);
+
+            deleteButton.Content = stackPanel;
+
+            deleteButton.Click += (s, e) =>
+            {
+                var result = DialogService.ShowConfirmDialog(
+                    "Удаление шага",
+                    "Вы уверены, что хотите удалить этот шаг?",
+                    "Удалить",
+                    "Отмена",
+                    Window.GetWindow(this)
+                );
+
+                if (result == true)
+                {
+                    int index = _steps.IndexOf(step);
+                    if (index >= 0)
+                    {
+                        _steps.RemoveAt(index);
+
+                        if (_originalStepImages.ContainsKey(stepIndex))
+                        {
+                            _originalStepImages.Remove(stepIndex);
+                        }
+
+                        UpdateStepsDisplay();
+                    }
+                }
+            };
+
+            return deleteButton;
+        }
+
+        private Border CreateStepIcon(int stepNumber)
+        {
             var iconBorder = new Border
             {
                 Width = 48,
@@ -220,8 +484,11 @@ namespace DigitalEducation.Pages
             };
 
             iconBorder.Child = iconText;
-            Grid.SetColumn(iconBorder, 0);
+            return iconBorder;
+        }
 
+        private StackPanel CreateStepTitleStack(LessonStep step, int stepNumber)
+        {
             var titleStack = new StackPanel
             {
                 VerticalAlignment = VerticalAlignment.Center
@@ -244,47 +511,11 @@ namespace DigitalEducation.Pages
 
             titleStack.Children.Add(stepTitle);
             titleStack.Children.Add(stepSubtitle);
-            Grid.SetColumn(titleStack, 1);
+            return titleStack;
+        }
 
-            var deleteButton = new Button
-            {
-                Style = (Style)FindResource("NavigationButtonStyle"),
-                Height = 40,
-                Width = 40,
-                Padding = new Thickness(0),
-                VerticalAlignment = VerticalAlignment.Center,
-                Tag = "Trash",
-                ToolTip = "Удалить шаг"
-            };
-
-            var deleteIcon = new Image
-            {
-                Tag = "Trash",
-                Width = 20,
-                Height = 20,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
-            ThemeManager.UpdateImageSource(deleteIcon, "Trash");
-            deleteButton.Content = deleteIcon;
-
-            deleteButton.Click += (s, e) =>
-            {
-                _steps.Remove(step);
-                UpdateStepsDisplay();
-            };
-
-            Grid.SetColumn(deleteButton, 2);
-
-            titleGrid.Children.Add(iconBorder);
-            titleGrid.Children.Add(titleStack);
-            titleGrid.Children.Add(deleteButton);
-
-            var contentStack = new StackPanel
-            {
-                UseLayoutRounding = true
-            };
-
+        private StackPanel CreateDescriptionPanel(LessonStep step, int stepIndex)
+        {
             var descriptionPanel = new StackPanel
             {
                 Margin = new Thickness(0, 0, 0, 20)
@@ -331,7 +562,11 @@ namespace DigitalEducation.Pages
 
             descriptionPanel.Children.Add(descriptionHeader);
             descriptionPanel.Children.Add(descriptionBox);
+            return descriptionPanel;
+        }
 
+        private StackPanel CreateHintPanel(LessonStep step, int stepIndex)
+        {
             var hintPanel = new StackPanel
             {
                 Margin = new Thickness(0, 0, 0, 20)
@@ -378,7 +613,11 @@ namespace DigitalEducation.Pages
 
             hintPanel.Children.Add(hintHeader);
             hintPanel.Children.Add(hintBox);
+            return hintPanel;
+        }
 
+        private StackPanel CreateImagePanel(LessonStep step, int stepIndex)
+        {
             var imagePanel = new StackPanel
             {
                 Margin = new Thickness(0, 0, 0, 0)
@@ -393,8 +632,8 @@ namespace DigitalEducation.Pages
             var imageIcon = new Image
             {
                 Tag = "Folder",
-                Width = 16,
-                Height = 16,
+                Width = 18,
+                Height = 18,
                 Margin = new Thickness(0, 0, 8, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
@@ -410,10 +649,7 @@ namespace DigitalEducation.Pages
             imageHeader.Children.Add(imageIcon);
             imageHeader.Children.Add(imageLabel);
 
-            var fileContainer = new Grid
-            {
-            };
-
+            var fileContainer = new Grid();
             fileContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             fileContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
@@ -426,9 +662,30 @@ namespace DigitalEducation.Pages
                 BorderThickness = new Thickness(1)
             };
 
+            string displayText;
+            if (!string.IsNullOrEmpty(step.VisionTarget))
+            {
+                if (File.Exists(step.VisionTarget))
+                {
+                    displayText = Path.GetFileName(step.VisionTarget);
+                }
+                else if (_isEditMode && _originalStepImages.ContainsKey(stepIndex))
+                {
+                    displayText = _originalStepImages[stepIndex];
+                }
+                else
+                {
+                    displayText = step.VisionTarget;
+                }
+            }
+            else
+            {
+                displayText = "Файл не выбран";
+            }
+
             var fileInfoText = new TextBlock
             {
-                Text = string.IsNullOrEmpty(step.VisionTarget) ? "Файл не выбран" : Path.GetFileName(step.VisionTarget),
+                Text = displayText,
                 Style = (Style)FindResource("BodyTextStyle"),
                 Foreground = (Brush)FindResource("TextSecondaryBrush"),
                 VerticalAlignment = VerticalAlignment.Center
@@ -444,19 +701,37 @@ namespace DigitalEducation.Pages
             };
             Grid.SetColumn(buttonPanel, 1);
 
+            var clearImageButton = CreateClearImageButton(step, stepIndex, fileInfoText);
+            var selectImageButton = CreateSelectImageButton(step, stepIndex, fileInfoText, clearImageButton);
+
+            buttonPanel.Children.Add(clearImageButton);
+            buttonPanel.Children.Add(selectImageButton);
+
+            fileContainer.Children.Add(fileInfoBorder);
+            fileContainer.Children.Add(buttonPanel);
+
+            imagePanel.Children.Add(imageHeader);
+            imagePanel.Children.Add(fileContainer);
+            return imagePanel;
+        }
+
+        private Button CreateClearImageButton(LessonStep step, int stepIndex, TextBlock fileInfoText)
+        {
             var clearImageButton = new Button
             {
                 Style = (Style)FindResource("NavigationButtonStyle"),
-                Height = 40,
                 Margin = new Thickness(0, 0, 8, 0),
-                Visibility = string.IsNullOrEmpty(step.VisionTarget) ? Visibility.Collapsed : Visibility.Visible
+                Visibility = string.IsNullOrEmpty(step.VisionTarget) &&
+                            !(_isEditMode && _originalStepImages.ContainsKey(stepIndex))
+                    ? Visibility.Collapsed
+                    : Visibility.Visible
             };
 
             var clearIcon = new Image
             {
                 Tag = "Trash",
-                Width = 16,
-                Height = 16,
+                Width = 18,
+                Height = 18,
                 Margin = new Thickness(0, 0, 6, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
@@ -481,21 +756,31 @@ namespace DigitalEducation.Pages
             {
                 step.VisionTarget = "";
                 step.RequiresVisionValidation = false;
+
+                if (_isEditMode && _originalStepImages.ContainsKey(stepIndex))
+                {
+                    _originalStepImages.Remove(stepIndex);
+                }
+
                 fileInfoText.Text = "Файл не выбран";
                 clearImageButton.Visibility = Visibility.Collapsed;
             };
 
+            return clearImageButton;
+        }
+
+        private Button CreateSelectImageButton(LessonStep step, int stepIndex, TextBlock fileInfoText, Button clearImageButton)
+        {
             var selectImageButton = new Button
             {
-                Style = (Style)FindResource("NavigationButtonStyle"),
-                Height = 40
+                Style = (Style)FindResource("NavigationButtonStyle")
             };
 
             var selectIcon = new Image
             {
                 Tag = "Folder",
-                Width = 16,
-                Height = 16,
+                Width = 18,
+                Height = 18,
                 Margin = new Thickness(0, 0, 6, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
@@ -530,27 +815,15 @@ namespace DigitalEducation.Pages
                     step.RequiresVisionValidation = true;
                     fileInfoText.Text = Path.GetFileName(step.VisionTarget);
                     clearImageButton.Visibility = Visibility.Visible;
+
+                    if (_isEditMode)
+                    {
+                        _originalStepImages[stepIndex] = Path.GetFileName(step.VisionTarget);
+                    }
                 }
             };
 
-            buttonPanel.Children.Add(clearImageButton);
-            buttonPanel.Children.Add(selectImageButton);
-
-            fileContainer.Children.Add(fileInfoBorder);
-            fileContainer.Children.Add(buttonPanel);
-
-            imagePanel.Children.Add(imageHeader);
-            imagePanel.Children.Add(fileContainer);
-
-            contentStack.Children.Add(descriptionPanel);
-            contentStack.Children.Add(hintPanel);
-            contentStack.Children.Add(imagePanel);
-
-            mainStack.Children.Add(titleGrid);
-            mainStack.Children.Add(contentStack);
-
-            card.Child = mainStack;
-            return card;
+            return selectImageButton;
         }
 
         private bool ValidateLesson()
@@ -606,76 +879,114 @@ namespace DigitalEducation.Pages
             return isValid;
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!ValidateLesson())
-            {
-                return;
-            }
-
-            var result = DialogService.ShowConfirmDialog(
-                "Сохранение урока",
-                "Вы уверены, что хотите сохранить урок?",
-                "Сохранить",
-                "Отмена",
-                Window.GetWindow(this)
-            );
-
-            if (result == true)
-            {
-                SaveLessonToFile();
-            }
-        }
-
         private void SaveLessonToFile()
         {
             try
             {
+                string lessonTitle = TitleTextBox.Text.Trim();
+
+                string lessonId = GenerateNumericLessonId(lessonTitle);
+
                 var lesson = new LessonData
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    Title = TitleTextBox.Text.Trim(),
+                    Id = lessonId,
+                    Title = lessonTitle,
                     CourseId = "Custom",
-                    Steps = _steps,
+                    Steps = new List<LessonStep>(),
                     CompletionMessage = CompletionMessageTextBox.Text.Trim()
                 };
 
-                string lessonImagesPath = Path.Combine(_templatesPath, lesson.Id);
-                Directory.CreateDirectory(lessonImagesPath);
+                string rootTemplatesPath = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "..", "..",
+                    "ComputerVision", "Templates");
 
-                foreach (var step in lesson.Steps)
+                Directory.CreateDirectory(rootTemplatesPath);
+
+                string oldTemplatesPath = Path.Combine(_customLessonsPath, "Templates");
+                if (Directory.Exists(oldTemplatesPath))
                 {
-                    if (!string.IsNullOrEmpty(step.VisionTarget) && File.Exists(step.VisionTarget))
+                    try
                     {
-                        string fileName = Path.GetFileName(step.VisionTarget);
-                        string destPath = Path.Combine(lessonImagesPath, fileName);
-                        File.Copy(step.VisionTarget, destPath, true);
-                        step.VisionTarget = fileName;
+                        Directory.Delete(oldTemplatesPath, true);
+                        Console.WriteLine($"Удалена старая папка шаблонов: {oldTemplatesPath}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Не удалось удалить старую папку шаблонов: {ex.Message}");
                     }
                 }
 
+                var stepsForJson = new List<object>();
+                int screenshotCounter = 1;
+
+                foreach (var step in _steps)
+                {
+                    var stepDict = new Dictionary<string, object>
+                    {
+                        ["title"] = step.Title,
+                        ["description"] = step.Description
+                    };
+
+                    if (!string.IsNullOrWhiteSpace(step.Hint))
+                        stepDict["hint"] = step.Hint;
+
+                    if (!string.IsNullOrEmpty(step.VisionTarget) && File.Exists(step.VisionTarget))
+                    {
+                        string extension = Path.GetExtension(step.VisionTarget).ToLower();
+
+                        string numericFileName = $"{lessonId}_{screenshotCounter:000}{extension}";
+                        string destPath = Path.Combine(rootTemplatesPath, numericFileName);
+
+                        File.Copy(step.VisionTarget, destPath, true);
+                        Console.WriteLine($"Скопирован файл в Templates: {Path.GetFileName(step.VisionTarget)} -> {numericFileName}");
+
+                        stepDict["visionTarget"] = numericFileName;
+                        stepDict["visionConfidence"] = 0.85;
+                        stepDict["requiresVisionValidation"] = true;
+
+                        screenshotCounter++;
+                    }
+
+                    else if (!string.IsNullOrEmpty(step.VisionTargetFolder))
+                    {
+                        stepDict["visionTargetFolder"] = step.VisionTargetFolder;
+                        stepDict["requiredMatches"] = 1;
+                        stepDict["visionConfidence"] = 0.8;
+                        stepDict["requiresVisionValidation"] = true;
+                    }
+
+                    stepsForJson.Add(stepDict);
+                }
+
+                var jsonObject = new
+                {
+                    id = lesson.Id,
+                    title = lesson.Title,
+                    courseId = lesson.CourseId,
+                    completionMessage = lesson.CompletionMessage,
+                    steps = stepsForJson
+                };
+
                 string filePath = Path.Combine(_customLessonsPath, $"{lesson.Id}.json");
+
                 var options = new JsonSerializerOptions
                 {
                     WriteIndented = true,
-                    PropertyNameCaseInsensitive = true,
-                    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                 };
 
-                string json = JsonSerializer.Serialize(lesson, options);
+                string json = JsonSerializer.Serialize(jsonObject, options);
                 File.WriteAllText(filePath, json, Encoding.UTF8);
 
-                System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(LessonManager).TypeHandle);
+                Console.WriteLine($"Урок сохранен: {filePath}");
 
                 DialogService.ShowSuccessDialog(
                     "Урок успешно сохранен!",
                     Window.GetWindow(this)
                 );
 
-                if (Window.GetWindow(this) is MainWindow mainWindow)
-                {
-                    mainWindow.LoadCustomLessonsPage();
-                }
+                ReturnToLessonsPage();
             }
             catch (Exception ex)
             {
@@ -686,23 +997,138 @@ namespace DigitalEducation.Pages
             }
         }
 
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        private void UpdateLessonFile()
         {
-            var result = DialogService.ShowConfirmDialog(
-                "Отмена создания",
-                "Вы уверены, что хотите отменить создание урока? Все несохраненные данные будут потеряны.",
-                "Отменить",
-                "Продолжить",
-                Window.GetWindow(this)
-            );
-
-            if (result == true)
+            try
             {
-                if (Window.GetWindow(this) is MainWindow mainWindow)
+                string lessonTitle = TitleTextBox.Text.Trim();
+
+                string lessonId = _editingLessonId;
+
+                var lesson = new LessonData
                 {
-                    mainWindow.LoadCustomLessonsPage();
+                    Id = lessonId,
+                    Title = lessonTitle,
+                    CourseId = "Custom",
+                    Steps = new List<LessonStep>(),
+                    CompletionMessage = CompletionMessageTextBox.Text.Trim()
+                };
+
+                string rootTemplatesPath = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "..", "..",
+                    "ComputerVision", "Templates");
+
+                Directory.CreateDirectory(rootTemplatesPath);
+
+                var stepsForJson = new List<object>();
+                int screenshotCounter = 1;
+
+                for (int i = 0; i < _steps.Count; i++)
+                {
+                    var step = _steps[i];
+                    var stepDict = new Dictionary<string, object>
+                    {
+                        ["title"] = step.Title,
+                        ["description"] = step.Description
+                    };
+
+                    if (!string.IsNullOrWhiteSpace(step.Hint))
+                        stepDict["hint"] = step.Hint;
+
+                    if (!string.IsNullOrEmpty(step.VisionTarget) && File.Exists(step.VisionTarget))
+                    {
+                        string extension = Path.GetExtension(step.VisionTarget).ToLower();
+
+                        string numericFileName;
+                        if (_originalStepImages.ContainsKey(i) &&
+                            !string.IsNullOrEmpty(_originalStepImages[i]) &&
+                            step.VisionTarget.Contains(_originalStepImages[i]))
+                        {
+                            numericFileName = _originalStepImages[i];
+                        }
+                        else
+                        {
+                            numericFileName = $"{lessonId}_{screenshotCounter:000}{extension}";
+                            string destPath = Path.Combine(rootTemplatesPath, numericFileName);
+
+                            File.Copy(step.VisionTarget, destPath, true);
+                            Console.WriteLine($"Скопирован файл в Templates: {Path.GetFileName(step.VisionTarget)} -> {numericFileName}");
+
+                            screenshotCounter++;
+                        }
+
+                        stepDict["visionTarget"] = numericFileName;
+                        stepDict["visionConfidence"] = 0.85;
+                        stepDict["requiresVisionValidation"] = true;
+                    }
+                    else if (_originalStepImages.ContainsKey(i) &&
+                            !string.IsNullOrEmpty(_originalStepImages[i]))
+                    {
+                        stepDict["visionTarget"] = _originalStepImages[i];
+                        stepDict["visionConfidence"] = 0.85;
+                        stepDict["requiresVisionValidation"] = true;
+                    }
+
+                    else if (!string.IsNullOrEmpty(step.VisionTargetFolder))
+                    {
+                        stepDict["visionTargetFolder"] = step.VisionTargetFolder;
+                        stepDict["requiredMatches"] = 1;
+                        stepDict["visionConfidence"] = 0.8;
+                        stepDict["requiresVisionValidation"] = true;
+                    }
+
+                    stepsForJson.Add(stepDict);
                 }
+
+                var jsonObject = new
+                {
+                    id = lesson.Id,
+                    title = lesson.Title,
+                    courseId = lesson.CourseId,
+                    completionMessage = lesson.CompletionMessage,
+                    steps = stepsForJson
+                };
+
+                string filePath = Path.Combine(_customLessonsPath, $"{lesson.Id}.json");
+
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+
+                string json = JsonSerializer.Serialize(jsonObject, options);
+                File.WriteAllText(filePath, json, Encoding.UTF8);
+
+                Console.WriteLine($"Урок обновлен: {filePath}");
+
+                DialogService.ShowSuccessDialog(
+                    "Урок успешно обновлен!",
+                    Window.GetWindow(this)
+                );
+
+                ReturnToLessonsPage();
             }
+            catch (Exception ex)
+            {
+                DialogService.ShowErrorDialog(
+                    $"Ошибка при обновлении урока: {ex.Message}",
+                    Window.GetWindow(this)
+                );
+            }
+        }
+
+        private string GenerateNumericLessonId(string lessonTitle)
+        {
+            int titleHash = Math.Abs(lessonTitle.GetHashCode());
+
+            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+
+            string combined = $"{titleHash}{timestamp}";
+            string numericOnly = new string(combined.Where(char.IsDigit).ToArray());
+
+            return numericOnly.Length > 15 ? numericOnly.Substring(0, 15) : numericOnly;
         }
     }
 }

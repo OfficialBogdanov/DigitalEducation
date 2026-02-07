@@ -184,6 +184,7 @@ namespace DigitalEducation
             _iconMapping["ZoomOut"] = "ZoomOut";
             _iconMapping["Search"] = "Search";
             _iconMapping["Plus"] = "Plus";
+            _iconMapping["Edit"] = "Edit";
         }
 
         public static BitmapImage GetIcon(string iconName)

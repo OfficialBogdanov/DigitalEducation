@@ -14,8 +14,8 @@
     <Color x:Key="InfoColor">#17A2B8</Color>
     <Color x:Key="CustomColor">#B4674D</Color>
 
-    <Color x:Key="BackgroundColor">#FFFFFF</Color>
-    <Color x:Key="BackgroundLightColor">#F8F9FA</Color>
+    <Color x:Key="BackgroundColor">#F8F9FA</Color>
+    <Color x:Key="BackgroundLightColor">#FFFFFF</Color>
     <Color x:Key="BackgroundDarkColor">#F0F2F5</Color>
 
     <Color x:Key="SurfaceColor">#FFFFFF</Color>
@@ -31,16 +31,16 @@
     <Color x:Key="CategoryOfficeColor">#17A2B8</Color>
     <Color x:Key="CategoryInternetColor">#28A745</Color>
 
-    <Color x:Key="HoverColor">#E9ECEF</Color>
-    <Color x:Key="PressedColor">#DEE2E6</Color>
-    <Color x:Key="SelectedColor">#E6F2FC</Color>
+    <Color x:Key="HoverColor">#F1F3F5</Color>
+    <Color x:Key="PressedColor">#E9ECEF</Color>
+    <Color x:Key="SelectedColor">#E3F2FD</Color>
     <Color x:Key="FocusColor">#0078D7</Color>
 
     <Color x:Key="DisabledColor">#F8F9FA</Color>
     <Color x:Key="DisabledTextColor">#ADB5BD</Color>
 
-    <Color x:Key="OverlayColor">#00000060</Color>
-    <Color x:Key="ShadowColor">#00000020</Color>
+    <Color x:Key="OverlayColor">#00000080</Color>
+    <Color x:Key="ShadowColor">#00000030</Color>
 
     <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource PrimaryColor}"/>
     <SolidColorBrush x:Key="PrimaryLightBrush" Color="{DynamicResource PrimaryLightColor}"/>

@@ -164,6 +164,7 @@ namespace DigitalEducation
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
             var numberBorder = new Border
             {
@@ -203,23 +204,6 @@ namespace DigitalEducation
                 Margin = new Thickness(0, 0, 0, 8)
             };
 
-            var descriptionText = new TextBlock
-            {
-                Text = GetLessonDescription(lesson),
-                Style = (Style)FindResource("BodyTextStyle"),
-                Margin = new Thickness(0, 0, 0, 12),
-                TextWrapping = TextWrapping.Wrap
-            };
-
-            var statsGrid = new Grid
-            {
-                Margin = new Thickness(0, 0, 0, 16),
-                UseLayoutRounding = true
-            };
-
-            statsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            statsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
             string lessonFilePath = Path.Combine(_customLessonsPath, $"{lesson.Id}.json");
             DateTime lastModified = File.Exists(lessonFilePath) ?
                 File.GetLastWriteTime(lessonFilePath) : DateTime.Now;
@@ -227,51 +211,33 @@ namespace DigitalEducation
             var dateText = new TextBlock
             {
                 Text = $"Изменён: {lastModified:dd.MM.yyyy HH:mm}",
-                Style = (Style)FindResource("BodyTextStyle")
+                Style = (Style)FindResource("BodyTextStyle"),
+                Margin = new Thickness(0, 0, 0, 12),
+                FontSize = 13
             };
-
-            var stepsText = new TextBlock
-            {
-                Text = $"{lesson.Steps?.Count ?? 0} шагов",
-                Foreground = new SolidColorBrush(GetLessonColor(lesson.Id)),
-                FontWeight = FontWeights.Medium
-            };
-
-            Grid.SetColumn(stepsText, 1);
-            statsGrid.Children.Add(dateText);
-            statsGrid.Children.Add(stepsText);
 
             stackPanel.Children.Add(titleText);
-            stackPanel.Children.Add(descriptionText);
-            stackPanel.Children.Add(statsGrid);
+            stackPanel.Children.Add(dateText);
 
             Grid.SetColumn(stackPanel, 1);
 
             var editButton = CreateActionButton("Редактировать", "Edit", () => EditLesson(lesson));
             Grid.SetColumn(editButton, 2);
 
-            var deleteButton = CreateActionButton("Удалить", "Trash", () => DeleteLesson(lesson));
+            var deleteButton = CreateDeleteButton("Удалить", "Trash", () => DeleteLesson(lesson));
             Grid.SetColumn(deleteButton, 3);
+
+            var startButton = CreateStartButton("Начать", () => StartLesson(lesson));
+            Grid.SetColumn(startButton, 4);
 
             grid.Children.Add(numberBorder);
             grid.Children.Add(stackPanel);
             grid.Children.Add(editButton);
             grid.Children.Add(deleteButton);
+            grid.Children.Add(startButton);
 
             card.Child = grid;
             return card;
-        }
-
-        private string GetLessonDescription(LessonData lesson)
-        {
-            if (string.IsNullOrEmpty(lesson.CompletionMessage))
-                return "Урок без описания";
-
-            string description = lesson.CompletionMessage;
-            if (description.Length > 150)
-                return description.Substring(0, 150) + "...";
-
-            return description;
         }
 
         private Button CreateActionButton(string text, string iconName, Action onClick)
@@ -279,8 +245,7 @@ namespace DigitalEducation
             var button = new Button
             {
                 Style = (Style)FindResource("NavigationButtonStyle"),
-                Height = 60,
-                Width = 140,
+                Height = 80,
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(12, 0, 0, 0),
                 UseLayoutRounding = true,
@@ -321,18 +286,114 @@ namespace DigitalEducation
             return button;
         }
 
+        private Button CreateDeleteButton(string text, string iconName, Action onClick)
+        {
+            var button = new Button
+            {
+                Style = (Style)FindResource("NavigationButtonStyle"),
+                Height = 80,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(12, 0, 0, 0),
+                UseLayoutRounding = true,
+                Tag = iconName,
+                ToolTip = "Удалить урок"
+            };
+
+            var stackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                UseLayoutRounding = true,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            var icon = new Image
+            {
+                Tag = iconName,
+                Width = 20,
+                Height = 20,
+                Margin = new Thickness(0, 0, 8, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            ThemeManager.UpdateImageSource(icon, iconName);
+
+            var buttonText = new TextBlock
+            {
+                Text = text,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontWeight = FontWeights.Medium,
+                Foreground = (SolidColorBrush)FindResource("TextPrimaryBrush")
+            };
+
+            stackPanel.Children.Add(icon);
+            stackPanel.Children.Add(buttonText);
+            button.Content = stackPanel;
+
+            button.Click += (s, e) => onClick();
+            return button;
+        }
+
+        private Button CreateStartButton(string text, Action onClick)
+        {
+            var button = new Button
+            {
+                Style = (Style)FindResource("NavigationButtonStyle"),
+                Height = 80,
+                VerticalAlignment = VerticalAlignment.Center,
+                Padding = new Thickness(24, 0, 0, 0),
+                Margin = new Thickness(12, 0, 0, 0),
+                UseLayoutRounding = true,
+                Tag = "Right"
+            };
+
+            var stackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                UseLayoutRounding = true,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            var icon = new Image
+            {
+                Tag = "Right",
+                Width = 24,
+                Height = 24,
+                Margin = new Thickness(0, 0, 8, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            ThemeManager.UpdateImageSource(icon, "Right");
+
+            var buttonText = new TextBlock
+            {
+                Text = text,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontWeight = FontWeights.Medium,
+                Foreground = (SolidColorBrush)FindResource("TextPrimaryBrush")
+            };
+
+            stackPanel.Children.Add(icon);
+            stackPanel.Children.Add(buttonText);
+            button.Content = stackPanel;
+
+            button.Click += (s, e) => onClick();
+            return button;
+        }
+
         private Color GetLessonColor(string lessonId)
         {
-            int hash = lessonId.GetHashCode();
-            byte r = (byte)((hash & 0xFF0000) >> 16);
-            byte g = (byte)((hash & 0x00FF00) >> 8);
-            byte b = (byte)(hash & 0x0000FF);
+            Color[] paletteColors = new Color[]
+            {
+                (Color)FindResource("PrimaryColor"),
+                (Color)FindResource("SuccessColor"),
+                (Color)FindResource("WarningColor"),
+                (Color)FindResource("ErrorColor")
+            };
 
-            return Color.FromRgb(
-                (byte)((r + 100) % 256),
-                (byte)((g + 150) % 256),
-                (byte)((b + 200) % 256)
-            );
+            int hash = Math.Abs(lessonId.GetHashCode());
+            int colorIndex = hash % paletteColors.Length;
+
+            return paletteColors[colorIndex];
         }
 
         private void CreateLessonButton_Click(object sender, RoutedEventArgs e)
@@ -346,56 +407,163 @@ namespace DigitalEducation
 
         private void EditLesson(LessonData lesson)
         {
-            DialogService.ShowMessageDialog(
-            "Редактирование урока",
-            $"Редактирование урока: \nРедактор уроков в разработке.",
-            "OK",
-            Window.GetWindow(this)
-            );
+            try
+            {
+                if (Window.GetWindow(this) is MainWindow mainWindow)
+                {
+                    var editLessonPage = new CreateLessonPage(lesson.Id);
+                    mainWindow.MainLayout.Content = editLessonPage;
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogService.ShowErrorDialog(
+                    $"Ошибка при открытии редактора: {ex.Message}",
+                    Window.GetWindow(this)
+                );
+            }
         }
 
         private void DeleteLesson(LessonData lesson)
         {
-            var result = DialogService.ShowConfirmDialog(
-            "Подтверждение удаления",
-            $"Вы уверены, что хотите удалить урок?",
-            "Удалить",
-            "Отмена",
-            Window.GetWindow(this)
-            );
-
-            if (result == true)
+            try
             {
-                try
+                var result = DialogService.ShowConfirmDialog(
+                    "Удаление урока",
+                    $"Вы уверены, что хотите удалить урок '{lesson.Title}'?\nЭто действие нельзя отменить.",
+                    "Удалить",
+                    "Отмена",
+                    Window.GetWindow(this)
+                );
+
+                if (result == true)
                 {
                     string lessonFilePath = Path.Combine(_customLessonsPath, $"{lesson.Id}.json");
 
                     if (File.Exists(lessonFilePath))
                     {
                         File.Delete(lessonFilePath);
-
-                        string imagesPath = Path.Combine(_customLessonsPath, "Templates", "VisionTargets", lesson.Id);
-                        if (Directory.Exists(imagesPath))
-                        {
-                            Directory.Delete(imagesPath, true);
-                        }
-
-                        LoadCustomLessons();
-                        UpdateLessonsDisplay();
-
-                        DialogService.ShowSuccessDialog(
-                            $"Урок успешно удален",
-                            Window.GetWindow(this)
-                        );
+                        Console.WriteLine($"Удален файл урока: {lessonFilePath}");
                     }
-                }
-                catch (Exception ex)
-                {
-                    DialogService.ShowErrorDialog(
-                    $"Не удалось удалить урок: {ex.Message}",
-                    Window.GetWindow(this)
+
+                    DeleteLessonImages(lesson.Id);
+
+                    LoadCustomLessons();
+                    UpdateLessonsDisplay();
+
+                    DialogService.ShowSuccessDialog(
+                        "Урок успешно удален!",
+                        Window.GetWindow(this)
                     );
                 }
+            }
+            catch (Exception ex)
+            {
+                DialogService.ShowErrorDialog(
+                    $"Ошибка при удалении урока: {ex.Message}",
+                    Window.GetWindow(this)
+                );
+            }
+        }
+
+        private void DeleteLessonImages(string lessonId)
+        {
+            try
+            {
+                string templatesPath = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "..", "..",
+                    "ComputerVision", "Templates");
+
+                if (Directory.Exists(templatesPath))
+                {
+                    var pattern = $"{lessonId}_*.*";
+                    var imageFiles = Directory.GetFiles(templatesPath, pattern);
+
+                    foreach (var file in imageFiles)
+                    {
+                        try
+                        {
+                            File.Delete(file);
+                            Console.WriteLine($"Удалено изображение: {Path.GetFileName(file)}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Не удалось удалить изображение {file}: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при удалении изображений урока: {ex.Message}");
+            }
+        }
+
+        private void StartLesson(LessonData lesson)
+        {
+            try
+            {
+                string lessonFilePath = Path.Combine(_customLessonsPath, $"{lesson.Id}.json");
+
+                if (File.Exists(lessonFilePath))
+                {
+                    LaunchLesson(lesson.Id);
+                }
+                else
+                {
+                    DialogService.ShowMessageDialog(
+                        "Урок недоступен",
+                        "Файл урока не найден.",
+                        "OK",
+                        Window.GetWindow(this)
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogService.ShowErrorDialog(
+                    $"Не удалось запустить урок: {ex.Message}",
+                    Window.GetWindow(this)
+                );
+            }
+        }
+
+        private void LaunchLesson(string lessonId)
+        {
+            try
+            {
+                OverlayWindow lessonWindow = new OverlayWindow(lessonId);
+
+                Window mainWindow = Application.Current.MainWindow;
+                if (mainWindow != null && mainWindow.IsLoaded)
+                {
+                    lessonWindow.Owner = mainWindow;
+                    lessonWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                }
+                else
+                {
+                    lessonWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                }
+
+                bool? result = lessonWindow.ShowDialog();
+
+                if (result == true)
+                {
+                    UpdateLessonsDisplay();
+
+                    DialogService.ShowSuccessDialog(
+                        "Урок успешно завершен!",
+                        Window.GetWindow(this)
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                DialogService.ShowErrorDialog(
+                    $"Не удалось запустить урок: {ex.Message}",
+                    Window.GetWindow(this)
+                );
             }
         }
     }

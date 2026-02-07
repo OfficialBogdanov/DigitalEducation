@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using DigitalEducation.ComputerVision.Services;
+using System.Text.Json;
 
 namespace DigitalEducation
 {
@@ -69,7 +70,18 @@ namespace DigitalEducation
         public OverlayWindow(string lessonId)
         {
             InitializeComponent();
+
             _lessonId = lessonId;
+
+            _currentLesson = LoadLessonFromAnySource(lessonId);
+
+            if (_currentLesson == null)
+            {
+                ShowErrorMessage($"Урок '{lessonId}' не найден");
+                this.DialogResult = false;
+                this.Close();
+                return;
+            }
 
             InitializeVisionService();
             _hintTimer = new DispatcherTimer();
@@ -80,21 +92,15 @@ namespace DigitalEducation
                 Application.Current.MainWindow.ShowInTaskbar = false;
             }
 
-            _currentLesson = LessonManager.GetLesson(lessonId);
-
-            if (_currentLesson == null)
-            {
-                Close();
-                return;
-            }
-
             _totalSteps = _currentLesson.Steps?.Count ?? 0;
             this.Title = _currentLesson.Title;
             LessonTitleText.Text = _currentLesson.Title;
 
             if (_currentLesson.Steps == null || _totalSteps == 0)
             {
-                Close();
+                ShowErrorMessage("В уроке нет шагов");
+                this.DialogResult = false;
+                this.Close();
                 return;
             }
 
@@ -118,33 +124,71 @@ namespace DigitalEducation
             this.Loaded += (s, e) => UpdateIcons();
         }
 
+        private LessonData LoadLessonFromAnySource(string lessonId)
+        {
+            var lesson = LessonManager.GetLesson(lessonId);
+            if (lesson != null)
+                return lesson;
+
+            return LoadCustomLesson(lessonId);
+        }
+
+        private LessonData LoadCustomLesson(string lessonId)
+        {
+            try
+            {
+                string projectRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..");
+                string customLessonsPath = Path.GetFullPath(Path.Combine(projectRoot, "Lessons", "CustomLessons"));
+                string lessonFilePath = Path.Combine(customLessonsPath, $"{lessonId}.json");
+
+                if (!File.Exists(lessonFilePath))
+                {
+                    Console.WriteLine($"Файл кастомного урока не найден: {lessonFilePath}");
+                    return null;
+                }
+
+                string jsonContent = File.ReadAllText(lessonFilePath, Encoding.UTF8);
+                var lesson = JsonSerializer.Deserialize<LessonData>(jsonContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (lesson != null)
+                {
+                    if (string.IsNullOrEmpty(lesson.CourseId))
+                        lesson.CourseId = "Custom";
+
+                    Console.WriteLine($"Загружен кастомный урок: {lesson.Title}");
+                }
+
+                return lesson;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка загрузки кастомного урока {lessonId}: {ex.Message}");
+                return null;
+            }
+        }
+
         private void InitializeVisionService()
         {
             try
             {
-                string templatesPath = App.GetTemplatesPath();
+                string templatesPath = GetTemplatesPath();
 
                 Console.WriteLine($"Путь к шаблонам: {templatesPath}");
 
                 if (!Directory.Exists(templatesPath))
                 {
-                    Console.WriteLine("Папка Templates не существует!");
-                    return;
+                    Directory.CreateDirectory(templatesPath);
+                    Console.WriteLine("Создана папка Templates");
                 }
 
-                var desktopPath = Path.Combine(templatesPath, "Desktop");
-                if (Directory.Exists(desktopPath))
+                var files = Directory.GetFiles(templatesPath, "*.png");
+                Console.WriteLine($"Найдено {files.Length} PNG файлов в Templates:");
+                foreach (var file in files)
                 {
-                    var files = Directory.GetFiles(desktopPath, "*.png");
-                    Console.WriteLine($"Найдено {files.Length} PNG файлов в Desktop:");
-                    foreach (var file in files)
-                    {
-                        Console.WriteLine($"  - {Path.GetFileName(file)}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Папка Desktop не существует!");
+                    Console.WriteLine($"  - {Path.GetFileName(file)}");
                 }
 
                 _visionService = new VisionService(templatesPath);
@@ -157,6 +201,30 @@ namespace DigitalEducation
             {
                 Console.WriteLine($"Не удалось инициализировать VisionService: {ex.Message}");
             }
+        }
+
+        private string GetTemplatesPath()
+        {
+            string projectRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..");
+            string templatesPath = Path.GetFullPath(Path.Combine(projectRoot, "ComputerVision", "Templates"));
+
+            Console.WriteLine($"=== ПУТЬ К ШАБЛОНАМ ===");
+            Console.WriteLine($"BaseDirectory: {AppDomain.CurrentDomain.BaseDirectory}");
+            Console.WriteLine($"ProjectRoot: {projectRoot}");
+            Console.WriteLine($"TemplatesPath: {templatesPath}");
+            Console.WriteLine($"Директория существует: {Directory.Exists(templatesPath)}");
+
+            if (Directory.Exists(templatesPath))
+            {
+                var files = Directory.GetFiles(templatesPath, "*.png");
+                Console.WriteLine($"Найдено файлов: {files.Length}");
+                foreach (var file in files)
+                {
+                    Console.WriteLine($"  - {Path.GetFileName(file)}");
+                }
+            }
+
+            return templatesPath;
         }
 
         private async Task ShowHintAsync(LessonStep step)
@@ -224,7 +292,7 @@ namespace DigitalEducation
                 else
                 {
                     Console.WriteLine($"Подсказка не найдена на экране");
-                    Console.WriteLine($"Проверьте: 1) Файл {step.VisionHint}.png в папке Desktop");
+                    Console.WriteLine($"Проверьте: 1) Файл {step.VisionHint}.png в папке Templates");
                     Console.WriteLine($"           2) Confidence threshold может быть слишком высоким");
                     Console.WriteLine($"           3) Элемент виден на экране прямо сейчас");
                     Console.WriteLine("=== ПОДСКАЗКА НЕ НАЙДЕНА ===");
@@ -545,15 +613,18 @@ namespace DigitalEducation
             _lessonTimer.Stop();
             double minutesSpent = _lessonTimer.Elapsed.TotalMinutes;
 
-            string courseId = GetCourseIdFromLesson(_lessonId);
+            if (!_currentLesson.CourseId.Equals("Custom", StringComparison.OrdinalIgnoreCase))
+            {
+                string courseId = GetCourseIdFromLesson(_lessonId);
+                ProgressManager.SaveLessonCompletion(
+                    lessonId: _lessonId,
+                    courseId: courseId,
+                    timeSpentMinutes: minutesSpent
+                );
 
-            ProgressManager.SaveLessonCompletion(
-                lessonId: _lessonId,
-                courseId: courseId,
-                timeSpentMinutes: minutesSpent
-            );
+                UpdateLessonStatus();
+            }
 
-            UpdateLessonStatus();
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 ShowCompletionMessage();
@@ -569,12 +640,12 @@ namespace DigitalEducation
             return "Other";
         }
 
+
         private void UpdateLessonStatus()
         {
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.UpdateLessonCompletion(_lessonId, true);
             }
         }
 
@@ -696,6 +767,7 @@ namespace DigitalEducation
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Ошибка при сворачивании окон: {ex.Message}");
             }
         }
 
@@ -716,6 +788,7 @@ namespace DigitalEducation
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Ошибка при восстановлении окон: {ex.Message}");
             }
         }
 
@@ -739,6 +812,17 @@ namespace DigitalEducation
             }
 
             return true;
+        }
+
+        private void ShowErrorMessage(string message)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DialogService.ShowErrorDialog(
+                    message,
+                    Application.Current.MainWindow
+                );
+            });
         }
     }
 }

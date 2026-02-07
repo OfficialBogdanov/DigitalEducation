@@ -26,7 +26,7 @@
       "title": "Шаг 5: Открытие контекстного меню",
       "description": "Щёлкните правой кнопкой мыши на рабочем столе",
       "hint": "💡 На вашем экране появится контексное меню различных десйтвий.",
-      "visionTargetFolder": "Desktop/ContextMenu",
+      "visionTargetFolder": "ContextMenu",
       "requiredMatches": 1,
       "visionConfidence": 0.8,
       "requiresVisionValidation": true

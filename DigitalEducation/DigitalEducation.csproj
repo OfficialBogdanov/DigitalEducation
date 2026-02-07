@@ -386,45 +386,30 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="ComputerVision\Templates\Desktop\new_folder_icon.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ComputerVision\Templates\Desktop\right_click_menu.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ComputerVision\Templates\Desktop\create_menu.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ComputerVision\Templates\Desktop\folder_menu_item.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ComputerVision\Templates\Desktop\right_click_menu2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ComputerVision\Templates\Desktop\new_menu_item.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ComputerVision\Templates\Desktop\right_click_menu4.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Icons\Black\Plus.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\White\Plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Black\Edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\White\Edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ComputerVision\Templates\context_menu.png" />
+    <Resource Include="ComputerVision\Templates\context_menu2.png" />
+    <Resource Include="ComputerVision\Templates\creater_menu.png" />
+    <Resource Include="ComputerVision\Templates\create_menu.png" />
+    <Resource Include="ComputerVision\Templates\create_menu_folder.png" />
+    <Resource Include="ComputerVision\Templates\folder_menu_item.png" />
+    <Resource Include="ComputerVision\Templates\new_folder_icon.png" />
+    <Resource Include="ComputerVision\Templates\new_menu_item.png" />
+    <Resource Include="ComputerVision\Templates\right_click_menu.png" />
+    <Resource Include="ComputerVision\Templates\right_click_menu2.png" />
+    <Resource Include="ComputerVision\Templates\right_click_menu3.png" />
+    <Resource Include="ComputerVision\Templates\right_click_menu4.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

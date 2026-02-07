@@ -1,0 +1,16 @@
+﻿{
+  "id": "842352755202602",
+  "title": "3",
+  "courseId": "Custom",
+  "completionMessage": "4",
+  "steps": [
+    {
+      "title": "Шаг 1",
+      "description": "5",
+      "hint": "6",
+      "visionTarget": "842352755202602_001",
+      "visionConfidence": 0.84999999999999998,
+      "requiresVisionValidation": true
+    }
+  ]
+}
