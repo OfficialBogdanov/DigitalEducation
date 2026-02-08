@@ -16,6 +16,20 @@ namespace DigitalEducation
     {
         private readonly string _customLessonsPath;
         private List<LessonData> _lessons = new List<LessonData>();
+        private List<LessonData> _filteredLessons = new List<LessonData>();
+
+        private readonly Dictionary<string, string> _lessonFilePaths = new Dictionary<string, string>();
+
+        private readonly List<string> _sortOptions = new List<string>
+        {
+            "По названию (А-Я)",
+            "По названию (Я-А)",
+            "По дате (сначала новые)",
+            "По дате (сначала старые)"
+        };
+
+        private string _currentSearchQuery = "";
+        private string _currentSortOption = "По дате (сначала новые)";
 
         public CustomLessonsPage()
         {
@@ -33,6 +47,7 @@ namespace DigitalEducation
         {
             try
             {
+                InitializeSearchAndSort();
                 LoadCustomLessons();
                 UpdateIcons();
                 UpdateLessonsDisplay();
@@ -61,6 +76,8 @@ namespace DigitalEducation
             ThemeManager.UpdateAllIconsInContainer(this);
             UpdateCreateButtonIcon();
             UpdateEmptyStateIcon();
+
+            UpdateSearchAndSortIcons();
         }
 
         private void UpdateCreateButtonIcon()
@@ -84,9 +101,130 @@ namespace DigitalEducation
             }
         }
 
+        private void UpdateSearchAndSortIcons()
+        {
+            try
+            {
+                if (SortComboBox != null)
+                {
+                    var contentPresenter = FindVisualChild<ContentPresenter>(SortComboBox);
+                    if (contentPresenter != null)
+                    {
+                        var stackPanel = VisualTreeHelper.GetChild(contentPresenter, 0) as StackPanel;
+                        if (stackPanel != null && stackPanel.Children.Count > 0)
+                        {
+                            var icon = stackPanel.Children[0] as Image;
+                            if (icon != null && icon.Tag != null)
+                            {
+                                ThemeManager.UpdateImageSource(icon, icon.Tag.ToString());
+                            }
+                        }
+                    }
+
+                    foreach (var item in SortComboBox.Items)
+                    {
+                        if (SortComboBox.ItemContainerGenerator.ContainerFromItem(item) is ComboBoxItem container)
+                        {
+                            var stackPanel = VisualTreeHelper.GetChild(container, 0) as StackPanel;
+                            if (stackPanel != null && stackPanel.Children.Count > 0)
+                            {
+                                var icon = stackPanel.Children[0] as Image;
+                                if (icon != null && icon.Tag != null)
+                                {
+                                    ThemeManager.UpdateImageSource(icon, icon.Tag.ToString());
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (SearchTextBox != null && SearchTextBox.Parent != null)
+                {
+                    var border = SearchTextBox.Parent as Border;
+                    if (border != null)
+                    {
+                        var grid = VisualTreeHelper.GetChild(border, 0) as Grid;
+                        if (grid != null && grid.Children.Count > 0)
+                        {
+                            var searchIcon = grid.Children[0] as Image;
+                            if (searchIcon != null)
+                            {
+                                ThemeManager.UpdateImageSource(searchIcon, "Search");
+                            }
+
+                            if (grid.Children.Count > 2)
+                            {
+                                var clearButton = grid.Children[2] as Button;
+                                if (clearButton?.Content is Image clearIcon)
+                                {
+                                    ThemeManager.UpdateImageSource(clearIcon, "Close");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (NoSearchResultsBorder != null && NoSearchResultsBorder.Child is StackPanel noResultsStackPanel)
+                {
+                    if (noResultsStackPanel.Children.Count > 0 && noResultsStackPanel.Children[0] is Border iconBorder)
+                    {
+                        if (iconBorder.Child is Image noResultsIcon)
+                        {
+                            ThemeManager.UpdateImageSource(noResultsIcon, "Search");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при обновлении иконок поиска и сортировки: {ex.Message}");
+            }
+        }
+
+        private T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null) return null;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T foundChild)
+                {
+                    return foundChild;
+                }
+
+                var childOfChild = FindVisualChild<T>(child);
+                if (childOfChild != null)
+                {
+                    return childOfChild;
+                }
+            }
+
+            return null;
+        }
+
+        private void InitializeSearchAndSort()
+        {
+            try
+            {
+                SortComboBox.ItemsSource = _sortOptions;
+                SortComboBox.SelectedItem = _currentSortOption;
+
+                if (SearchTextBox != null)
+                {
+                    SearchTextBox.Tag = "Поиск уроков по названию...";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка инициализации поиска и сортировки: {ex.Message}");
+            }
+        }
+
         private void LoadCustomLessons()
         {
             _lessons.Clear();
+            _lessonFilePaths.Clear();
 
             if (!Directory.Exists(_customLessonsPath))
             {
@@ -113,6 +251,8 @@ namespace DigitalEducation
                             lesson.CourseId = "Custom";
                         }
 
+                        _lessonFilePaths[lesson.Id] = filePath;
+
                         _lessons.Add(lesson);
                     }
                 }
@@ -122,23 +262,120 @@ namespace DigitalEducation
                 }
             }
 
-            _lessons = _lessons.OrderByDescending(l =>
-                File.GetLastWriteTime(Path.Combine(_customLessonsPath, $"{l.Id}.json"))).ToList();
+            ApplySorting();
+        }
+
+        private void ApplySearch()
+        {
+            if (string.IsNullOrWhiteSpace(_currentSearchQuery))
+            {
+                _filteredLessons = new List<LessonData>(_lessons);
+            }
+            else
+            {
+                var query = _currentSearchQuery.ToLower();
+                _filteredLessons = _lessons
+                    .Where(lesson =>
+                        (!string.IsNullOrEmpty(lesson.Title) &&
+                         lesson.Title.ToLower().Contains(query)))
+                    .ToList();
+            }
+
+            ApplySorting();
+        }
+
+        private void ApplySorting()
+        {
+            var lessonsToSort = _filteredLessons.Any() ? _filteredLessons : _lessons;
+
+            switch (_currentSortOption)
+            {
+                case "По названию (А-Я)":
+                    lessonsToSort = lessonsToSort
+                        .OrderBy(l => l.Title ?? "")
+                        .ToList();
+                    break;
+
+                case "По названию (Я-А)":
+                    lessonsToSort = lessonsToSort
+                        .OrderByDescending(l => l.Title ?? "")
+                        .ToList();
+                    break;
+
+                case "По дате (сначала новые)":
+                    lessonsToSort = lessonsToSort
+                        .OrderByDescending(l => GetLessonLastModified(l.Id))
+                        .ToList();
+                    break;
+
+                case "По дате (сначала старые)":
+                    lessonsToSort = lessonsToSort
+                        .OrderBy(l => GetLessonLastModified(l.Id))
+                        .ToList();
+                    break;
+            }
+
+            if (_filteredLessons.Any())
+            {
+                _filteredLessons = lessonsToSort;
+            }
+            else
+            {
+                _lessons = lessonsToSort;
+            }
+        }
+
+        private DateTime GetLessonLastModified(string lessonId)
+        {
+            if (_lessonFilePaths.TryGetValue(lessonId, out string filePath) &&
+                File.Exists(filePath))
+            {
+                return File.GetLastWriteTime(filePath);
+            }
+
+            return DateTime.MinValue;
         }
 
         private void UpdateLessonsDisplay()
         {
             LessonsContainer.Children.Clear();
 
-            if (_lessons.Count == 0)
+            var lessonsToDisplay = _filteredLessons.Any() ? _filteredLessons : _lessons;
+            var hasSearchQuery = !string.IsNullOrWhiteSpace(_currentSearchQuery);
+
+            if (hasSearchQuery)
             {
-                EmptyStateBorder.Visibility = Visibility.Visible;
-                return;
+                if (lessonsToDisplay.Count > 0)
+                {
+                    SearchResultsText.Text = $"Найдено уроков: {lessonsToDisplay.Count}";
+                    SearchResultsText.Visibility = Visibility.Visible;
+                    NoSearchResultsBorder.Visibility = Visibility.Collapsed;
+                    EmptyStateBorder.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    SearchResultsText.Visibility = Visibility.Collapsed;
+                    NoSearchResultsBorder.Visibility = Visibility.Visible;
+                    EmptyStateBorder.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                SearchResultsText.Visibility = Visibility.Collapsed;
+                NoSearchResultsBorder.Visibility = Visibility.Collapsed;
+
+                if (lessonsToDisplay.Count == 0)
+                {
+                    EmptyStateBorder.Visibility = Visibility.Visible;
+                    return;
+                }
+                else
+                {
+                    EmptyStateBorder.Visibility = Visibility.Collapsed;
+                }
             }
 
-            EmptyStateBorder.Visibility = Visibility.Collapsed;
-
-            foreach (var lesson in _lessons)
+            foreach (var lesson in lessonsToDisplay)
             {
                 var lessonCard = CreateLessonCard(lesson);
                 LessonsContainer.Children.Add(lessonCard);
@@ -177,9 +414,12 @@ namespace DigitalEducation
                 SnapsToDevicePixels = true
             };
 
+            var lessonsList = _filteredLessons.Any() ? _filteredLessons : _lessons;
+            var lessonIndex = lessonsList.IndexOf(lesson) + 1;
+
             var numberText = new TextBlock
             {
-                Text = (_lessons.IndexOf(lesson) + 1).ToString(),
+                Text = lessonIndex.ToString(),
                 FontSize = 32,
                 FontWeight = FontWeights.Bold,
                 Foreground = Brushes.White,
@@ -204,9 +444,7 @@ namespace DigitalEducation
                 Margin = new Thickness(0, 0, 0, 8)
             };
 
-            string lessonFilePath = Path.Combine(_customLessonsPath, $"{lesson.Id}.json");
-            DateTime lastModified = File.Exists(lessonFilePath) ?
-                File.GetLastWriteTime(lessonFilePath) : DateTime.Now;
+            DateTime lastModified = GetLessonLastModified(lesson.Id);
 
             var dateText = new TextBlock
             {
@@ -396,6 +634,43 @@ namespace DigitalEducation
             return paletteColors[colorIndex];
         }
 
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _currentSearchQuery = SearchTextBox.Text.Trim();
+
+            ClearSearchButton.Visibility = string.IsNullOrEmpty(_currentSearchQuery)
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                ApplySearch();
+                UpdateLessonsDisplay();
+            }), System.Windows.Threading.DispatcherPriority.Background);
+        }
+
+        private void ClearSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            SearchTextBox.Text = "";
+            _currentSearchQuery = "";
+            ClearSearchButton.Visibility = Visibility.Collapsed;
+
+            ApplySearch();
+            UpdateLessonsDisplay();
+
+            SearchTextBox.Focus();
+        }
+
+        private void SortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (SortComboBox.SelectedItem != null)
+            {
+                _currentSortOption = SortComboBox.SelectedItem.ToString();
+                ApplySorting();
+                UpdateLessonsDisplay();
+            }
+        }
+
         private void CreateLessonButton_Click(object sender, RoutedEventArgs e)
         {
             if (Window.GetWindow(this) is MainWindow mainWindow)
@@ -448,7 +723,10 @@ namespace DigitalEducation
 
                     DeleteLessonImages(lesson.Id);
 
+                    _lessonFilePaths.Remove(lesson.Id);
+
                     LoadCustomLessons();
+                    ApplySearch();
                     UpdateLessonsDisplay();
 
                     DialogService.ShowSuccessDialog(
@@ -460,7 +738,7 @@ namespace DigitalEducation
             catch (Exception ex)
             {
                 DialogService.ShowErrorDialog(
-                    $"Ошибка при удалении урока: {ex.Message}",
+                    $"Ошибка при удаления урока: {ex.Message}",
                     Window.GetWindow(this)
                 );
             }
@@ -550,12 +828,9 @@ namespace DigitalEducation
 
                 if (result == true)
                 {
+                    LoadCustomLessons();
+                    ApplySearch();
                     UpdateLessonsDisplay();
-
-                    DialogService.ShowSuccessDialog(
-                        "Урок успешно завершен!",
-                        Window.GetWindow(this)
-                    );
                 }
             }
             catch (Exception ex)

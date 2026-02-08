@@ -1,14 +1,22 @@
 ﻿{
   "id": "842352755202602",
-  "title": "3",
+  "title": "Тест",
   "courseId": "Custom",
-  "completionMessage": "4",
+  "completionMessage": "Здравствуйте!",
   "steps": [
     {
       "title": "Шаг 1",
-      "description": "5",
-      "hint": "6",
-      "visionTarget": "842352755202602_001",
+      "description": "Тест",
+      "hint": "Тест",
+      "visionTarget": "folder_menu_item.png",
+      "visionConfidence": 0.84999999999999998,
+      "requiresVisionValidation": true
+    },
+    {
+      "title": "Шаг 2",
+      "description": "Тест",
+      "hint": "Тест",
+      "visionTarget": "right_click_menu2.png",
       "visionConfidence": 0.84999999999999998,
       "requiresVisionValidation": true
     }

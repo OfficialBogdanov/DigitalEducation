@@ -17,6 +17,7 @@ namespace DigitalEducation
 
         public static event EventHandler<string> ThemeChanged;
 
+
         static ThemeManager()
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -185,6 +186,7 @@ namespace DigitalEducation
             _iconMapping["Search"] = "Search";
             _iconMapping["Plus"] = "Plus";
             _iconMapping["Edit"] = "Edit";
+            _iconMapping["Calendar"] = "Calendar";
         }
 
         public static BitmapImage GetIcon(string iconName)

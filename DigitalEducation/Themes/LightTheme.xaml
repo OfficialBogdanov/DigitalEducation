@@ -31,7 +31,7 @@
     <Color x:Key="CategoryOfficeColor">#17A2B8</Color>
     <Color x:Key="CategoryInternetColor">#28A745</Color>
 
-    <Color x:Key="HoverColor">#F1F3F5</Color>
+    <Color x:Key="HoverColor">#E9ECEF</Color>
     <Color x:Key="PressedColor">#E9ECEF</Color>
     <Color x:Key="SelectedColor">#E3F2FD</Color>
     <Color x:Key="FocusColor">#0078D7</Color>
