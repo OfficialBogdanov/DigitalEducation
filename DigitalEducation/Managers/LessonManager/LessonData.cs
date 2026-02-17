@@ -1,19 +1,28 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DigitalEducation
 {
     public class LessonData
     {
+        [Required]
         public string Id { get; set; }
+
+        [Required]
         public string Title { get; set; }
+
         public string CourseId { get; set; }
-        public List<LessonStep> Steps { get; set; }
+
+        public List<LessonStep> Steps { get; set; } = new List<LessonStep>();
+
         public string CompletionMessage { get; set; }
     }
 
     public class LessonStep
     {
+        [Required]
         public string Title { get; set; }
+
         public string Description { get; set; }
         public string Hint { get; set; }
 

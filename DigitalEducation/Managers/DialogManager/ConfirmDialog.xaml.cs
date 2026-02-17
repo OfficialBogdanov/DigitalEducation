@@ -6,11 +6,16 @@ namespace DigitalEducation
 {
     public partial class ConfirmDialog : UserControl
     {
-        public event EventHandler<bool> DialogResultChanged;
+        private Action<bool?> _resultCallback;
 
         public ConfirmDialog()
         {
             InitializeComponent();
+        }
+
+        public void SetResultCallback(Action<bool?> callback)
+        {
+            _resultCallback = callback;
         }
 
         public string Title
@@ -45,12 +50,12 @@ namespace DigitalEducation
 
         private void OnConfirmClick(object sender, RoutedEventArgs e)
         {
-            DialogResultChanged?.Invoke(this, true);
+            _resultCallback?.Invoke(true);
         }
 
         private void OnCancelClick(object sender, RoutedEventArgs e)
         {
-            DialogResultChanged?.Invoke(this, false);
+            _resultCallback?.Invoke(false);
         }
     }
 }

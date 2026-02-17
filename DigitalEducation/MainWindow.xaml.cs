@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace DigitalEducation
 {
@@ -11,14 +11,14 @@ namespace DigitalEducation
     {
         private const int GWL_STYLE = -16;
         private const int WS_SYSMENU = 0x80000;
-        private const int WS_MAXIMIZEBOX = 0x10000;
-        private const int WS_MINIMIZEBOX = 0x20000;
 
         [DllImport("user32.dll")]
         private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll")]
         private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        private NavigationService _navigationService;
 
         public MainWindow()
         {
@@ -27,11 +27,14 @@ namespace DigitalEducation
 
             InitializeComponent();
 
+            _navigationService = new NavigationService(MainLayout);
+            _navigationService.CategoryAction += OnCategoryAction;
+            _navigationService.CourseAction += OnCourseAction;
+            _navigationService.SettingsAction += OnSettingsAction;
+
             Loaded += OnMainWindowLoaded;
             SourceInitialized += OnSourceInitialized;
         }
-
-
 
         private void OnSourceInitialized(object sender, EventArgs e)
         {
@@ -43,23 +46,18 @@ namespace DigitalEducation
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Maximized;
-
             SetupNavigationButtons();
-            LoadHomePage();
-            MainLayout.SetActiveNavigation("Home");
+            _navigationService.NavigateToHome();
         }
 
         private void SetupNavigationButtons()
         {
             if (MainLayout.FindName("btnHome") is Button btnHome)
                 btnHome.Click += OnNavigationButtonClick;
-
             if (MainLayout.FindName("btnCourses") is Button btnCourses)
                 btnCourses.Click += OnNavigationButtonClick;
-
             if (MainLayout.FindName("btnSettings") is Button btnSettings)
                 btnSettings.Click += OnNavigationButtonClick;
-
             if (MainLayout.FindName("btnCloseApp") is Button btnCloseApp)
                 btnCloseApp.Click += OnCloseAppButtonClick;
         }
@@ -68,23 +66,16 @@ namespace DigitalEducation
         {
             if (sender is Button clickedButton)
             {
-                string buttonName = clickedButton.Name;
-
-                if (MainLayout is MasterLayout layout)
-                {
-                    layout.HandleNavigationClick(clickedButton);
-                }
-
-                switch (buttonName)
+                switch (clickedButton.Name)
                 {
                     case "btnHome":
-                        LoadHomePage();
+                        _navigationService.NavigateToHome();
                         break;
                     case "btnCourses":
-                        LoadCoursesPage();
+                        _navigationService.NavigateToCourses();
                         break;
                     case "btnSettings":
-                        LoadSettingsPage();
+                        _navigationService.NavigateToSettings();
                         break;
                 }
             }
@@ -92,179 +83,81 @@ namespace DigitalEducation
 
         private void OnCloseAppButtonClick(object sender, RoutedEventArgs e)
         {
-            var result = DialogService.ShowConfirmDialog(
-                "Выход",
-                "Вы действительно хотите выйти из приложения?",
-                "Выход",
-                "Отмена",
-                this
-            );
-
-            if (result == true)
-            {
+            if (ConfirmExit())
                 Application.Current.Shutdown();
-            }
         }
 
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        protected override void OnClosing(CancelEventArgs e)
         {
-            base.OnClosing(e);
-
             e.Cancel = true;
+            if (ConfirmExit())
+                Application.Current.Shutdown();
+        }
 
-            var result = DialogService.ShowConfirmDialog(
+        private bool ConfirmExit()
+        {
+            return DialogService.ShowConfirmDialog(
                 "Выход",
                 "Вы действительно хотите выйти из приложения?",
                 "Выход",
                 "Отмена",
-                this
-            );
+                this) == true;
+        }
 
-            if (result == true)
+        private void OnCategoryAction(object sender, string categoryName)
+        {
+        }
+
+        private void OnCourseAction(object sender, string courseTag)
+        {
+        }
+
+        private void OnSettingsAction(object sender, SettingsActionEventArgs e)
+        {
+            if (e.Action == "ProgressReset")
             {
-                Application.Current.Shutdown();
-            }
-            else
-            {
-
-            }
-        }
-
-        private void LoadHomePage()
-        {
-            var homePage = new HomePage();
-            homePage.CategoryButtonClicked += OnCategoryButtonClicked;
-            MainLayout.Content = homePage;
-        }
-
-        private void LoadCoursesPage()
-        {
-            var coursesPage = new CoursesPage();
-            coursesPage.CourseButtonClicked += OnCourseButtonClicked;
-            MainLayout.Content = coursesPage;
-        }
-
-        private void LoadSettingsPage()
-        {
-            var settingsPage = new SettingsPage();
-            settingsPage.SettingsButtonClicked += OnSettingsButtonClicked;
-            MainLayout.Content = settingsPage;
-        }
-
-        private void LoadFilesLessonsPage()
-        {
-            var filesLessonsPage = new FilesLessonsPage();
-            MainLayout.Content = filesLessonsPage;
-        }
-
-
-        public void LoadCustomLessonsPage()
-        {
-            var customLessonsPage = new CustomLessonsPage();
-            MainLayout.Content = customLessonsPage;
-
-            if (MainLayout is MasterLayout layout)
-            {
-                layout.SetActiveNavigation("Courses");
-            }
-        }
-
-        private void OnSettingsButtonClicked(object sender, string action)
-        {
-            if (action == "ProgressReset")
-            {
-                var currentPage = MainLayout.Content;
-                if (currentPage is CoursesPage coursesPage)
+                if (_navigationService.CurrentPage is CoursesPage coursesPage)
                 {
                     coursesPage.RefreshProgress();
                 }
             }
-            else if (action.StartsWith("ThemeChanged:"))
+            else if (e.Action.StartsWith("ThemeChanged:"))
             {
-                ReloadCurrentPage();
-
-                if (MainLayout is MasterLayout layout)
-                {
-                    if (MainLayout.Content is HomePage)
-                        layout.SetActiveNavigation("Home");
-                    else if (MainLayout.Content is CoursesPage)
-                        layout.SetActiveNavigation("Courses");
-                    else if (MainLayout.Content is SettingsPage)
-                        layout.SetActiveNavigation("Settings");
-                }
-            }
-        }
-
-        private void OnCategoryButtonClicked(object sender, string categoryName)
-        {
-            if (categoryName == "Files")
-            {
-                LoadFilesLessonsPage();
-            }
-
-            if (categoryName == "Custom")
-            {
-                LoadCustomLessonsPage();
-            }
-        }
-
-        private void OnCourseButtonClicked(object sender, string courseTag)
-        {
-            if (courseTag == "OpenFilesLessons")
-            {
-                LoadFilesLessonsPage();
-            }
-            else if (courseTag == "Custom")
-            {
-                LoadCustomLessonsPage();
-            }
-        }
-
-        public void ReloadCurrentPage()
-        {
-            if (MainLayout.Content is HomePage)
-            {
-                LoadHomePage();
-            }
-            else if (MainLayout.Content is CoursesPage)
-            {
-                LoadCoursesPage();
-            }
-            else if (MainLayout.Content is SettingsPage)
-            {
-                LoadSettingsPage();
-            }
-            else if (MainLayout.Content is FilesLessonsPage)
-            {
-                LoadFilesLessonsPage();
-            }
-        }
-
-        private string GetCourseName(string tag)
-        {
-            switch (tag)
-            {
-                case "Files":
-                    return "Файлы и папки";
-                case "System":
-                    return "Операционная система";
-                case "Office":
-                    return "Офисные программы";
-                case "Internet":
-                    return "Интернет";
-                default:
-                    return "Неизвестный курс";
+                _navigationService.ReloadCurrentPage();
             }
         }
 
         public void UpdateLessonCompletion(string lessonId, bool isCompleted)
         {
-            if (MainLayout.Content is FilesLessonsPage filesPage)
+            if (_navigationService.CurrentPage is FilesLessonsPage filesPage)
             {
                 filesPage.UpdateLessonStatus(lessonId, isCompleted);
             }
+        }
 
-            Console.WriteLine($"Урок {lessonId} завершен: {isCompleted}");
+        public void LoadHomePage()
+        {
+            _navigationService?.NavigateToHome();
+        }
+
+        public void LoadCoursesPage()
+        {
+            _navigationService?.NavigateToCourses();
+        }
+
+        public void LoadSettingsPage()
+        {
+            _navigationService?.NavigateToSettings();
+        }
+
+        public void LoadFilesLessonsPage()
+        {
+            _navigationService?.NavigateToFilesLessons();
+        }
+
+        public void LoadCustomLessonsPage()
+        {
+            _navigationService?.NavigateToCustomLessons();
         }
     }
 }

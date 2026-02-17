@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace DigitalEducation
 {
-    public partial class HomePage : UserControl
+    public partial class HomePage : UserControl, IPage
     {
         public event EventHandler<string> CategoryButtonClicked;
 

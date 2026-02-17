@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace DigitalEducation
 {
-    public partial class FilesLessonsPage : UserControl
+    public partial class FilesLessonsPage : UserControl, IPage
     {
         public FilesLessonsPage()
         {

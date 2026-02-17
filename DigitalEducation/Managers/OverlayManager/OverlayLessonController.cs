@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace DigitalEducation
 {
@@ -16,29 +15,41 @@ namespace DigitalEducation
         private DateTime _lessonStartTime;
         private bool _isCompleted = false;
 
+        private readonly Func<string, LessonData> _lessonLoader;
+        private readonly Action<string, string, double> _progressSaver;
+        private readonly Func<string, string> _courseIdResolver;
+
         public event EventHandler StepChanged;
         public event EventHandler LessonCompleted;
 
-        public OverlayLessonController(string lessonId, OverlayWindow window)
+        public OverlayLessonController(
+            string lessonId,
+            OverlayWindow window,
+            Func<string, LessonData> lessonLoader,
+            Action<string, string, double> progressSaver,
+            Func<string, string> courseIdResolver)
         {
             _lessonId = lessonId;
             _window = window;
             _lessonTimer = new Stopwatch();
+            _lessonLoader = lessonLoader;
+            _progressSaver = progressSaver;
+            _courseIdResolver = courseIdResolver;
         }
 
         public bool Initialize()
         {
-            _currentLesson = LoadLessonFromAnySource(_lessonId);
+            _currentLesson = _lessonLoader(_lessonId);
             if (_currentLesson == null)
             {
-                ShowErrorMessage($"Урок '{_lessonId}' не найден");
+                _window.ShowError($"Урок '{_lessonId}' не найден");
                 return false;
             }
 
             _totalSteps = _currentLesson.Steps?.Count ?? 0;
             if (_totalSteps == 0)
             {
-                ShowErrorMessage("В уроке нет шагов");
+                _window.ShowError("В уроке нет шагов");
                 return false;
             }
 
@@ -120,12 +131,8 @@ namespace DigitalEducation
 
             if (!_currentLesson.CourseId.Equals("Custom", StringComparison.OrdinalIgnoreCase))
             {
-                string courseId = GetCourseIdFromLesson(_lessonId);
-                ProgressManager.SaveLessonCompletion(
-                    lessonId: _lessonId,
-                    courseId: courseId,
-                    timeSpentMinutes: minutesSpent
-                );
+                string courseId = _courseIdResolver(_lessonId);
+                _progressSaver(_lessonId, courseId, minutesSpent);
             }
 
             _isCompleted = true;
@@ -151,48 +158,6 @@ namespace DigitalEducation
             return step?.RequiresVisionValidation == true;
         }
 
-        private LessonData LoadLessonFromAnySource(string lessonId)
-        {
-            var lesson = LessonManager.GetLesson(lessonId);
-            if (lesson != null) return lesson;
-            return LoadCustomLesson(lessonId);
-        }
-
-        private LessonData LoadCustomLesson(string lessonId)
-        {
-            try
-            {
-                string projectRoot = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..");
-                string customLessonsPath = System.IO.Path.GetFullPath(
-                    System.IO.Path.Combine(projectRoot, "Lessons", "CustomLessons"));
-                string lessonFilePath = System.IO.Path.Combine(customLessonsPath, $"{lessonId}.json");
-
-                if (!System.IO.File.Exists(lessonFilePath)) return null;
-
-                string jsonContent = System.IO.File.ReadAllText(lessonFilePath, System.Text.Encoding.UTF8);
-                var lesson = System.Text.Json.JsonSerializer.Deserialize<LessonData>(jsonContent,
-                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (lesson != null && string.IsNullOrEmpty(lesson.CourseId))
-                    lesson.CourseId = "Custom";
-
-                return lesson;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private string GetCourseIdFromLesson(string lessonId)
-        {
-            if (lessonId.StartsWith("FilesLesson")) return "Files";
-            if (lessonId.StartsWith("OsLesson")) return "System";
-            if (lessonId.StartsWith("OfficeLesson")) return "Office";
-            if (lessonId.StartsWith("InternetLesson")) return "Internet";
-            return "Other";
-        }
-
         private void ShowCompletionMessage()
         {
             string title = "Урок завершен!";
@@ -201,14 +166,6 @@ namespace DigitalEducation
                 : "Поздравляем! Урок успешно завершен!";
 
             _window.ShowLessonCompletion(title, message);
-        }
-
-        private void ShowErrorMessage(string message)
-        {
-            _window.Dispatcher.Invoke(() =>
-            {
-                DialogService.ShowErrorDialog(message, Application.Current.MainWindow);
-            });
         }
     }
 }

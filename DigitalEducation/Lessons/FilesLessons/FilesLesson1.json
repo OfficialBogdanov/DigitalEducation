@@ -25,7 +25,11 @@
     {
       "title": "Шаг 5: Открытие контекстного меню",
       "description": "Щёлкните правой кнопкой мыши на рабочем столе",
-      "hint": "\uD83D\uDCA1 На вашем экране появится контексное меню различных десйтвий."
+      "hint": "\uD83D\uDCA1 На вашем экране появится контексное меню различных десйтвий.",
+      "visionTargetFolder": "ContextMenu",
+      "requiredMatches": 1,
+      "visionConfidence": 0.8,
+      "requiresVisionValidation": true
     },
     {
       "title": "Шаг 6: Выбор пункта 'Создать'",
@@ -33,7 +37,10 @@
       "hint": "\uD83D\uDCA1 Убедитесь, что курсор чётко указывает на 'Создать' перед тем, как откроется подменю.",
       "visionTarget": "create_menu",
       "visionConfidence": 0.85,
-      "requiresVisionValidation": true
+      "requiresVisionValidation": true,
+      "showHint": true,
+      "visionHint": "1",
+      "hintConfidence": 0.85
     },
     {
       "title": "Шаг 7: Выбор 'Папка' в подменю",

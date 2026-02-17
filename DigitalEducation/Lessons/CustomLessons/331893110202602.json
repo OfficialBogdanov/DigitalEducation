@@ -1,0 +1,13 @@
+﻿{
+  "id": "331893110202602",
+  "title": "привет",
+  "courseId": "Custom",
+  "completionMessage": "здравствуй",
+  "steps": [
+    {
+      "title": "Шаг 1",
+      "description": "123",
+      "hint": "123"
+    }
+  ]
+}

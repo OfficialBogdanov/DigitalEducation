@@ -6,9 +6,13 @@
         AllowsTransparency="True"
         Background="Transparent"
         Topmost="True"
-        Loaded="Window_Loaded"
-        MouseDown="Window_MouseDown"
-        SizeToContent="WidthAndHeight">
+        WindowState="Normal"
+        SizeToContent="Manual"
+        ShowInTaskbar="False"
+        Width="{Binding Source={x:Static SystemParameters.VirtualScreenWidth}}"
+        Height="{Binding Source={x:Static SystemParameters.VirtualScreenHeight}}"
+        Left="{Binding Source={x:Static SystemParameters.VirtualScreenLeft}}"
+        Top="{Binding Source={x:Static SystemParameters.VirtualScreenTop}}">
 
     <Grid>
         <Canvas x:Name="HintCanvas"

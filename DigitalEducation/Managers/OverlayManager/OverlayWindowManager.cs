@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows;
 
 namespace DigitalEducation
 {
-    public class OverlayWindowManager
+    public class WindowsApiWindowManager : IWindowManager
     {
         [DllImport("user32.dll")]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);

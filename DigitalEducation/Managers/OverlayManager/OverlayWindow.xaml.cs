@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DigitalEducation.ComputerVision.Services;
+using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,17 +12,57 @@ namespace DigitalEducation
     {
         private OverlayLessonController _lessonController;
         private OverlayVisionController _visionController;
-        private OverlayWindowManager _windowManager;
+        private IWindowManager _windowManager;
         private bool _isCompleted = false;
+        private VisionService _visionService;
 
+        private readonly ILessonLoader _lessonLoader;
+        private readonly ICourseIdResolver _courseIdResolver;
+        private readonly IProgressSaver _progressSaver;
+        private readonly IErrorPresenter _errorPresenter;
+        private readonly IHintRenderer _hintRenderer;
+        private readonly IVisionServiceFactory _visionServiceFactory;
 
-        public OverlayWindow(string lessonId)
+        public OverlayWindow(string lessonId) : this(
+            lessonId,
+            new LessonLoader(),
+            new CourseIdResolver(),
+            new ProgressSaver(),
+            new ErrorPresenter(Application.Current?.MainWindow),
+            new VisionServiceFactory(),
+            new WindowsApiWindowManager())
+        {
+        }
+
+        public OverlayWindow(
+            string lessonId,
+            ILessonLoader lessonLoader,
+            ICourseIdResolver courseIdResolver,
+            IProgressSaver progressSaver,
+            IErrorPresenter errorPresenter,
+            IVisionServiceFactory visionServiceFactory,
+            IWindowManager windowManager)
         {
             InitializeComponent();
 
-            _lessonController = new OverlayLessonController(lessonId, this);
-            _visionController = new OverlayVisionController(_lessonController, this);
-            _windowManager = new OverlayWindowManager();
+            _lessonLoader = lessonLoader;
+            _courseIdResolver = courseIdResolver;
+            _progressSaver = progressSaver;
+            _errorPresenter = errorPresenter;
+            _visionServiceFactory = visionServiceFactory;
+            _windowManager = windowManager;
+
+            _visionService = _visionServiceFactory.Create();
+            _hintRenderer = new HintRenderer(_visionService, HintCanvas, Dispatcher);
+
+            _lessonController = new OverlayLessonController(
+                lessonId,
+                this,
+                id => _lessonLoader.LoadLesson(id),
+                (lid, cid, minutes) => _progressSaver.Save(lid, cid, minutes),
+                id => _courseIdResolver.GetCourseId(id));
+
+            _visionController = new OverlayVisionController(_lessonController, this, _visionService);
 
             if (!_lessonController.Initialize())
             {
@@ -47,14 +89,11 @@ namespace DigitalEducation
 
             this.Loaded += (s, e) =>
             {
-                // Находим кнопку закрытия
                 if (BtnClose != null)
                 {
-                    // Ищем Image внутри кнопки
                     var image = FindVisualChild<Image>(BtnClose);
                     if (image != null)
                     {
-                        // Вручную загружаем иконку
                         var iconSource = ThemeManager.GetIcon("Close");
                         if (iconSource != null)
                         {
@@ -90,8 +129,6 @@ namespace DigitalEducation
                 this.Topmost = true;
                 this.Focus();
                 var screen = SystemParameters.WorkArea;
-                this.Left = screen.Width - this.ActualWidth - 40;
-                this.Top = 40;
                 _lessonController.StartLessonTimer();
             };
 
@@ -108,8 +145,6 @@ namespace DigitalEducation
             {
                 this.Topmost = true;
                 var screen = SystemParameters.WorkArea;
-                this.Left = screen.Width - this.ActualWidth - 40;
-                this.Top = 40;
                 this.Focus();
                 _lessonController.UpdateProgressBar();
                 _lessonController.StartLessonTimer();
@@ -320,5 +355,20 @@ namespace DigitalEducation
         }
 
         public Canvas GetHintCanvas() => HintCanvas;
+
+        public void ShowError(string message)
+        {
+            _errorPresenter.ShowError(message);
+        }
+
+        public async Task ShowHint(string hintTemplateName, double confidence)
+        {
+            await _hintRenderer.ShowHint(hintTemplateName, confidence);
+        }
+
+        public async Task ClearHintCanvas()
+        {
+            await _hintRenderer.ClearHint();
+        }
     }
 }

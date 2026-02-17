@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 
 namespace DigitalEducation
 {
-    public partial class CustomLessonsPage : UserControl
+    public partial class CustomLessonsPage : UserControl, IPage
     {
         private readonly string _customLessonsPath;
         private List<LessonData> _lessons = new List<LessonData>();

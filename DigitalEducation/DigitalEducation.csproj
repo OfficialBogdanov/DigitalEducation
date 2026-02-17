@@ -109,6 +109,10 @@
     <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Common, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -166,16 +170,33 @@
     <Compile Include="ComputerVision\TemplateInfo.cs" />
     <Compile Include="ComputerVision\TemplateMatcher.cs" />
     <Compile Include="ComputerVision\VisionService.cs" />
-    <Compile Include="ConfirmDialog.xaml.cs">
+    <Compile Include="Managers\DialogManager\ConfirmDialog.xaml.cs">
       <DependentUpon>ConfirmDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ManagersServices\DialogService.cs" />
-    <Compile Include="ManagersServices\LessonData.cs" />
-    <Compile Include="ManagersServices\LessonManager.cs" />
-    <Compile Include="ManagersServices\ThemeManager.cs" />
-    <Compile Include="Overlay\OverlayLessonController.cs" />
-    <Compile Include="Overlay\OverlayVisionController.cs" />
-    <Compile Include="Overlay\OverlayWindowManager.cs" />
+    <Compile Include="Managers\DialogManager\DialogAbstractions.cs" />
+    <Compile Include="Managers\DialogManager\DialogService.cs" />
+    <Compile Include="Managers\LessonManager\FileSystemLessonRepository.cs" />
+    <Compile Include="Managers\LessonManager\ILessonRepository.cs" />
+    <Compile Include="Managers\LessonManager\LessonData.cs" />
+    <Compile Include="Managers\LessonManager\LessonManager.cs" />
+    <Compile Include="Managers\NavigationManager\NavigationAbstractions.cs" />
+    <Compile Include="Managers\NavigationManager\NavigationService.cs" />
+    <Compile Include="Managers\OverlayManager\CourseIdResolver.cs" />
+    <Compile Include="Managers\OverlayManager\ErrorPresenter.cs" />
+    <Compile Include="Managers\OverlayManager\HintRenderer.cs" />
+    <Compile Include="Managers\OverlayManager\IWindowManager.cs" />
+    <Compile Include="Managers\OverlayManager\LessonLoader.cs" />
+    <Compile Include="Managers\OverlayManager\ProgressSaver.cs" />
+    <Compile Include="Managers\OverlayManager\VisionServiceFactory.cs" />
+    <Compile Include="Managers\ProgressManager\DefaultStatisticsCalculator.cs" />
+    <Compile Include="Managers\ProgressManager\FileSystemProgressRepository.cs" />
+    <Compile Include="Managers\ProgressManager\IProgressRepository.cs" />
+    <Compile Include="Managers\ProgressManager\IStatisticsCalculator.cs" />
+    <Compile Include="Managers\ThemeManager\ThemeAbstractions.cs" />
+    <Compile Include="Managers\ThemeManager\ThemeManager.cs" />
+    <Compile Include="Managers\OverlayManager\OverlayLessonController.cs" />
+    <Compile Include="Managers\OverlayManager\OverlayVisionController.cs" />
+    <Compile Include="Managers\OverlayManager\OverlayWindowManager.cs" />
     <Compile Include="Pages\CoursesPage.xaml.cs">
       <DependentUpon>CoursesPage.xaml</DependentUpon>
     </Compile>
@@ -197,9 +218,9 @@
     <Compile Include="Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ManagersServices\ProgressManager.cs" />
-    <Compile Include="ManagersServices\UserProgress.cs" />
-    <Page Include="ConfirmDialog.xaml">
+    <Compile Include="Managers\ProgressManager\ProgressManager.cs" />
+    <Compile Include="Managers\ProgressManager\UserProgress.cs" />
+    <Page Include="Managers\DialogManager\ConfirmDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -231,7 +252,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Overlay\OverlayWindow.xaml">
+    <Page Include="Managers\OverlayManager\OverlayWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -257,7 +278,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Overlay\OverlayWindow.xaml.cs">
+    <Compile Include="Managers\OverlayManager\OverlayWindow.xaml.cs">
       <DependentUpon>OverlayWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">

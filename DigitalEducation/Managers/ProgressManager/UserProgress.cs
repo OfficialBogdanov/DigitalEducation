@@ -7,7 +7,6 @@ namespace DigitalEducation
     {
         public DateTime LastUpdated { get; set; }
         public UserStatistics Statistics { get; set; } = new UserStatistics();
-
         public List<CompletedLesson> CompletedLessons { get; set; } = new List<CompletedLesson>();
         public Dictionary<string, CourseProgress> CourseProgress { get; set; } = new Dictionary<string, CourseProgress>();
     }
@@ -18,7 +17,6 @@ namespace DigitalEducation
         public string CourseId { get; set; }
         public DateTime CompletionDate { get; set; }
         public double TimeSpentMinutes { get; set; }
-        public string Status { get; set; } = "completed";
     }
 
     public class UserStatistics

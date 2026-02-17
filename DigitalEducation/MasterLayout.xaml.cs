@@ -15,41 +15,24 @@ namespace DigitalEducation
             set { SetValue(ContentProperty, value); }
         }
 
-        public void SetActiveNavigation(string pageName)
-        {
-            ResetAllNavigationButtons();
-
-            var activeStyle = (Style)FindResource("ActiveNavigationButtonStyle");
-
-            switch (pageName)
-            {
-                case "Home":
-                    if (btnHome != null) btnHome.Style = activeStyle;
-                    break;
-                case "Courses":
-                    if (btnCourses != null) btnCourses.Style = activeStyle;
-                    break;
-                case "Settings":
-                    if (btnSettings != null) btnSettings.Style = activeStyle;
-                    break;
-                case "CloseApp":
-                    break;
-            }
-        }
+        private Style _defaultNavigationStyle;
+        private Style _activeNavigationStyle;
 
         public MasterLayout()
         {
             InitializeComponent();
+
+            _defaultNavigationStyle = (Style)FindResource("NavigationButtonStyle");
+            _activeNavigationStyle = (Style)FindResource("ActiveNavigationButtonStyle");
+
             Loaded += OnMasterLayoutLoaded;
             Unloaded += OnMasterLayoutUnloaded;
         }
 
         private void OnMasterLayoutLoaded(object sender, RoutedEventArgs e)
         {
-            ThemeManager.ThemeChanged += OnThemeChanged;
             ThemeManager.UpdateAllIconsInContainer(this);
-            UpdateButtonStyles();
-            ForceVisualRefresh();
+            ThemeManager.ThemeChanged += OnThemeChanged;
             Loaded -= OnMasterLayoutLoaded;
         }
 
@@ -65,86 +48,34 @@ namespace DigitalEducation
             layout.ContentArea.Content = e.NewValue;
         }
 
-        public void HandleNavigationClick(Button clickedButton)
+        public void SetActiveNavigation(string pageName)
         {
-            if (clickedButton == null) return;
-
-            if (clickedButton.Name == "btnCloseApp")
-                return;
-
             ResetAllNavigationButtons();
-            clickedButton.Style = (Style)FindResource("ActiveNavigationButtonStyle");
+
+            switch (pageName)
+            {
+                case "Home":
+                    if (btnHome != null) btnHome.Style = _activeNavigationStyle;
+                    break;
+                case "Courses":
+                    if (btnCourses != null) btnCourses.Style = _activeNavigationStyle;
+                    break;
+                case "Settings":
+                    if (btnSettings != null) btnSettings.Style = _activeNavigationStyle;
+                    break;
+            }
         }
 
         private void ResetAllNavigationButtons()
         {
-            var defaultStyle = (Style)FindResource("NavigationButtonStyle");
-
-            if (btnHome != null) btnHome.Style = defaultStyle;
-            if (btnCourses != null) btnCourses.Style = defaultStyle;
-            if (btnSettings != null) btnSettings.Style = defaultStyle;
+            if (btnHome != null) btnHome.Style = _defaultNavigationStyle;
+            if (btnCourses != null) btnCourses.Style = _defaultNavigationStyle;
+            if (btnSettings != null) btnSettings.Style = _defaultNavigationStyle;
         }
 
         private void OnThemeChanged(object sender, string themeName)
         {
             ThemeManager.UpdateAllIconsInContainer(this);
-            UpdateButtonStyles();
-            ForceVisualRefresh();
-        }
-
-        private void UpdateButtonStyles()
-        {
-            Dispatcher.InvokeAsync(() =>
-            {
-                var defaultStyle = (Style)FindResource("NavigationButtonStyle");
-
-                if (btnHome != null)
-                {
-                    var currentStyle = btnHome.Style;
-                    btnHome.Style = null;
-                    btnHome.Style = currentStyle ?? defaultStyle;
-                }
-
-                if (btnCourses != null)
-                {
-                    var currentStyle = btnCourses.Style;
-                    btnCourses.Style = null;
-                    btnCourses.Style = currentStyle ?? defaultStyle;
-                }
-
-                if (btnSettings != null)
-                {
-                    var currentStyle = btnSettings.Style;
-                    btnSettings.Style = null;
-                    btnSettings.Style = currentStyle ?? defaultStyle;
-                }
-
-                if (btnCloseApp != null)
-                {
-                    var currentStyle = btnCloseApp.Style;
-                    btnCloseApp.Style = null;
-                    btnCloseApp.Style = currentStyle ?? defaultStyle;
-                }
-            }, System.Windows.Threading.DispatcherPriority.Render);
-        }
-
-        private void ForceVisualRefresh()
-        {
-            Dispatcher.InvokeAsync(() =>
-            {
-                InvalidateVisual();
-                InvalidateMeasure();
-                InvalidateArrange();
-
-                UpdateLayout();
-
-                var app = Application.Current;
-                if (app != null)
-                {
-                    Resources = null;
-                    Resources = app.Resources;
-                }
-            }, System.Windows.Threading.DispatcherPriority.Render);
         }
     }
 }
