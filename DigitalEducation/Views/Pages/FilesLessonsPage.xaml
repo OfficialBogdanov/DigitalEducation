@@ -1,0 +1,598 @@
+﻿ <UserControl x:Class="DigitalEducation.FilesLessonsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent"
+             UseLayoutRounding="True">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="40,20">
+        <StackPanel UseLayoutRounding="True">
+            <Border Style="{DynamicResource CardStyle}"
+                    Margin="0,0,0,32"
+                    UseLayoutRounding="True"
+                    SnapsToDevicePixels="True">
+                <Grid UseLayoutRounding="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                            Width="80"
+                            Height="80"
+                            Background="{DynamicResource PrimaryBrush}"
+                            CornerRadius="16"
+                            Margin="0,0,20,0"
+                            UseLayoutRounding="True"
+                            SnapsToDevicePixels="True">
+                        <Image Source="/Assets/Icons/White/Folder.png"
+                               Width="32"
+                               Height="32"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                        <TextBlock Text="Файлы и папки"
+                                   FontSize="20"
+                                   Foreground="{DynamicResource PrimaryBrush}"
+                                   FontWeight="Medium"
+                                   Margin="0,0,0,8"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"/>
+
+                        <TextBlock Text="Научитесь работать с файловой системой компьютера, организовывать документы и эффективно управлять данными."
+                                   Style="{DynamicResource BodyTextStyle}"
+                                   Margin="0,0,0,12"/>
+
+                        <Grid Margin="0,0,0,16" UseLayoutRounding="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Прогресс курса" Style="{DynamicResource BodyTextStyle}"/>
+                            <TextBlock x:Name="CourseProgressText" Grid.Column="1" Text="1/5 уроков" Foreground="{DynamicResource SuccessBrush}" TextOptions.TextFormattingMode="Display"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <TextBlock Text="Доступные уроки" 
+           Style="{DynamicResource SubtitleTextStyle}"
+           TextOptions.TextFormattingMode="Display"/>
+
+            <TextBlock Text="Выберите интересующий вас урок"
+           Style="{DynamicResource BodyTextStyle}"
+           Margin="0,0,0,24"/>
+
+            <Border Style="{DynamicResource CardStyle}"
+                    Margin="0,0,0,24"
+                    UseLayoutRounding="True"
+                    SnapsToDevicePixels="True">
+                <Grid UseLayoutRounding="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border x:Name="Lesson1Number" Grid.Column="0" 
+                            Width="80" 
+                            Height="80"
+                            CornerRadius="16"
+                            Background="{DynamicResource PrimaryBrush}"
+                            Margin="0,0,24,0"
+                            UseLayoutRounding="True"
+                            SnapsToDevicePixels="True">
+                        <TextBlock Text="1"
+                                   FontSize="32"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                        <TextBlock Text="Работа с папками"
+                                   FontSize="16"
+                                   FontWeight="Medium"
+                                   Foreground="{DynamicResource PrimaryBrush}"
+                                   Margin="0,0,0,8"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"/>
+
+                        <TextBlock Text="Знакомство с папками. Создание и наименование папок в Windows"
+                                   Style="{DynamicResource BodyTextStyle}"
+                                   Margin="0,0,0,12"/>
+
+                        <Grid Margin="0,0,0,16" UseLayoutRounding="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Статус урока" Style="{DynamicResource BodyTextStyle}"/>
+                            <TextBlock x:Name="Lesson1Status" Grid.Column="1" Text="Не пройден" Style="{DynamicResource BodyTextStyle}"/>
+                        </Grid>
+
+                        <WrapPanel UseLayoutRounding="True">
+                            <Border Background="{DynamicResource SurfaceBrush}"
+                                    CornerRadius="8"
+                                    Padding="12,8"
+                                    Margin="0,0,12,8"
+                                    BorderBrush="{DynamicResource PrimarySoftBrush}"
+                                    BorderThickness="1"
+                                    UseLayoutRounding="True"
+                                    SnapsToDevicePixels="True">
+                                <TextBlock Text="2-4 минуты" 
+                                           Foreground="{DynamicResource PrimaryDarkBrush}"
+                                           FontWeight="Medium"
+                                           TextOptions.TextFormattingMode="Display"/>
+                            </Border>
+                            <Border Background="{DynamicResource SurfaceBrush}"
+                                    CornerRadius="8"
+                                    Padding="12,8"
+                                    Margin="0,0,12,8"
+                                    BorderBrush="{DynamicResource PrimarySoftBrush}"
+                                    BorderThickness="1"
+                                    UseLayoutRounding="True"
+                                    SnapsToDevicePixels="True">
+                                <TextBlock Text="8 практических шагов" 
+                                           Foreground="{DynamicResource PrimaryDarkBrush}"
+                                           FontWeight="Medium"
+                                           TextOptions.TextFormattingMode="Display"/>
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <Button Grid.Column="2"
+                            Style="{DynamicResource NavigationButtonStyle}"
+                            Height="80"
+                            VerticalAlignment="Center"
+                            Padding="24,0"
+                            Margin="24,0,0,0"
+                            Tag="FilesLesson1"
+                            UseLayoutRounding="True">
+                        <StackPanel Orientation="Horizontal" UseLayoutRounding="True">
+                            <Image x:Name="Lesson1Icon"
+                                   Tag="Right"
+                                   Width="24"
+                                   Height="24"
+                                   Margin="0,0,8,0"
+                                   VerticalAlignment="Center"/>
+                            <TextBlock x:Name="Lesson1ButtonText" 
+                                       Text="Начать" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       TextOptions.TextFormattingMode="Display"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Border Style="{DynamicResource CardStyle}"
+                    Margin="0,0,0,24"
+                    UseLayoutRounding="True"
+                    SnapsToDevicePixels="True">
+                <Grid UseLayoutRounding="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border x:Name="Lesson2Number" Grid.Column="0" 
+                            Width="80" 
+                            Height="80"
+                            CornerRadius="16"
+                            Background="{DynamicResource PrimaryBrush}"
+                            Margin="0,0,24,0"
+                            UseLayoutRounding="True"
+                            SnapsToDevicePixels="True">
+                        <TextBlock Text="2"
+                                   FontSize="32"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                        <TextBlock Text="Корзина и восстановление"
+                                   FontSize="16"
+                                   FontWeight="Medium"
+                                   Foreground="{DynamicResource PrimaryBrush}"
+                                   Margin="0,0,0,8"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"/>
+
+                        <TextBlock Text="Работа с корзиной Windows, удаление и восстановление файлов"
+                                   Style="{DynamicResource BodyTextStyle}"
+                                   Margin="0,0,0,12"/>
+
+                        <Grid Margin="0,0,0,16" UseLayoutRounding="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Статус урока" Style="{DynamicResource BodyTextStyle}"/>
+                            <TextBlock x:Name="Lesson2Status" Grid.Column="1" Text="Не пройден" Style="{DynamicResource BodyTextStyle}"/>
+                        </Grid>
+
+                        <WrapPanel UseLayoutRounding="True">
+                            <Border Background="{DynamicResource SurfaceBrush}"
+                                    CornerRadius="8"
+                                    Padding="12,8"
+                                    Margin="0,0,12,8"
+                                    BorderBrush="{DynamicResource PrimarySoftBrush}"
+                                    BorderThickness="1"
+                                    UseLayoutRounding="True"
+                                    SnapsToDevicePixels="True">
+                                <TextBlock Text="5-10 минут" 
+                                           Foreground="{DynamicResource PrimaryDarkBrush}"
+                                           FontWeight="Medium"
+                                           TextOptions.TextFormattingMode="Display"/>
+                            </Border>
+                            <Border Background="{DynamicResource SurfaceBrush}"
+                                    CornerRadius="8"
+                                    Padding="12,8"
+                                    Margin="0,0,12,8"
+                                    BorderBrush="{DynamicResource PrimarySoftBrush}"
+                                    BorderThickness="1"
+                                    UseLayoutRounding="True"
+                                    SnapsToDevicePixels="True">
+                                <TextBlock Text="17 практических шагов" 
+                                           Foreground="{DynamicResource PrimaryDarkBrush}"
+                                           FontWeight="Medium"
+                                           TextOptions.TextFormattingMode="Display"/>
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <Button Grid.Column="2"
+                            Style="{DynamicResource NavigationButtonStyle}"
+                            Height="80"
+                            VerticalAlignment="Center"
+                            Padding="24,0"
+                            Margin="24,0,0,0"
+                            Tag="FilesLesson2"
+                            UseLayoutRounding="True">
+                        <StackPanel Orientation="Horizontal" UseLayoutRounding="True">
+                            <Image x:Name="Lesson2Icon"
+                                   Tag="Right"
+                                   Width="24"
+                                   Height="24"
+                                   Margin="0,0,8,0"
+                                   VerticalAlignment="Center"/>
+                            <TextBlock x:Name="Lesson2ButtonText" 
+                                       Text="Начать" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       TextOptions.TextFormattingMode="Display"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Border Style="{DynamicResource CardStyle}"
+                    Margin="0,0,0,24"
+                    UseLayoutRounding="True"
+                    SnapsToDevicePixels="True">
+                <Grid UseLayoutRounding="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border x:Name="Lesson3Number" Grid.Column="0" 
+                            Width="80" 
+                            Height="80"
+                            CornerRadius="16"
+                            Background="{DynamicResource PrimaryBrush}"
+                            Margin="0,0,24,0"
+                            UseLayoutRounding="True"
+                            SnapsToDevicePixels="True">
+                        <TextBlock Text="3"
+                                   FontSize="32"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                        <TextBlock Text="Текстовый файл"
+                                   FontSize="16"
+                                   FontWeight="Medium"
+                                   Foreground="{DynamicResource PrimaryBrush}"
+                                   Margin="0,0,0,8"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"/>
+
+                        <TextBlock Text="Работа с текстовым файлом в Windows"
+                                   Style="{DynamicResource BodyTextStyle}"
+                                   Margin="0,0,0,12"/>
+
+                        <Grid Margin="0,0,0,16" UseLayoutRounding="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Статус урока" Style="{DynamicResource BodyTextStyle}"/>
+                            <TextBlock x:Name="Lesson3Status" Grid.Column="1" Text="Не пройден" Style="{DynamicResource BodyTextStyle}"/>
+                        </Grid>
+
+                        <WrapPanel UseLayoutRounding="True">
+                            <Border Background="{DynamicResource SurfaceBrush}"
+                                    CornerRadius="8"
+                                    Padding="12,8"
+                                    Margin="0,0,12,8"
+                                    BorderBrush="{DynamicResource PrimarySoftBrush}"
+                                    BorderThickness="1"
+                                    UseLayoutRounding="True"
+                                    SnapsToDevicePixels="True">
+                                <TextBlock Text="5-15 минут" 
+                                           Foreground="{DynamicResource PrimaryDarkBrush}"
+                                           FontWeight="Medium"
+                                           TextOptions.TextFormattingMode="Display"/>
+                            </Border>
+                            <Border Background="{DynamicResource SurfaceBrush}"
+                                    CornerRadius="8"
+                                    Padding="12,8"
+                                    Margin="0,0,12,8"
+                                    BorderBrush="{DynamicResource PrimarySoftBrush}"
+                                    BorderThickness="1"
+                                    UseLayoutRounding="True"
+                                    SnapsToDevicePixels="True">
+                                <TextBlock Text="13 практических шагов" 
+                                           Foreground="{DynamicResource PrimaryDarkBrush}"
+                                           FontWeight="Medium"
+                                           TextOptions.TextFormattingMode="Display"/>
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <Button Grid.Column="2"
+                            Style="{DynamicResource NavigationButtonStyle}"
+                            Height="80"
+                            VerticalAlignment="Center"
+                            Padding="24,0"
+                            Margin="24,0,0,0"
+                            Tag="FilesLesson3"
+                            UseLayoutRounding="True">
+                        <StackPanel Orientation="Horizontal" UseLayoutRounding="True">
+                            <Image x:Name="Lesson3Icon"
+                                   Tag="Right"
+                                   Width="24"
+                                   Height="24"
+                                   Margin="0,0,8,0"
+                                   VerticalAlignment="Center"/>
+                            <TextBlock x:Name="Lesson3ButtonText" 
+                                       Text="Начать" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       TextOptions.TextFormattingMode="Display"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Border Style="{DynamicResource CardStyle}"
+                    Margin="0,0,0,24"
+                    UseLayoutRounding="True"
+                    SnapsToDevicePixels="True">
+                <Grid UseLayoutRounding="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border x:Name="Lesson4Number" Grid.Column="0" 
+                            Width="80" 
+                            Height="80"
+                            CornerRadius="16"
+                            Background="{DynamicResource PrimaryBrush}"
+                            Margin="0,0,24,0"
+                            UseLayoutRounding="True"
+                            SnapsToDevicePixels="True">
+                        <TextBlock Text="4"
+                                   FontSize="32"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                        <TextBlock Text="Проводник Windows"
+                                   FontSize="16"
+                                   FontWeight="Medium"
+                                   Foreground="{DynamicResource PrimaryBrush}"
+                                   Margin="0,0,0,8"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"/>
+
+                        <TextBlock Text="Основные элементы и навигация"
+                                   Style="{DynamicResource BodyTextStyle}"
+                                   Margin="0,0,0,12"/>
+
+                        <Grid Margin="0,0,0,16" UseLayoutRounding="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Статус урока" Style="{DynamicResource BodyTextStyle}"/>
+                            <TextBlock x:Name="Lesson4Status" Grid.Column="1" Text="Не пройден" Style="{DynamicResource BodyTextStyle}"/>
+                        </Grid>
+
+                        <WrapPanel UseLayoutRounding="True">
+                            <Border Background="{DynamicResource SurfaceBrush}"
+                                    CornerRadius="8"
+                                    Padding="12,8"
+                                    Margin="0,0,12,8"
+                                    BorderBrush="{DynamicResource PrimarySoftBrush}"
+                                    BorderThickness="1"
+                                    UseLayoutRounding="True"
+                                    SnapsToDevicePixels="True">
+                                <TextBlock Text="5-10 минут" 
+                                           Foreground="{DynamicResource PrimaryDarkBrush}"
+                                           FontWeight="Medium"
+                                           TextOptions.TextFormattingMode="Display"/>
+                            </Border>
+                            <Border Background="{DynamicResource SurfaceBrush}"
+                                    CornerRadius="8"
+                                    Padding="12,8"
+                                    Margin="0,0,12,8"
+                                    BorderBrush="{DynamicResource PrimarySoftBrush}"
+                                    BorderThickness="1"
+                                    UseLayoutRounding="True"
+                                    SnapsToDevicePixels="True">
+                                <TextBlock Text="15 практических шагов" 
+                                           Foreground="{DynamicResource PrimaryDarkBrush}"
+                                           FontWeight="Medium"
+                                           TextOptions.TextFormattingMode="Display"/>
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <Button Grid.Column="2"
+                            Style="{DynamicResource NavigationButtonStyle}"
+                            Height="80"
+                            VerticalAlignment="Center"
+                            Padding="24,0"
+                            Margin="24,0,0,0"
+                            Tag="FilesLesson4"
+                            UseLayoutRounding="True">
+                        <StackPanel Orientation="Horizontal" UseLayoutRounding="True">
+                            <Image x:Name="Lesson4Icon"
+                                   Tag="Right"
+                                   Width="24"
+                                   Height="24"
+                                   Margin="0,0,8,0"
+                                   VerticalAlignment="Center"/>
+                            <TextBlock x:Name="Lesson4ButtonText" 
+                                       Text="Начать" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       TextOptions.TextFormattingMode="Display"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Border Style="{DynamicResource CardStyle}"
+                    UseLayoutRounding="True"
+                    SnapsToDevicePixels="True">
+                <Grid UseLayoutRounding="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border x:Name="Lesson5Number" Grid.Column="0" 
+                            Width="80" 
+                            Height="80"
+                            CornerRadius="16"
+                            Background="{DynamicResource PrimaryBrush}"
+                            Margin="0,0,24,0"
+                            UseLayoutRounding="True"
+                            SnapsToDevicePixels="True">
+                        <TextBlock Text="5"
+                                   FontSize="32"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                        <TextBlock Text="Копирование и перемещение файлов"
+                                   FontSize="16"
+                                   FontWeight="Medium"
+                                   Foreground="{DynamicResource PrimaryBrush}"
+                                   Margin="0,0,0,8"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"/>
+
+                        <TextBlock Text="Различные способы копирования и перемещения файлов между папками"
+                                   Style="{DynamicResource BodyTextStyle}"
+                                   Margin="0,0,0,12"/>
+
+                        <Grid Margin="0,0,0,16" UseLayoutRounding="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Статус урока" Style="{DynamicResource BodyTextStyle}"/>
+                            <TextBlock x:Name="Lesson5Status" Grid.Column="1" Text="Не пройден" Style="{DynamicResource BodyTextStyle}"/>
+                        </Grid>
+
+                        <WrapPanel UseLayoutRounding="True">
+                            <Border Background="{DynamicResource SurfaceBrush}"
+                                    CornerRadius="8"
+                                    Padding="12,8"
+                                    Margin="0,0,12,8"
+                                    BorderBrush="{DynamicResource PrimarySoftBrush}"
+                                    BorderThickness="1"
+                                    UseLayoutRounding="True"
+                                    SnapsToDevicePixels="True">
+                                <TextBlock Text="10-15 минут" 
+                                           Foreground="{DynamicResource PrimaryDarkBrush}"
+                                           FontWeight="Medium"
+                                           TextOptions.TextFormattingMode="Display"/>
+                            </Border>
+                            <Border Background="{DynamicResource SurfaceBrush}"
+                                    CornerRadius="8"
+                                    Padding="12,8"
+                                    Margin="0,0,12,8"
+                                    BorderBrush="{DynamicResource PrimarySoftBrush}"
+                                    BorderThickness="1"
+                                    UseLayoutRounding="True"
+                                    SnapsToDevicePixels="True">
+                                <TextBlock Text="21 практических шагов" 
+                                           Foreground="{DynamicResource PrimaryDarkBrush}"
+                                           FontWeight="Medium"
+                                           TextOptions.TextFormattingMode="Display"/>
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <Button Grid.Column="2"
+                            Style="{DynamicResource NavigationButtonStyle}"
+                            Height="80"
+                            VerticalAlignment="Center"
+                            Padding="24,0"
+                            Margin="24,0,0,0"
+                            Tag="FilesLesson5"
+                            UseLayoutRounding="True">
+                        <StackPanel Orientation="Horizontal" UseLayoutRounding="True">
+                            <Image x:Name="Lesson5Icon"
+                                   Tag="Right"
+                                   Width="24"
+                                   Height="24"
+                                   Margin="0,0,8,0"
+                                   VerticalAlignment="Center"/>
+                            <TextBlock x:Name="Lesson5ButtonText" 
+                                       Text="Начать" 
+                                       VerticalAlignment="Center" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       TextOptions.TextFormattingMode="Display"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

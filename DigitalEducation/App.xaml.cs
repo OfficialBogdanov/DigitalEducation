@@ -43,6 +43,7 @@ namespace DigitalEducation
         {
             return Path.Combine(
                 AppDomain.CurrentDomain.BaseDirectory,
+                "Engine",
                 "ComputerVision",
                 "Templates"
             );
@@ -58,11 +59,11 @@ namespace DigitalEducation
 
                 if (themeName == "Dark")
                 {
-                    newTheme.Source = new Uri("Themes/DarkTheme.xaml", UriKind.Relative);
+                    newTheme.Source = new Uri("Assets/Themes/DarkTheme.xaml", UriKind.Relative);
                 }
                 else
                 {
-                    newTheme.Source = new Uri("Themes/LightTheme.xaml", UriKind.Relative);
+                    newTheme.Source = new Uri("Assets/Themes/LightTheme.xaml", UriKind.Relative);
                 }
 
                 Resources.MergedDictionaries.Add(newTheme);

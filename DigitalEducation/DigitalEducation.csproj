@@ -57,7 +57,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>638237F8C9FD71A7027E2AD603E9081816D45E03</ManifestCertificateThumbprint>
@@ -165,78 +166,89 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ComputerVision\RecognitionResult.cs" />
-    <Compile Include="ComputerVision\ScreenCapturer.cs" />
-    <Compile Include="ComputerVision\TemplateInfo.cs" />
-    <Compile Include="ComputerVision\TemplateMatcher.cs" />
-    <Compile Include="ComputerVision\VisionService.cs" />
-    <Compile Include="Managers\DialogManager\ConfirmDialog.xaml.cs">
+    <Compile Include="Engine\ComputerVision\RecognitionResult.cs" />
+    <Compile Include="Engine\ComputerVision\ScreenCapturer.cs" />
+    <Compile Include="Engine\ComputerVision\TemplateInfo.cs" />
+    <Compile Include="Engine\ComputerVision\TemplateMatcher.cs" />
+    <Compile Include="Engine\ComputerVision\VisionService.cs" />
+    <Compile Include="Views\Windows\ConfirmDialog.xaml.cs">
       <DependentUpon>ConfirmDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Managers\DialogManager\DialogAbstractions.cs" />
-    <Compile Include="Managers\DialogManager\DialogService.cs" />
-    <Compile Include="Managers\LessonManager\FileSystemLessonRepository.cs" />
-    <Compile Include="Managers\LessonManager\ILessonRepository.cs" />
-    <Compile Include="Managers\LessonManager\LessonData.cs" />
-    <Compile Include="Managers\LessonManager\LessonManager.cs" />
-    <Compile Include="Managers\NavigationManager\NavigationAbstractions.cs" />
-    <Compile Include="Managers\NavigationManager\NavigationService.cs" />
-    <Compile Include="Managers\OverlayManager\CourseIdResolver.cs" />
-    <Compile Include="Managers\OverlayManager\ErrorPresenter.cs" />
-    <Compile Include="Managers\OverlayManager\HintRenderer.cs" />
-    <Compile Include="Managers\OverlayManager\IWindowManager.cs" />
-    <Compile Include="Managers\OverlayManager\LessonLoader.cs" />
-    <Compile Include="Managers\OverlayManager\ProgressSaver.cs" />
-    <Compile Include="Managers\OverlayManager\VisionServiceFactory.cs" />
-    <Compile Include="Managers\ProgressManager\DefaultStatisticsCalculator.cs" />
-    <Compile Include="Managers\ProgressManager\FileSystemProgressRepository.cs" />
-    <Compile Include="Managers\ProgressManager\IProgressRepository.cs" />
-    <Compile Include="Managers\ProgressManager\IStatisticsCalculator.cs" />
-    <Compile Include="Managers\ThemeManager\ThemeAbstractions.cs" />
-    <Compile Include="Managers\ThemeManager\ThemeManager.cs" />
-    <Compile Include="Managers\OverlayManager\OverlayLessonController.cs" />
-    <Compile Include="Managers\OverlayManager\OverlayVisionController.cs" />
-    <Compile Include="Managers\OverlayManager\OverlayWindowManager.cs" />
-    <Compile Include="Pages\CoursesPage.xaml.cs">
+    <Compile Include="Abstractions\DialogAbstractions.cs" />
+    <Compile Include="Services\UI\DialogService.cs" />
+    <Compile Include="Services\Repositories\CustomLessonRepository.cs" />
+    <Compile Include="Abstractions\ILessonRepository.cs" />
+    <Compile Include="Abstractions\ILessonStorage.cs.cs" />
+    <Compile Include="Models\LessonData.cs" />
+    <Compile Include="Services\Repositories\LessonFileStorage.cs" />
+    <Compile Include="Services\Common\LessonManager.cs" />
+    <Compile Include="Abstractions\NavigationAbstractions.cs" />
+    <Compile Include="Services\Common\NavigationService.cs" />
+    <Compile Include="Services\Common\LessonCourseResolver.cs" />
+    <Compile Include="Services\UI\ErrorPresenter.cs" />
+    <Compile Include="Services\UI\HintRenderer.cs" />
+    <Compile Include="Abstractions\IWindowManager.cs" />
+    <Compile Include="Services\Repositories\LessonLoader.cs" />
+    <Compile Include="Services\Common\ProgressSaver.cs" />
+    <Compile Include="Services\Repositories\VisionFactory.cs" />
+    <Compile Include="Services\Common\StatisticsCalculator.cs" />
+    <Compile Include="Services\Repositories\ProgressRepository.cs" />
+    <Compile Include="Abstractions\IProgressRepository.cs" />
+    <Compile Include="Abstractions\IStatisticsCalculator.cs" />
+    <Compile Include="Abstractions\ThemeAbstractions.cs" />
+    <Compile Include="Services\UI\ThemeManager.cs" />
+    <Compile Include="Services\Controllers\OverlayLessonController.cs" />
+    <Compile Include="Services\Controllers\OverlayVisionController.cs" />
+    <Compile Include="Services\UI\WindowManager.cs" />
+    <Compile Include="Views\Pages\CoursesPage.xaml.cs">
       <DependentUpon>CoursesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\CreateLessonPage.xaml.cs">
+    <Compile Include="Views\Pages\CreateLessonPage.xaml.cs">
       <DependentUpon>CreateLessonPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\CustomLessonsPage.xaml.cs">
+    <Compile Include="Views\Pages\CustomLessonsPage.xaml.cs">
       <DependentUpon>CustomLessonsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\FilesLessonsPage.xaml.cs">
+    <Compile Include="Validation\LessonValidator.cs" />
+    <Compile Include="Views\Components\StepCardFactory.cs" />
+    <Compile Include="Services\Common\StepCollection.cs" />
+    <Compile Include="Abstractions\ILessonActionHandler.cs" />
+    <Compile Include="Abstractions\ILessonCardFactory.cs" />
+    <Compile Include="Abstractions\ILessonProvider.cs" />
+    <Compile Include="Services\Common\CustomLessonActionHandler.cs" />
+    <Compile Include="Views\Components\LessonCardFactory.cs" />
+    <Compile Include="Services\Common\LessonProvider.cs" />
+    <Compile Include="Views\Pages\FilesLessonsPage.xaml.cs">
       <DependentUpon>FilesLessonsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MasterLayout.xaml.cs">
       <DependentUpon>MasterLayout.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\HomePage.xaml.cs">
+    <Compile Include="Views\Pages\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SettingsPage.xaml.cs">
+    <Compile Include="Views\Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Managers\ProgressManager\ProgressManager.cs" />
-    <Compile Include="Managers\ProgressManager\UserProgress.cs" />
-    <Page Include="Managers\DialogManager\ConfirmDialog.xaml">
+    <Compile Include="Services\Common\ProgressManager.cs" />
+    <Compile Include="Models\UserProgress.cs" />
+    <Page Include="Views\Windows\ConfirmDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\CoursesPage.xaml">
+    <Page Include="Views\Pages\CoursesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\CreateLessonPage.xaml">
+    <Page Include="Views\Pages\CreateLessonPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\CustomLessonsPage.xaml">
+    <Page Include="Views\Pages\CustomLessonsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\FilesLessonsPage.xaml">
+    <Page Include="Views\Pages\FilesLessonsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -252,7 +264,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Managers\OverlayManager\OverlayWindow.xaml">
+    <Page Include="Views\Windows\OverlayWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -260,25 +272,25 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\HomePage.xaml">
+    <Page Include="Views\Pages\HomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\SettingsPage.xaml">
+    <Page Include="Views\Pages\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\DarkTheme.xaml">
+    <Page Include="Assets\Themes\DarkTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\LightTheme.xaml">
+    <Page Include="Assets\Themes\LightTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Managers\OverlayManager\OverlayWindow.xaml.cs">
+    <Compile Include="Views\Windows\OverlayWindow.xaml.cs">
       <DependentUpon>OverlayWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -298,25 +310,25 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Resource Include="Fonts\Comfortaa\Comfortaa-Bold.ttf" />
-    <Resource Include="Fonts\Comfortaa\Comfortaa-Light.ttf" />
-    <Resource Include="Fonts\Comfortaa\Comfortaa-Medium.ttf" />
-    <Resource Include="Fonts\Comfortaa\Comfortaa-Regular.ttf" />
-    <Resource Include="Fonts\Comfortaa\Comfortaa-SemiBold.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-Black.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-BlackItalic.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-Bold.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-BoldItalic.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-ExtraBold.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-ExtraBoldItalic.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-Italic.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-Light.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-LightItalic.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-Medium.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-MediumItalic.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-Regular.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-SemiBold.ttf" />
-    <Resource Include="Fonts\Rubik\Rubik-SemiBoldItalic.ttf" />
+    <Resource Include="Assets\Fonts\Comfortaa\Comfortaa-Bold.ttf" />
+    <Resource Include="Assets\Fonts\Comfortaa\Comfortaa-Light.ttf" />
+    <Resource Include="Assets\Fonts\Comfortaa\Comfortaa-Medium.ttf" />
+    <Resource Include="Assets\Fonts\Comfortaa\Comfortaa-Regular.ttf" />
+    <Resource Include="Assets\Fonts\Comfortaa\Comfortaa-SemiBold.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-Black.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-BlackItalic.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-Bold.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-BoldItalic.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-ExtraBold.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-ExtraBoldItalic.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-Italic.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-Light.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-LightItalic.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-Medium.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-MediumItalic.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-Regular.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-SemiBold.ttf" />
+    <Resource Include="Assets\Fonts\Rubik\Rubik-SemiBoldItalic.ttf" />
     <None Include="Lessons\FilesLessons\FilesLesson3.json" />
     <None Include="Lessons\FilesLessons\FilesLesson4.json" />
     <None Include="Lessons\FilesLessons\FilesLesson1.json" />
@@ -334,70 +346,67 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Lessons\CustomLessons\" />
     <Folder Include="Lessons\OsLessons\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Icon.ico" />
+    <Resource Include="Assets\Icons\Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Black\Book.png" />
-    <Resource Include="Icons\Black\Chart.png" />
-    <Resource Include="Icons\Black\ChevronLeft.png" />
-    <Resource Include="Icons\Black\ChevronRight.png" />
-    <Resource Include="Icons\Black\Close.png" />
-    <Resource Include="Icons\Black\Document.png" />
-    <Resource Include="Icons\Black\Folder.png" />
-    <Resource Include="Icons\Black\Globe.png" />
-    <Resource Include="Icons\Black\Home.png" />
-    <Resource Include="Icons\Black\Info.png" />
-    <Resource Include="Icons\Black\List.png" />
-    <Resource Include="Icons\Black\Monitor.png" />
-    <Resource Include="Icons\Black\Moon.png" />
-    <Resource Include="Icons\Black\Refresh.png" />
-    <Resource Include="Icons\Black\Right.png" />
-    <Resource Include="Icons\Black\Settings.png" />
-    <Resource Include="Icons\Black\Success.png" />
-    <Resource Include="Icons\Black\Sun.png" />
-    <Resource Include="Icons\Black\Trash.png" />
-    <Resource Include="Icons\Black\TrendingUp.png" />
-    <Resource Include="Icons\Black\User.png" />
-    <Resource Include="Icons\Black\ZoomIn.png" />
-    <Resource Include="Icons\Black\ZoomOut.png" />
+    <Resource Include="Assets\Icons\Black\Book.png" />
+    <Resource Include="Assets\Icons\Black\Chart.png" />
+    <Resource Include="Assets\Icons\Black\ChevronLeft.png" />
+    <Resource Include="Assets\Icons\Black\ChevronRight.png" />
+    <Resource Include="Assets\Icons\Black\Close.png" />
+    <Resource Include="Assets\Icons\Black\Document.png" />
+    <Resource Include="Assets\Icons\Black\Folder.png" />
+    <Resource Include="Assets\Icons\Black\Globe.png" />
+    <Resource Include="Assets\Icons\Black\Home.png" />
+    <Resource Include="Assets\Icons\Black\Info.png" />
+    <Resource Include="Assets\Icons\Black\List.png" />
+    <Resource Include="Assets\Icons\Black\Monitor.png" />
+    <Resource Include="Assets\Icons\Black\Moon.png" />
+    <Resource Include="Assets\Icons\Black\Refresh.png" />
+    <Resource Include="Assets\Icons\Black\Right.png" />
+    <Resource Include="Assets\Icons\Black\Settings.png" />
+    <Resource Include="Assets\Icons\Black\Success.png" />
+    <Resource Include="Assets\Icons\Black\Sun.png" />
+    <Resource Include="Assets\Icons\Black\Trash.png" />
+    <Resource Include="Assets\Icons\Black\TrendingUp.png" />
+    <Resource Include="Assets\Icons\Black\User.png" />
+    <Resource Include="Assets\Icons\Black\ZoomIn.png" />
+    <Resource Include="Assets\Icons\Black\ZoomOut.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\White\Book.png" />
-    <Resource Include="Icons\White\Chart.png" />
-    <Resource Include="Icons\White\ChevronLeft.png" />
-    <Resource Include="Icons\White\ChevronRight.png" />
-    <Resource Include="Icons\White\Close.png" />
-    <Resource Include="Icons\White\Document.png" />
-    <Resource Include="Icons\White\Folder.png" />
-    <Resource Include="Icons\White\Globe.png" />
-    <Resource Include="Icons\White\Home.png" />
-    <Resource Include="Icons\White\Info.png" />
-    <Resource Include="Icons\White\List.png" />
-    <Resource Include="Icons\White\Monitor.png" />
-    <Resource Include="Icons\White\Moon.png" />
-    <Resource Include="Icons\White\Refresh.png" />
-    <Resource Include="Icons\White\Right.png" />
-    <Resource Include="Icons\White\Settings.png" />
-    <Resource Include="Icons\White\Success.png" />
-    <Resource Include="Icons\White\Sun.png" />
-    <Resource Include="Icons\White\Trash.png" />
-    <Resource Include="Icons\White\TrendingUp.png" />
-    <Resource Include="Icons\White\User.png" />
-    <Resource Include="Icons\White\ZoomIn.png" />
-    <Resource Include="Icons\White\ZoomOut.png" />
+    <Resource Include="Assets\Icons\White\Book.png" />
+    <Resource Include="Assets\Icons\White\Chart.png" />
+    <Resource Include="Assets\Icons\White\ChevronLeft.png" />
+    <Resource Include="Assets\Icons\White\ChevronRight.png" />
+    <Resource Include="Assets\Icons\White\Close.png" />
+    <Resource Include="Assets\Icons\White\Document.png" />
+    <Resource Include="Assets\Icons\White\Folder.png" />
+    <Resource Include="Assets\Icons\White\Globe.png" />
+    <Resource Include="Assets\Icons\White\Home.png" />
+    <Resource Include="Assets\Icons\White\Info.png" />
+    <Resource Include="Assets\Icons\White\List.png" />
+    <Resource Include="Assets\Icons\White\Monitor.png" />
+    <Resource Include="Assets\Icons\White\Moon.png" />
+    <Resource Include="Assets\Icons\White\Refresh.png" />
+    <Resource Include="Assets\Icons\White\Right.png" />
+    <Resource Include="Assets\Icons\White\Settings.png" />
+    <Resource Include="Assets\Icons\White\Success.png" />
+    <Resource Include="Assets\Icons\White\Sun.png" />
+    <Resource Include="Assets\Icons\White\Trash.png" />
+    <Resource Include="Assets\Icons\White\TrendingUp.png" />
+    <Resource Include="Assets\Icons\White\User.png" />
+    <Resource Include="Assets\Icons\White\ZoomIn.png" />
+    <Resource Include="Assets\Icons\White\ZoomOut.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Black\Search.png" />
+    <Resource Include="Assets\Icons\Black\Search.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\White\Search.png" />
+    <Resource Include="Assets\Icons\White\Search.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -412,39 +421,39 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Black\Plus.png" />
+    <Resource Include="Assets\Icons\Black\Plus.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\White\Plus.png" />
+    <Resource Include="Assets\Icons\White\Plus.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Black\Edit.png" />
+    <Resource Include="Assets\Icons\Black\Edit.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\White\Edit.png" />
+    <Resource Include="Assets\Icons\White\Edit.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="ComputerVision\Templates\context_menu.png" />
-    <Resource Include="ComputerVision\Templates\context_menu2.png" />
-    <Resource Include="ComputerVision\Templates\creater_menu.png" />
-    <Resource Include="ComputerVision\Templates\create_menu.png" />
-    <Resource Include="ComputerVision\Templates\create_menu_folder.png" />
-    <Resource Include="ComputerVision\Templates\folder_menu_item.png" />
-    <Resource Include="ComputerVision\Templates\new_folder_icon.png" />
-    <Resource Include="ComputerVision\Templates\new_menu_item.png" />
-    <Resource Include="ComputerVision\Templates\right_click_menu.png" />
-    <Resource Include="ComputerVision\Templates\right_click_menu2.png" />
-    <Resource Include="ComputerVision\Templates\right_click_menu3.png" />
-    <Resource Include="ComputerVision\Templates\right_click_menu4.png" />
+    <Resource Include="Engine\ComputerVision\Templates\context_menu.png" />
+    <Resource Include="Engine\ComputerVision\Templates\context_menu2.png" />
+    <Resource Include="Engine\ComputerVision\Templates\creater_menu.png" />
+    <Resource Include="Engine\ComputerVision\Templates\create_menu.png" />
+    <Resource Include="Engine\ComputerVision\Templates\create_menu_folder.png" />
+    <Resource Include="Engine\ComputerVision\Templates\folder_menu_item.png" />
+    <Resource Include="Engine\ComputerVision\Templates\new_folder_icon.png" />
+    <Resource Include="Engine\ComputerVision\Templates\new_menu_item.png" />
+    <Resource Include="Engine\ComputerVision\Templates\right_click_menu.png" />
+    <Resource Include="Engine\ComputerVision\Templates\right_click_menu2.png" />
+    <Resource Include="Engine\ComputerVision\Templates\right_click_menu3.png" />
+    <Resource Include="Engine\ComputerVision\Templates\right_click_menu4.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Black\Calendar.png" />
+    <Resource Include="Assets\Icons\Black\Calendar.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\White\Calendar.png" />
+    <Resource Include="Assets\Icons\White\Calendar.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="ComputerVision\Templates\842352755202602_001.png" />
+    <Resource Include="Engine\ComputerVision\Templates\842352755202602_001.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
