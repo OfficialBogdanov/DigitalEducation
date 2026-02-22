@@ -1,6 +1,7 @@
 ﻿using DigitalEducation.Pages;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,10 +18,14 @@ namespace DigitalEducation
         private List<LessonData> _allLessons = new List<LessonData>();
         private List<LessonData> _filteredLessons = new List<LessonData>();
 
+        private Dictionary<string, DateTime> _lessonCreationDates = new Dictionary<string, DateTime>();
+
         private readonly List<string> _sortOptions = new List<string>
         {
             "По названию (А-Я)",
-            "По названию (Я-А)"
+            "По названию (Я-А)",
+            "По дате (Новые)",
+            "По дате (Старые)"
         };
 
         private string _currentSearchQuery = "";
@@ -91,6 +96,24 @@ namespace DigitalEducation
         private void RefreshLessons()
         {
             _allLessons = _lessonProvider.GetLessons("Custom");
+            _lessonCreationDates.Clear();
+
+            string projectRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..");
+            string customLessonsPath = Path.GetFullPath(Path.Combine(projectRoot, "Lessons", "CustomLessons"));
+
+            foreach (var lesson in _allLessons)
+            {
+                string filePath = Path.Combine(customLessonsPath, $"{lesson.Id}.json");
+                if (File.Exists(filePath))
+                {
+                    _lessonCreationDates[lesson.Id] = File.GetCreationTime(filePath);
+                }
+                else
+                {
+                    _lessonCreationDates[lesson.Id] = DateTime.MinValue;
+                }
+            }
+
             ApplySearch();
         }
 
@@ -103,12 +126,32 @@ namespace DigitalEducation
         private void ApplySorting()
         {
             var lessonsToSort = _filteredLessons.Any() ? _filteredLessons : _allLessons;
-            var sorted = _lessonProvider.Sort(lessonsToSort, _currentSortOption);
 
-            if (_filteredLessons.Any())
-                _filteredLessons = sorted;
+            if (_currentSortOption.StartsWith("По дате создания"))
+            {
+                IEnumerable<LessonData> sorted;
+                if (_currentSortOption.Contains("сначала новые"))
+                {
+                    sorted = lessonsToSort.OrderByDescending(l => _lessonCreationDates.ContainsKey(l.Id) ? _lessonCreationDates[l.Id] : DateTime.MinValue);
+                }
+                else
+                {
+                    sorted = lessonsToSort.OrderBy(l => _lessonCreationDates.ContainsKey(l.Id) ? _lessonCreationDates[l.Id] : DateTime.MinValue);
+                }
+
+                if (_filteredLessons.Any())
+                    _filteredLessons = sorted.ToList();
+                else
+                    _allLessons = sorted.ToList();
+            }
             else
-                _allLessons = sorted;
+            {
+                var sorted = _lessonProvider.Sort(lessonsToSort, _currentSortOption);
+                if (_filteredLessons.Any())
+                    _filteredLessons = sorted;
+                else
+                    _allLessons = sorted;
+            }
         }
 
         private void UpdateLessonsDisplay()
