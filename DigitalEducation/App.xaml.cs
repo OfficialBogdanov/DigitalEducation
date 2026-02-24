@@ -8,9 +8,9 @@ namespace DigitalEducation
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            ThemeManager.Initialize();
+            AppThemeManager.Initialize();
 
-            string savedTheme = ThemeManager.GetCurrentTheme();
+            string savedTheme = AppThemeManager.GetCurrentTheme();
             if (!string.IsNullOrEmpty(savedTheme))
             {
                 ApplyThemeOnStartup(savedTheme);
@@ -43,8 +43,8 @@ namespace DigitalEducation
         {
             return Path.Combine(
                 AppDomain.CurrentDomain.BaseDirectory,
+                "Learning",
                 "Engine",
-                "ComputerVision",
                 "Templates"
             );
         }

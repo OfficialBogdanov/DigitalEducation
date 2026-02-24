@@ -165,95 +165,96 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Abstractions\ILessonLogger.cs" />
-    <Compile Include="Engine\ComputerVision\RecognitionResult.cs" />
-    <Compile Include="Engine\ComputerVision\ScreenCapturer.cs" />
-    <Compile Include="Engine\ComputerVision\TemplateInfo.cs" />
-    <Compile Include="Engine\ComputerVision\TemplateMatcher.cs" />
-    <Compile Include="Engine\ComputerVision\VisionService.cs" />
-    <Compile Include="Services\Common\DebugLessonLogger.cs" />
-    <Compile Include="Views\Windows\ConfirmDialog.xaml.cs">
-      <DependentUpon>ConfirmDialog.xaml</DependentUpon>
+    <Compile Include="DataServices\Abstractions\ILessonLogger.cs" />
+    <Compile Include="Learning\Engine\VisionRecognitionResult.cs" />
+    <Compile Include="Learning\Engine\ScreenCapturerService.cs" />
+    <Compile Include="Learning\Engine\VisionTemplateInfo.cs" />
+    <Compile Include="Learning\Engine\VisionTemplateMatcher.cs" />
+    <Compile Include="Learning\Engine\ComputerVisionService.cs" />
+    <Compile Include="DataServices\Services\DebugLessonLogger.cs" />
+    <Compile Include="DataServices\Services\VisualTreeHelperExtensions.cs" />
+    <Compile Include="UI\Windows\ConfirmationDialog.xaml.cs">
+      <DependentUpon>ConfirmationDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Abstractions\DialogAbstractions.cs" />
-    <Compile Include="Services\UI\DialogService.cs" />
-    <Compile Include="Services\Repositories\CustomLessonRepository.cs" />
-    <Compile Include="Abstractions\ILessonRepository.cs" />
-    <Compile Include="Abstractions\ILessonStorage.cs.cs" />
-    <Compile Include="Models\LessonData.cs" />
-    <Compile Include="Services\Repositories\LessonFileStorage.cs" />
-    <Compile Include="Services\Common\LessonManager.cs" />
-    <Compile Include="Abstractions\NavigationAbstractions.cs" />
-    <Compile Include="Services\Common\NavigationService.cs" />
-    <Compile Include="Services\Common\LessonCourseResolver.cs" />
-    <Compile Include="Services\UI\ErrorPresenter.cs" />
-    <Compile Include="Services\UI\HintRenderer.cs" />
-    <Compile Include="Abstractions\IWindowManager.cs" />
-    <Compile Include="Services\Repositories\LessonLoader.cs" />
-    <Compile Include="Services\Common\ProgressSaver.cs" />
-    <Compile Include="Services\Repositories\VisionFactory.cs" />
-    <Compile Include="Services\Common\StatisticsCalculator.cs" />
-    <Compile Include="Services\Repositories\ProgressRepository.cs" />
-    <Compile Include="Abstractions\IProgressRepository.cs" />
-    <Compile Include="Abstractions\IStatisticsCalculator.cs" />
-    <Compile Include="Abstractions\ThemeAbstractions.cs" />
-    <Compile Include="Services\UI\ThemeManager.cs" />
-    <Compile Include="Services\Controllers\OverlayLessonController.cs" />
-    <Compile Include="Services\Controllers\OverlayVisionController.cs" />
-    <Compile Include="Services\UI\WindowManager.cs" />
-    <Compile Include="Views\Pages\CoursesPage.xaml.cs">
-      <DependentUpon>CoursesPage.xaml</DependentUpon>
+    <Compile Include="DataServices\Abstractions\DialogAbstractions.cs" />
+    <Compile Include="DataServices\Services\AppDialogService.cs" />
+    <Compile Include="DataServices\Repositories\CustomLessonFileRepository.cs" />
+    <Compile Include="DataServices\Abstractions\ILessonRepository.cs" />
+    <Compile Include="DataServices\Abstractions\ILessonStorage.cs.cs" />
+    <Compile Include="Learning\Data\LessonDataModel.cs" />
+    <Compile Include="DataServices\Repositories\CustomLessonFileStorage.cs" />
+    <Compile Include="Learning\Data\LessonRegistry.cs" />
+    <Compile Include="DataServices\Abstractions\NavigationAbstractions.cs" />
+    <Compile Include="DataServices\Services\AppNavigationService.cs" />
+    <Compile Include="Learning\Data\LessonCourseIdResolver.cs" />
+    <Compile Include="DataServices\Services\ErrorMessagePresenter.cs" />
+    <Compile Include="Learning\Services\VisionHintRenderer.cs" />
+    <Compile Include="DataServices\Abstractions\IWindowManager.cs" />
+    <Compile Include="Learning\Data\LessonDataLoader.cs" />
+    <Compile Include="Learning\Data\LessonProgressSaver.cs" />
+    <Compile Include="Learning\Services\VisionServiceFactory.cs" />
+    <Compile Include="DataServices\Services\ProgressStatisticsCalculator.cs" />
+    <Compile Include="DataServices\Repositories\UserProgressFileRepository.cs" />
+    <Compile Include="DataServices\Abstractions\IProgressRepository.cs" />
+    <Compile Include="DataServices\Abstractions\IStatisticsCalculator.cs" />
+    <Compile Include="DataServices\Abstractions\ThemeAbstractions.cs" />
+    <Compile Include="DataServices\Services\AppThemeManager.cs" />
+    <Compile Include="Learning\Controllers\LessonOverlayController.cs" />
+    <Compile Include="Learning\Controllers\LessonVisionController.cs" />
+    <Compile Include="DataServices\Services\WindowMinimizeManager.cs" />
+    <Compile Include="UI\Pages\CoursesCatalogPage.xaml.cs">
+      <DependentUpon>CoursesCatalogPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Pages\CreateLessonPage.xaml.cs">
-      <DependentUpon>CreateLessonPage.xaml</DependentUpon>
+    <Compile Include="UI\Pages\CreateCustomLessonPage.xaml.cs">
+      <DependentUpon>CreateCustomLessonPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Pages\CustomLessonsPage.xaml.cs">
+    <Compile Include="UI\Pages\CustomLessonsPage.xaml.cs">
       <DependentUpon>CustomLessonsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Validation\LessonValidator.cs" />
-    <Compile Include="Views\Components\StepCardFactory.cs" />
-    <Compile Include="Services\Common\StepCollection.cs" />
-    <Compile Include="Abstractions\ILessonActionHandler.cs" />
-    <Compile Include="Abstractions\ILessonCardFactory.cs" />
-    <Compile Include="Abstractions\ILessonProvider.cs" />
-    <Compile Include="Services\Common\CustomLessonActionHandler.cs" />
-    <Compile Include="Views\Components\LessonCardFactory.cs" />
-    <Compile Include="Services\Common\LessonProvider.cs" />
-    <Compile Include="Views\Pages\FilesLessonsPage.xaml.cs">
+    <Compile Include="UI\Components\CustomLessonValidator.cs" />
+    <Compile Include="UI\Components\LessonStepCardFactory.cs" />
+    <Compile Include="Learning\Data\LessonStepCollection.cs" />
+    <Compile Include="DataServices\Abstractions\ILessonActionHandler.cs" />
+    <Compile Include="DataServices\Abstractions\ILessonCardFactory.cs" />
+    <Compile Include="DataServices\Abstractions\ILessonProvider.cs" />
+    <Compile Include="Learning\Controllers\CustomLessonActionsHandler.cs" />
+    <Compile Include="UI\Components\CustomLessonCardFactory.cs" />
+    <Compile Include="Learning\Data\LessonDataProvider.cs" />
+    <Compile Include="UI\Pages\FilesLessonsPage.xaml.cs">
       <DependentUpon>FilesLessonsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MasterLayout.xaml.cs">
-      <DependentUpon>MasterLayout.xaml</DependentUpon>
+    <Compile Include="UI\Layout\AppLayout.xaml.cs">
+      <DependentUpon>AppLayout.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Pages\HomePage.xaml.cs">
+    <Compile Include="UI\Pages\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Pages\SettingsPage.xaml.cs">
+    <Compile Include="UI\Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Services\Common\ProgressManager.cs" />
-    <Compile Include="Models\UserProgress.cs" />
-    <Page Include="Views\Windows\ConfirmDialog.xaml">
+    <Compile Include="DataServices\Services\UserProgressManager.cs" />
+    <Compile Include="DataServices\Models\UserProgressModel.cs" />
+    <Page Include="UI\Windows\ConfirmationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Pages\CoursesPage.xaml">
+    <Page Include="UI\Pages\CoursesCatalogPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Pages\CreateLessonPage.xaml">
+    <Page Include="UI\Pages\CreateCustomLessonPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Pages\CustomLessonsPage.xaml">
+    <Page Include="UI\Pages\CustomLessonsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Pages\FilesLessonsPage.xaml">
+    <Page Include="UI\Pages\FilesLessonsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="UI\Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -261,23 +262,23 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="UI\Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\Windows\OverlayWindow.xaml">
+    <Page Include="UI\Windows\LessonOverlayWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MasterLayout.xaml">
+    <Page Include="UI\Layout\AppLayout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Pages\HomePage.xaml">
+    <Page Include="UI\Pages\HomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Pages\SettingsPage.xaml">
+    <Page Include="UI\Pages\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -291,8 +292,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Views\Windows\OverlayWindow.xaml.cs">
-      <DependentUpon>OverlayWindow.xaml</DependentUpon>
+    <Compile Include="UI\Windows\LessonOverlayWindow.xaml.cs">
+      <DependentUpon>LessonOverlayWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -330,10 +331,10 @@
     <Resource Include="Assets\Fonts\Rubik\Rubik-Regular.ttf" />
     <Resource Include="Assets\Fonts\Rubik\Rubik-SemiBold.ttf" />
     <Resource Include="Assets\Fonts\Rubik\Rubik-SemiBoldItalic.ttf" />
-    <None Include="Lessons\FilesLessons\FilesLesson3.json" />
-    <None Include="Lessons\FilesLessons\FilesLesson4.json" />
-    <None Include="Lessons\FilesLessons\FilesLesson1.json" />
-    <None Include="Lessons\FilesLessons\FilesLesson5.json" />
+    <None Include="DataServices\Lessons\FilesLessons\FilesLesson3.json" />
+    <None Include="DataServices\Lessons\FilesLessons\FilesLesson4.json" />
+    <None Include="DataServices\Lessons\FilesLessons\FilesLesson1.json" />
+    <None Include="DataServices\Lessons\FilesLessons\FilesLesson5.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -347,8 +348,8 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Lessons\CustomLessons\" />
-    <Folder Include="Lessons\OsLessons\" />
+    <Folder Include="DataServices\Lessons\CustomLessons\" />
+    <Folder Include="DataServices\Lessons\OsLessons\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Icons\Icon.ico" />
@@ -434,11 +435,11 @@
     <Resource Include="Assets\Icons\White\Edit.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Engine\ComputerVision\Templates\creater_menu.png" />
-    <Resource Include="Engine\ComputerVision\Templates\create_menu.png" />
-    <Resource Include="Engine\ComputerVision\Templates\create_menu_folder.png" />
-    <Resource Include="Engine\ComputerVision\Templates\folder_menu_item.png" />
-    <Resource Include="Engine\ComputerVision\Templates\new_folder_icon.png" />
+    <Resource Include="Learning\Engine\Templates\creater_menu.png" />
+    <Resource Include="Learning\Engine\Templates\create_menu.png" />
+    <Resource Include="Learning\Engine\Templates\create_menu_folder.png" />
+    <Resource Include="Learning\Engine\Templates\folder_menu_item.png" />
+    <Resource Include="Learning\Engine\Templates\new_folder_icon.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Icons\Black\Calendar.png" />
@@ -450,9 +451,9 @@
     <Resource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Engine\ComputerVision\Templates\create.png" />
-    <Resource Include="Engine\ComputerVision\Templates\create2.png" />
-    <Resource Include="Engine\ComputerVision\Templates\folder.png" />
+    <Resource Include="Learning\Engine\Templates\create.png" />
+    <Resource Include="Learning\Engine\Templates\create2.png" />
+    <Resource Include="Learning\Engine\Templates\folder.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

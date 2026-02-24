@@ -1,0 +1,19 @@
+﻿{
+  "id": "130611693120260",
+  "title": "Тест",
+  "courseId": "Custom",
+  "completionMessage": "1",
+  "steps": [
+    {
+      "title": "Шаг 1",
+      "description": "1",
+      "hint": "2",
+      "visionTarget": "130611693120260_001",
+      "visionConfidence": 0.84999999999999998,
+      "requiresVisionValidation": true,
+      "visionHint": "130611693120260_step1_hint",
+      "hintConfidence": 0.85,
+      "hintType": "glow"
+    }
+  ]
+}
