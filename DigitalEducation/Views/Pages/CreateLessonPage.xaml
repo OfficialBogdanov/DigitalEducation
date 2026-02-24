@@ -58,6 +58,35 @@
             </Setter>
         </Style>
 
+        <Style x:Key="HintTypeRadioButtonStyle" TargetType="RadioButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="border" 
+                                Background="{DynamicResource BackgroundLightBrush}" 
+                                CornerRadius="6" 
+                                Padding="12,8" 
+                                BorderThickness="1" 
+                                BorderBrush="{DynamicResource SurfaceBorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="False"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource HoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource CustomBrush}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource CustomBrush}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="AddStepBlockStyle" TargetType="Border">
             <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource CustomBrush}"/>
@@ -94,7 +123,7 @@
                             SnapsToDevicePixels="True"/>
 
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Создание урока" 
+                        <TextBlock x:Name="PageTitleText" Text="Создание урока" 
                                    Style="{DynamicResource TitleTextStyle}"
                                    Foreground="{DynamicResource CustomBrush}"
                                    TextOptions.TextFormattingMode="Display"/>

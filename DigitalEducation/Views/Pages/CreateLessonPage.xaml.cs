@@ -21,6 +21,7 @@ namespace DigitalEducation.Pages
         private bool _isEditMode = false;
         private LessonData _originalLesson;
         private readonly Dictionary<int, string> _originalStepImages = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> _originalStepHintImages = new Dictionary<int, string>();
 
         public CreateLessonPage(string lessonId = null)
         {
@@ -90,13 +91,8 @@ namespace DigitalEducation.Pages
                     textBlock.Text = "Обновить урок";
                 }
 
-                var scrollViewer = MainGrid.Children[0] as ScrollViewer;
-                var stackPanel = scrollViewer?.Content as StackPanel;
-                var grid = stackPanel?.Children[0] as Grid;
-                var titleStack = grid?.Children[1] as StackPanel;
-                var titleText = titleStack?.Children[0] as TextBlock;
-                if (titleText != null)
-                    titleText.Text = "Редактирование урока";
+                if (this.PageTitleText != null)
+                    this.PageTitleText.Text = "Редактирование урока";
             }
         }
 
@@ -117,13 +113,14 @@ namespace DigitalEducation.Pages
 
                 _steps.Clear();
                 _originalStepImages.Clear();
+                _originalStepHintImages.Clear();
 
                 if (_originalLesson.Steps != null)
                 {
                     for (int i = 0; i < _originalLesson.Steps.Count; i++)
                     {
                         var step = _originalLesson.Steps[i];
-                        _steps.Add(new LessonStep
+                        var newStep = new LessonStep
                         {
                             Title = step.Title,
                             Description = step.Description,
@@ -132,13 +129,28 @@ namespace DigitalEducation.Pages
                             VisionTargetFolder = step.VisionTargetFolder,
                             RequiresVisionValidation = step.RequiresVisionValidation,
                             VisionConfidence = step.VisionConfidence,
-                            RequiredMatches = step.RequiredMatches
-                        });
+                            RequiredMatches = step.RequiredMatches,
+                            HintType = step.HintType ?? "rectangle"
+                        };
+
+                        if (!string.IsNullOrEmpty(step.VisionHint))
+                        {
+                            string templatesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Engine", "ComputerVision", "Templates");
+                            string fullPath = Path.Combine(templatesPath, step.VisionHint);
+                            if (File.Exists(fullPath))
+                            {
+                                newStep.HintImagePath = fullPath;
+                                newStep.ShowHint = true;
+                                _originalStepHintImages[i] = step.VisionHint;
+                            }
+                        }
 
                         if (!string.IsNullOrEmpty(step.VisionTarget))
                         {
                             _originalStepImages[i] = step.VisionTarget;
                         }
+
+                        _steps.Add(newStep);
                     }
                 }
 
@@ -206,7 +218,10 @@ namespace DigitalEducation.Pages
                 VisionTargetFolder = "",
                 RequiresVisionValidation = false,
                 VisionConfidence = 0.85,
-                RequiredMatches = 1
+                RequiredMatches = 1,
+                HintType = "rectangle",
+                HintImagePath = "",
+                ShowHint = false
             });
         }
 
@@ -236,8 +251,8 @@ namespace DigitalEducation.Pages
                         if (result == true)
                         {
                             _steps.RemoveAt(idx);
-                            if (_originalStepImages.ContainsKey(idx))
-                                _originalStepImages.Remove(idx);
+                            _originalStepImages.Remove(idx);
+                            _originalStepHintImages.Remove(idx);
                         }
                     },
                     onImageSelected: (idx, fileName) =>
@@ -249,6 +264,19 @@ namespace DigitalEducation.Pages
                     {
                         if (_isEditMode && _originalStepImages.ContainsKey(idx))
                             _originalStepImages.Remove(idx);
+                    },
+                    onHintImageSelected: (idx, fileName) =>
+                    {
+                        if (_isEditMode)
+                        {
+                            string fileNameOnly = Path.GetFileName(fileName);
+                            _originalStepHintImages[idx] = fileNameOnly;
+                        }
+                    },
+                    onHintImageCleared: (idx) =>
+                    {
+                        if (_isEditMode && _originalStepHintImages.ContainsKey(idx))
+                            _originalStepHintImages.Remove(idx);
                     }
                 );
 
@@ -312,8 +340,11 @@ namespace DigitalEducation.Pages
                     Steps = new List<LessonStep>()
                 };
 
-                _storage.SaveNewLesson(lesson, new List<LessonStep>(_steps));
+                string lessonId = _storage.GenerateNewLessonId();
+                CopyHintImagesForLesson(lessonId, new List<LessonStep>(_steps), false);
+                lesson.Steps = new List<LessonStep>(_steps);
 
+                _storage.SaveNewLesson(lesson, lesson.Steps);
                 LessonManager.ReloadAllLessons();
 
                 DialogService.ShowSuccessDialog("Урок успешно сохранен!", Window.GetWindow(this));
@@ -338,8 +369,10 @@ namespace DigitalEducation.Pages
                     Steps = new List<LessonStep>()
                 };
 
-                _storage.UpdateLesson(_editingLessonId, lesson, new List<LessonStep>(_steps));
+                CopyHintImagesForLesson(_editingLessonId, new List<LessonStep>(_steps), true);
+                lesson.Steps = new List<LessonStep>(_steps);
 
+                _storage.UpdateLesson(_editingLessonId, lesson, lesson.Steps);
                 LessonManager.ReloadAllLessons();
 
                 DialogService.ShowSuccessDialog("Урок успешно обновлен!", Window.GetWindow(this));
@@ -348,6 +381,51 @@ namespace DigitalEducation.Pages
             catch (Exception ex)
             {
                 DialogService.ShowErrorDialog($"Ошибка при обновлении урока: {ex.Message}", Window.GetWindow(this));
+            }
+        }
+
+        private void CopyHintImagesForLesson(string lessonId, List<LessonStep> steps, bool isUpdate)
+        {
+            string templatesDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Engine", "ComputerVision", "Templates");
+            if (!Directory.Exists(templatesDir))
+                Directory.CreateDirectory(templatesDir);
+
+            for (int i = 0; i < steps.Count; i++)
+            {
+                var step = steps[i];
+                string sourcePath = step.HintImagePath;
+
+                if (string.IsNullOrEmpty(sourcePath) || !File.Exists(sourcePath))
+                {
+                    if (isUpdate && _originalStepHintImages.ContainsKey(i))
+                    {
+                        string oldFile = Path.Combine(templatesDir, _originalStepHintImages[i]);
+                        if (File.Exists(oldFile))
+                        {
+                            try { File.Delete(oldFile); } catch { }
+                        }
+                    }
+                    step.VisionHint = null;
+                    step.ShowHint = false;
+                    continue;
+                }
+
+                string ext = Path.GetExtension(sourcePath);
+                string fileName = $"{lessonId}_step{i + 1}_hint{ext}";
+                string destPath = Path.Combine(templatesDir, fileName);
+
+                if (isUpdate && _originalStepHintImages.ContainsKey(i))
+                {
+                    string oldFile = Path.Combine(templatesDir, _originalStepHintImages[i]);
+                    if (File.Exists(oldFile) && oldFile != destPath)
+                    {
+                        try { File.Delete(oldFile); } catch { }
+                    }
+                }
+
+                File.Copy(sourcePath, destPath, true);
+                step.VisionHint = fileName;
+                step.ShowHint = true;
             }
         }
     }

@@ -8,5 +8,6 @@ namespace DigitalEducation.Pages.CreateCustomLesson
         string GenerateLessonId(string lessonTitle);
         LessonData SaveNewLesson(LessonData lesson, List<LessonStep> steps);
         void UpdateLesson(string lessonId, LessonData lesson, List<LessonStep> steps);
+        string GenerateNewLessonId();
     }
 }

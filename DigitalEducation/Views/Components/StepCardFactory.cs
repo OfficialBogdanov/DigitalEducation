@@ -1,10 +1,12 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace DigitalEducation.Pages.CreateCustomLesson
 {
@@ -23,7 +25,9 @@ namespace DigitalEducation.Pages.CreateCustomLesson
             int stepIndex,
             Action<int> onDelete,
             Action<int, string> onImageSelected,
-            Action<int> onImageCleared)
+            Action<int> onImageCleared,
+            Action<int, string> onHintImageSelected,
+            Action<int> onHintImageCleared)
         {
             var card = new Border
             {
@@ -39,15 +43,30 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                 Margin = new Thickness(24)
             };
 
-            var titleGrid = new Grid
-            {
-                UseLayoutRounding = true,
-                Margin = new Thickness(0, 0, 0, 24)
-            };
+            var titleGrid = CreateTitleGrid(step, stepNumber, stepIndex, onDelete);
+            var contentStack = new StackPanel { UseLayoutRounding = true };
 
-            titleGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            titleGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            // Панели ввода
+            contentStack.Children.Add(CreateDescriptionPanel(step, stepIndex));
+            contentStack.Children.Add(CreateHintPanel(step, stepIndex));
+            contentStack.Children.Add(CreateImagePanel(step, stepIndex, onImageSelected, onImageCleared));
+
+            // Новая панель для изображения подсказки и типа
+            contentStack.Children.Add(CreateHintImagePanel(step, stepIndex, onHintImageSelected, onHintImageCleared));
+
+            mainStack.Children.Add(titleGrid);
+            mainStack.Children.Add(contentStack);
+
+            card.Child = mainStack;
+            return card;
+        }
+
+        private Grid CreateTitleGrid(LessonStep step, int stepNumber, int stepIndex, Action<int> onDelete)
+        {
+            var grid = new Grid { UseLayoutRounding = true, Margin = new Thickness(0, 0, 0, 24) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
             var iconBorder = CreateStepIcon(stepNumber);
             Grid.SetColumn(iconBorder, 0);
@@ -58,28 +77,10 @@ namespace DigitalEducation.Pages.CreateCustomLesson
             var deleteButton = CreateDeleteButton(stepIndex, onDelete);
             Grid.SetColumn(deleteButton, 2);
 
-            titleGrid.Children.Add(iconBorder);
-            titleGrid.Children.Add(titleStack);
-            titleGrid.Children.Add(deleteButton);
-
-            var contentStack = new StackPanel
-            {
-                UseLayoutRounding = true
-            };
-
-            var descriptionPanel = CreateDescriptionPanel(step, stepIndex);
-            var hintPanel = CreateHintPanel(step, stepIndex);
-            var imagePanel = CreateImagePanel(step, stepIndex, onImageSelected, onImageCleared);
-
-            contentStack.Children.Add(descriptionPanel);
-            contentStack.Children.Add(hintPanel);
-            contentStack.Children.Add(imagePanel);
-
-            mainStack.Children.Add(titleGrid);
-            mainStack.Children.Add(contentStack);
-
-            card.Child = mainStack;
-            return card;
+            grid.Children.Add(iconBorder);
+            grid.Children.Add(titleStack);
+            grid.Children.Add(deleteButton);
+            return grid;
         }
 
         private Border CreateStepIcon(int stepNumber)
@@ -111,11 +112,7 @@ namespace DigitalEducation.Pages.CreateCustomLesson
 
         private StackPanel CreateStepTitleStack(LessonStep step)
         {
-            var titleStack = new StackPanel
-            {
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
+            var titleStack = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
             var stepTitle = new TextBlock
             {
                 Text = step.Title,
@@ -123,287 +120,15 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                 Foreground = (Brush)_resourceParent.FindResource("CustomBrush"),
                 Margin = new Thickness(0, 0, 0, 4)
             };
-
             var stepSubtitle = new TextBlock
             {
                 Text = "Заполните информацию о практическом шаге",
                 Style = (Style)_resourceParent.FindResource("BodyTextStyle"),
                 Foreground = (Brush)_resourceParent.FindResource("TextSecondaryBrush")
             };
-
             titleStack.Children.Add(stepTitle);
             titleStack.Children.Add(stepSubtitle);
             return titleStack;
-        }
-
-        private StackPanel CreateDescriptionPanel(LessonStep step, int stepIndex)
-        {
-            var panel = new StackPanel
-            {
-                Margin = new Thickness(0, 0, 0, 20)
-            };
-
-            var header = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 0, 0, 8)
-            };
-
-            var icon = new Image
-            {
-                Tag = "Info",
-                Width = 16,
-                Height = 16,
-                Margin = new Thickness(0, 0, 8, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            ThemeManager.UpdateImageSource(icon, "Info");
-
-            var label = new TextBlock
-            {
-                Text = "Описание шага *",
-                Style = (Style)_resourceParent.FindResource("BodyTextStyle"),
-                FontWeight = FontWeights.Medium
-            };
-
-            header.Children.Add(icon);
-            header.Children.Add(label);
-
-            var textBox = new TextBox
-            {
-                Text = step.Description,
-                Style = (Style)_resourceParent.FindResource("RoundedMultiLineTextBox"),
-                Height = 120,
-                MaxLength = 1000
-            };
-
-            textBox.TextChanged += (s, e) => step.Description = textBox.Text;
-
-            panel.Children.Add(header);
-            panel.Children.Add(textBox);
-            return panel;
-        }
-
-        private StackPanel CreateHintPanel(LessonStep step, int stepIndex)
-        {
-            var panel = new StackPanel
-            {
-                Margin = new Thickness(0, 0, 0, 20)
-            };
-
-            var header = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 0, 0, 8)
-            };
-
-            var icon = new Image
-            {
-                Tag = "Info",
-                Width = 16,
-                Height = 16,
-                Margin = new Thickness(0, 0, 8, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            ThemeManager.UpdateImageSource(icon, "Info");
-
-            var label = new TextBlock
-            {
-                Text = "Подсказка (необязательно)",
-                Style = (Style)_resourceParent.FindResource("BodyTextStyle"),
-                FontWeight = FontWeights.Medium
-            };
-
-            header.Children.Add(icon);
-            header.Children.Add(label);
-
-            var textBox = new TextBox
-            {
-                Text = step.Hint,
-                Style = (Style)_resourceParent.FindResource("RoundedMultiLineTextBox"),
-                Height = 100,
-                MaxLength = 500
-            };
-
-            textBox.TextChanged += (s, e) => step.Hint = textBox.Text;
-
-            panel.Children.Add(header);
-            panel.Children.Add(textBox);
-            return panel;
-        }
-
-        private StackPanel CreateImagePanel(LessonStep step, int stepIndex,
-            Action<int, string> onImageSelected, Action<int> onImageCleared)
-        {
-            var panel = new StackPanel
-            {
-                Margin = new Thickness(0, 0, 0, 0)
-            };
-
-            var header = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 0, 0, 8)
-            };
-
-            var icon = new Image
-            {
-                Tag = "Folder",
-                Width = 18,
-                Height = 18,
-                Margin = new Thickness(0, 0, 8, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            ThemeManager.UpdateImageSource(icon, "Folder");
-
-            var label = new TextBlock
-            {
-                Text = "Изображение для проверки (необязательно)",
-                Style = (Style)_resourceParent.FindResource("BodyTextStyle"),
-                FontWeight = FontWeights.Medium
-            };
-
-            header.Children.Add(icon);
-            header.Children.Add(label);
-
-            var fileContainer = new Grid();
-            fileContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            fileContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-            var fileInfoBorder = new Border
-            {
-                Background = (Brush)_resourceParent.FindResource("BackgroundLightBrush"),
-                CornerRadius = new CornerRadius(8),
-                Padding = new Thickness(16),
-                BorderBrush = (Brush)_resourceParent.FindResource("SurfaceBorderBrush"),
-                BorderThickness = new Thickness(1)
-            };
-
-            var fileInfoText = new TextBlock
-            {
-                Text = string.IsNullOrEmpty(step.VisionTarget) ? "Файл не выбран" : Path.GetFileName(step.VisionTarget),
-                Style = (Style)_resourceParent.FindResource("BodyTextStyle"),
-                Foreground = (Brush)_resourceParent.FindResource("TextSecondaryBrush"),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
-            fileInfoBorder.Child = fileInfoText;
-            Grid.SetColumn(fileInfoBorder, 0);
-
-            var buttonPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(12, 0, 0, 0)
-            };
-            Grid.SetColumn(buttonPanel, 1);
-
-            var clearButton = CreateClearImageButton(step, stepIndex, fileInfoText, onImageCleared);
-            var selectButton = CreateSelectImageButton(step, stepIndex, fileInfoText, clearButton, onImageSelected);
-
-            buttonPanel.Children.Add(clearButton);
-            buttonPanel.Children.Add(selectButton);
-
-            fileContainer.Children.Add(fileInfoBorder);
-            fileContainer.Children.Add(buttonPanel);
-
-            panel.Children.Add(header);
-            panel.Children.Add(fileContainer);
-            return panel;
-        }
-
-        private Button CreateClearImageButton(LessonStep step, int stepIndex, TextBlock fileInfoText,
-            Action<int> onImageCleared)
-        {
-            var button = new Button
-            {
-                Style = (Style)_resourceParent.FindResource("NavigationButtonStyle"),
-                Margin = new Thickness(0, 0, 8, 0),
-                Visibility = string.IsNullOrEmpty(step.VisionTarget) ? Visibility.Collapsed : Visibility.Visible
-            };
-
-            var icon = new Image
-            {
-                Tag = "Trash",
-                Width = 18,
-                Height = 18,
-                Margin = new Thickness(0, 0, 6, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            ThemeManager.UpdateImageSource(icon, "Trash");
-
-            var text = new TextBlock
-            {
-                Text = "Очистить",
-                FontSize = 14,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
-            var stack = new StackPanel { Orientation = Orientation.Horizontal };
-            stack.Children.Add(icon);
-            stack.Children.Add(text);
-            button.Content = stack;
-
-            button.Click += (s, e) =>
-            {
-                step.VisionTarget = "";
-                step.RequiresVisionValidation = false;
-                fileInfoText.Text = "Файл не выбран";
-                button.Visibility = Visibility.Collapsed;
-                onImageCleared?.Invoke(stepIndex);
-            };
-
-            return button;
-        }
-
-        private Button CreateSelectImageButton(LessonStep step, int stepIndex, TextBlock fileInfoText,
-            Button clearButton, Action<int, string> onImageSelected)
-        {
-            var button = new Button
-            {
-                Style = (Style)_resourceParent.FindResource("NavigationButtonStyle")
-            };
-
-            var icon = new Image
-            {
-                Tag = "Folder",
-                Width = 18,
-                Height = 18,
-                Margin = new Thickness(0, 0, 6, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            ThemeManager.UpdateImageSource(icon, "Folder");
-
-            var text = new TextBlock
-            {
-                Text = "Выбрать файл",
-                FontSize = 14,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
-            var stack = new StackPanel { Orientation = Orientation.Horizontal };
-            stack.Children.Add(icon);
-            stack.Children.Add(text);
-            button.Content = stack;
-
-            button.Click += (s, e) =>
-            {
-                var dialog = new OpenFileDialog
-                {
-                    Filter = "Изображения (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp|Все файлы (*.*)|*.*",
-                    Title = "Выберите изображение для проверки"
-                };
-
-                if (dialog.ShowDialog() == true)
-                {
-                    step.VisionTarget = dialog.FileName;
-                    step.RequiresVisionValidation = true;
-                    fileInfoText.Text = Path.GetFileName(step.VisionTarget);
-                    clearButton.Visibility = Visibility.Visible;
-                    onImageSelected?.Invoke(stepIndex, dialog.FileName);
-                }
-            };
-
-            return button;
         }
 
         private Button CreateDeleteButton(int stepIndex, Action<int> onDelete)
@@ -448,8 +173,277 @@ namespace DigitalEducation.Pages.CreateCustomLesson
             button.Content = stack;
 
             button.Click += (s, e) => onDelete?.Invoke(stepIndex);
+            return button;
+        }
+
+        private StackPanel CreateDescriptionPanel(LessonStep step, int stepIndex)
+        {
+            var panel = new StackPanel { Margin = new Thickness(0, 0, 0, 20) };
+            var header = CreateHeader("Info", "Описание шага *");
+            var textBox = new TextBox
+            {
+                Text = step.Description,
+                Style = (Style)_resourceParent.FindResource("RoundedMultiLineTextBox"),
+                Height = 120,
+                MaxLength = 1000
+            };
+            textBox.TextChanged += (s, e) => step.Description = textBox.Text;
+            panel.Children.Add(header);
+            panel.Children.Add(textBox);
+            return panel;
+        }
+
+        private StackPanel CreateHintPanel(LessonStep step, int stepIndex)
+        {
+            var panel = new StackPanel { Margin = new Thickness(0, 0, 0, 20) };
+            var header = CreateHeader("Info", "Подсказка (необязательно)");
+            var textBox = new TextBox
+            {
+                Text = step.Hint,
+                Style = (Style)_resourceParent.FindResource("RoundedMultiLineTextBox"),
+                Height = 100,
+                MaxLength = 500
+            };
+            textBox.TextChanged += (s, e) => step.Hint = textBox.Text;
+            panel.Children.Add(header);
+            panel.Children.Add(textBox);
+            return panel;
+        }
+
+        private StackPanel CreateImagePanel(LessonStep step, int stepIndex,
+            Action<int, string> onImageSelected, Action<int> onImageCleared)
+        {
+            var panel = new StackPanel { Margin = new Thickness(0, 0, 0, 20) };
+            var header = CreateHeader("Folder", "Изображение для проверки (необязательно)");
+
+            var fileContainer = CreateFileSelector(
+                step.VisionTarget,
+                (file) => { step.VisionTarget = file; step.RequiresVisionValidation = true; },
+                () => { step.VisionTarget = ""; step.RequiresVisionValidation = false; },
+                stepIndex,
+                onImageSelected,
+                onImageCleared
+            );
+
+            panel.Children.Add(header);
+            panel.Children.Add(fileContainer);
+            return panel;
+        }
+
+        // НОВЫЙ МЕТОД: панель выбора изображения для подсказки и типа подсказки
+        private StackPanel CreateHintImagePanel(LessonStep step, int stepIndex,
+            Action<int, string> onHintImageSelected, Action<int> onHintImageCleared)
+        {
+            var panel = new StackPanel { Margin = new Thickness(0, 0, 0, 20) };
+            var header = CreateHeader("Hint", "Изображение для визуальной подсказки (необязательно)");
+
+            // Селектор файла
+            var fileContainer = CreateFileSelector(
+                step.HintImagePath, // временный путь
+                (file) => { step.HintImagePath = file; step.ShowHint = true; },
+                () => { step.HintImagePath = ""; step.ShowHint = false; step.VisionHint = ""; },
+                stepIndex,
+                onHintImageSelected,
+                onHintImageCleared
+            );
+
+            // Селектор типа подсказки
+            var typeSelector = CreateHintTypeSelector(step);
+
+            panel.Children.Add(header);
+            panel.Children.Add(fileContainer);
+            panel.Children.Add(typeSelector);
+            return panel;
+        }
+
+        private StackPanel CreateHeader(string iconName, string text)
+        {
+            var stack = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 8) };
+            var icon = new Image
+            {
+                Tag = iconName,
+                Width = 16,
+                Height = 16,
+                Margin = new Thickness(0, 0, 8, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            ThemeManager.UpdateImageSource(icon, iconName);
+            var label = new TextBlock
+            {
+                Text = text,
+                Style = (Style)_resourceParent.FindResource("BodyTextStyle"),
+                FontWeight = FontWeights.Medium
+            };
+            stack.Children.Add(icon);
+            stack.Children.Add(label);
+            return stack;
+        }
+
+        private Grid CreateFileSelector(string currentFilePath, Action<string> onFileSelected, Action onFileCleared,
+            int stepIndex, Action<int, string> onImageSelected, Action<int> onImageCleared)
+        {
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var fileInfoBorder = new Border
+            {
+                Background = (Brush)_resourceParent.FindResource("BackgroundLightBrush"),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(16),
+                BorderBrush = (Brush)_resourceParent.FindResource("SurfaceBorderBrush"),
+                BorderThickness = new Thickness(1)
+            };
+            var fileInfoText = new TextBlock
+            {
+                Text = string.IsNullOrEmpty(currentFilePath) ? "Файл не выбран" : Path.GetFileName(currentFilePath),
+                Style = (Style)_resourceParent.FindResource("BodyTextStyle"),
+                Foreground = (Brush)_resourceParent.FindResource("TextSecondaryBrush"),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            fileInfoBorder.Child = fileInfoText;
+            Grid.SetColumn(fileInfoBorder, 0);
+
+            var buttonPanel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(12, 0, 0, 0) };
+            Grid.SetColumn(buttonPanel, 1);
+
+            var clearButton = CreateClearButton(currentFilePath, fileInfoText, onFileCleared, stepIndex, onImageCleared);
+            var selectButton = CreateSelectButton(fileInfoText, clearButton, onFileSelected, stepIndex, onImageSelected);
+
+            buttonPanel.Children.Add(clearButton);
+            buttonPanel.Children.Add(selectButton);
+
+            grid.Children.Add(fileInfoBorder);
+            grid.Children.Add(buttonPanel);
+            return grid;
+        }
+
+        private Button CreateClearButton(string currentFilePath, TextBlock fileInfoText, Action onFileCleared,
+            int stepIndex, Action<int> onImageCleared)
+        {
+            var button = new Button
+            {
+                Style = (Style)_resourceParent.FindResource("NavigationButtonStyle"),
+                Margin = new Thickness(0, 0, 8, 0),
+                Visibility = string.IsNullOrEmpty(currentFilePath) ? Visibility.Collapsed : Visibility.Visible
+            };
+
+            var icon = new Image
+            {
+                Tag = "Trash",
+                Width = 18,
+                Height = 18,
+                Margin = new Thickness(0, 0, 6, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            ThemeManager.UpdateImageSource(icon, "Trash");
+
+            var text = new TextBlock
+            {
+                Text = "Очистить",
+                FontSize = 14,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var stack = new StackPanel { Orientation = Orientation.Horizontal };
+            stack.Children.Add(icon);
+            stack.Children.Add(text);
+            button.Content = stack;
+
+            button.Click += (s, e) =>
+            {
+                onFileCleared?.Invoke();
+                fileInfoText.Text = "Файл не выбран";
+                button.Visibility = Visibility.Collapsed;
+                onImageCleared?.Invoke(stepIndex);
+            };
 
             return button;
+        }
+
+        private Button CreateSelectButton(TextBlock fileInfoText, Button clearButton, Action<string> onFileSelected,
+            int stepIndex, Action<int, string> onImageSelected)
+        {
+            var button = new Button
+            {
+                Style = (Style)_resourceParent.FindResource("NavigationButtonStyle")
+            };
+
+            var icon = new Image
+            {
+                Tag = "Folder",
+                Width = 18,
+                Height = 18,
+                Margin = new Thickness(0, 0, 6, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            ThemeManager.UpdateImageSource(icon, "Folder");
+
+            var text = new TextBlock
+            {
+                Text = "Выбрать файл",
+                FontSize = 14,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var stack = new StackPanel { Orientation = Orientation.Horizontal };
+            stack.Children.Add(icon);
+            stack.Children.Add(text);
+            button.Content = stack;
+
+            button.Click += (s, e) =>
+            {
+                var dialog = new OpenFileDialog
+                {
+                    Filter = "Изображения (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp|Все файлы (*.*)|*.*",
+                    Title = "Выберите изображение"
+                };
+
+                if (dialog.ShowDialog() == true)
+                {
+                    onFileSelected?.Invoke(dialog.FileName);
+                    fileInfoText.Text = Path.GetFileName(dialog.FileName);
+                    clearButton.Visibility = Visibility.Visible;
+                    onImageSelected?.Invoke(stepIndex, dialog.FileName);
+                }
+            };
+
+            return button;
+        }
+
+        private StackPanel CreateHintTypeSelector(LessonStep step)
+        {
+            var panel = new StackPanel { Margin = new Thickness(0, 20, 0, 0) };
+            var header = CreateHeader("HintType", "Тип подсказки");
+            panel.Children.Add(header);
+
+            var types = new Dictionary<string, string>
+            {
+                { "rectangle", "🟦 Прямоугольник" },
+                { "arrow", "⬅️ Стрелка" },
+                { "highlight", "✨ Подсветка" },
+                { "corner", "🔸 Уголок" },
+                { "glow", "💫 Свечение" },
+                { "dim", "🌑 Затемнение" }
+            };
+
+            var wrapPanel = new WrapPanel { Margin = new Thickness(0, 8, 0, 0) };
+            foreach (var type in types)
+            {
+                var radio = new RadioButton
+                {
+                    GroupName = "HintType_" + step.GetHashCode(),
+                    Content = type.Value,
+                    Tag = type.Key,
+                    Margin = new Thickness(0, 0, 8, 8),
+                    Style = (Style)_resourceParent.FindResource("HintTypeRadioButtonStyle")
+                };
+                radio.IsChecked = (step.HintType == type.Key);
+                radio.Checked += (s, e) => step.HintType = (string)((RadioButton)s).Tag;
+                wrapPanel.Children.Add(radio);
+            }
+            panel.Children.Add(wrapPanel);
+            return panel;
         }
     }
 }

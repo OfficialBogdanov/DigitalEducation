@@ -1,10 +1,13 @@
-﻿using DigitalEducation.ComputerVision.Services;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Interop;
+using System.Runtime.InteropServices;
+using DigitalEducation.ComputerVision.Services;
+using System.Windows.Shapes;
 
 namespace DigitalEducation
 {
@@ -15,13 +18,20 @@ namespace DigitalEducation
         private IWindowManager _windowManager;
         private bool _isCompleted = false;
         private VisionService _visionService;
-
         private readonly ILessonLoader _lessonLoader;
         private readonly ICourseIdResolver _courseIdResolver;
         private readonly IProgressSaver _progressSaver;
         private readonly IErrorPresenter _errorPresenter;
         private readonly IHintRenderer _hintRenderer;
         private readonly IVisionServiceFactory _visionServiceFactory;
+        private string _currentHintType;
+
+        [DllImport("user32.dll")]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+        private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+        private const uint SWP_NOMOVE = 0x0002;
+        private const uint SWP_NOSIZE = 0x0001;
+        private const uint SWP_NOACTIVATE = 0x0010;
 
         public OverlayWindow(string lessonId) : this(
             lessonId,
@@ -78,7 +88,7 @@ namespace DigitalEducation
                 Application.Current.MainWindow.Visibility = Visibility.Collapsed;
             }
 
-            var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            var hwnd = new WindowInteropHelper(this).Handle;
             _windowManager.MinimizeAllWindows(hwnd);
 
             InitializeUI();
@@ -118,7 +128,6 @@ namespace DigitalEducation
                 if (childResult != null)
                     return childResult;
             }
-
             return null;
         }
 
@@ -128,7 +137,6 @@ namespace DigitalEducation
             {
                 this.Topmost = true;
                 this.Focus();
-                var screen = SystemParameters.WorkArea;
                 _lessonController.StartLessonTimer();
             };
 
@@ -138,13 +146,12 @@ namespace DigitalEducation
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            var hwnd = new WindowInteropHelper(this).Handle;
             _windowManager.MinimizeAllWindows(hwnd);
 
             this.Dispatcher.BeginInvoke((Action)(() =>
             {
                 this.Topmost = true;
-                var screen = SystemParameters.WorkArea;
                 this.Focus();
                 _lessonController.UpdateProgressBar();
                 _lessonController.StartLessonTimer();
@@ -160,7 +167,6 @@ namespace DigitalEducation
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var source = e.OriginalSource as DependencyObject;
-
             if (source != null && !IsChildOfLessonContainer(source))
             {
                 CloseLesson();
@@ -180,7 +186,6 @@ namespace DigitalEducation
                         e.Handled = true;
                     }
                     break;
-
                 case Key.Left:
                     if (_lessonController.CanGoToPreviousStep())
                     {
@@ -188,7 +193,6 @@ namespace DigitalEducation
                         e.Handled = true;
                     }
                     break;
-
                 case Key.Escape:
                     CloseLesson();
                     e.Handled = true;
@@ -361,14 +365,91 @@ namespace DigitalEducation
             _errorPresenter.ShowError(message);
         }
 
-        public async Task ShowHint(string hintTemplateName, double confidence)
+        public async Task ShowHint(string hintTemplateName, double confidence, string hintType = "rectangle")
         {
-            await _hintRenderer.ShowHint(hintTemplateName, confidence);
+            _currentHintType = hintType;
+
+            if (hintType == "dim")
+            {
+                OverlayRect.Fill = Brushes.Transparent;
+
+                if (!string.IsNullOrEmpty(hintTemplateName))
+                {
+                    var result = await _visionService.FindElementAsync(hintTemplateName, confidence);
+                    if (result.IsDetected)
+                    {
+                        var hole = new Rect(result.Location.X, result.Location.Y, result.Size.Width, result.Size.Height);
+                        DrawDimWithHole(hole);
+                    }
+                    else
+                    {
+                        DrawDimFull();
+                    }
+                }
+                else
+                {
+                    DrawDimFull();
+                }
+            }
+            else
+            {
+                OverlayRect.Fill = (Brush)FindResource("OverlayBrush");
+                HintCanvas.Children.Clear();
+                await _hintRenderer.ShowHint(hintTemplateName, confidence, hintType);
+            }
+
+            BringToTopmost();
         }
 
         public async Task ClearHintCanvas()
         {
+            OverlayRect.Fill = (Brush)FindResource("OverlayBrush");
+            HintCanvas.Children.Clear();
             await _hintRenderer.ClearHint();
+        }
+
+        private void DrawDimWithHole(Rect hole)
+        {
+            HintCanvas.Children.Clear();
+
+            double screenWidth = SystemParameters.VirtualScreenWidth;
+            double screenHeight = SystemParameters.VirtualScreenHeight;
+            Brush dimBrush = (Brush)FindResource("DimOverlayBrush");
+
+            AddDimRect(0, 0, screenWidth, hole.Top, dimBrush);
+            AddDimRect(0, hole.Bottom, screenWidth, screenHeight - hole.Bottom, dimBrush);
+            AddDimRect(0, hole.Top, hole.Left, hole.Height, dimBrush);
+            AddDimRect(hole.Right, hole.Top, screenWidth - hole.Right, hole.Height, dimBrush);
+        }
+
+        private void DrawDimFull()
+        {
+            HintCanvas.Children.Clear();
+            double screenWidth = SystemParameters.VirtualScreenWidth;
+            double screenHeight = SystemParameters.VirtualScreenHeight;
+            AddDimRect(0, 0, screenWidth, screenHeight, (Brush)FindResource("DimOverlayBrush"));
+        }
+
+        private void AddDimRect(double x, double y, double width, double height, Brush brush)
+        {
+            if (width <= 0 || height <= 0) return;
+            var rect = new Rectangle
+            {
+                Width = width,
+                Height = height,
+                Fill = brush,
+                IsHitTestVisible = false
+            };
+            Canvas.SetLeft(rect, x);
+            Canvas.SetTop(rect, y);
+            HintCanvas.Children.Add(rect);
+        }
+
+        private void BringToTopmost()
+        {
+            if (!IsLoaded) return;
+            var hwnd = new WindowInteropHelper(this).Handle;
+            SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
         }
     }
 }

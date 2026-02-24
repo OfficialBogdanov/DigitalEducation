@@ -189,20 +189,6 @@ nav a:hover {
     color: var(--text-inverse);
 }
 
-.hero-image {
-    background: var(--bg-surface);
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 10px 25px -5px var(--shadow);
-    text-align: center;
-    min-height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-secondary);
-    border: 1px solid var(--bg-surface-border);
-}
-
 .features {
     padding: 80px 0;
     background: var(--bg-surface);
@@ -247,7 +233,7 @@ nav a:hover {
     width: 80px;
     height: 80px;
     background: var(--primary);
-    border-radius: 50%;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -291,7 +277,7 @@ nav a:hover {
     height: 48px;
     background: var(--primary);
     color: var(--text-inverse);
-    border-radius: 50%;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -419,7 +405,7 @@ footer a:hover {
     background: var(--primary);
     color: var(--text-inverse);
     border: none;
-    border-radius: 50%;
+    border-radius: 20px;
     font-size: 24px;
     cursor: pointer;
     box-shadow: 0 2px 10px var(--shadow);

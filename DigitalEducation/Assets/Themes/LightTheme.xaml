@@ -79,6 +79,8 @@
     <SolidColorBrush x:Key="CategoryOfficeBrush" Color="{DynamicResource CategoryOfficeColor}"/>
     <SolidColorBrush x:Key="CategoryInternetBrush" Color="{DynamicResource CategoryInternetColor}"/>
 
+    <SolidColorBrush x:Key="DimOverlayBrush" Color="#CC000000"/>
+
     <SolidColorBrush x:Key="OverlayBrush" Color="{DynamicResource OverlayColor}"/>
     <SolidColorBrush x:Key="ShadowBrush" Color="{DynamicResource ShadowColor}"/>
 

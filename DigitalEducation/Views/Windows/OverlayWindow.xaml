@@ -16,12 +16,12 @@
 
     <Grid>
         <Canvas x:Name="HintCanvas"
-        Panel.ZIndex="9999"
+        Panel.ZIndex="2"
         IsHitTestVisible="False"
         Background="Transparent"/>
 
 
-        <Rectangle Fill="{StaticResource OverlayBrush}"/>
+        <Rectangle x:Name="OverlayRect" Panel.ZIndex="1" Fill="{StaticResource OverlayBrush}"/>
 
         <Border x:Name="LessonContainer"
                 Background="{StaticResource SurfaceBrush}"
@@ -35,7 +35,8 @@
                 VerticalAlignment="Top"
                 Margin="20,20,20,0"
                 UseLayoutRounding="True"
-                SnapsToDevicePixels="True">
+                SnapsToDevicePixels="True"
+                Panel.ZIndex="3">
 
             <Border.Effect>
                 <DropShadowEffect Color="{StaticResource ShadowColor}" 

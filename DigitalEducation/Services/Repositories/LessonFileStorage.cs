@@ -50,16 +50,22 @@ namespace DigitalEducation.Pages.CreateCustomLesson
             return numericOnly.Length > 15 ? numericOnly.Substring(0, 15) : numericOnly;
         }
 
+        public string GenerateNewLessonId()
+        {
+            return $"CustomLesson_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}";
+        }
+
         public LessonData SaveNewLesson(LessonData lesson, List<LessonStep> steps)
         {
             string lessonId = GenerateLessonId(lesson.Title);
             lesson.Id = lessonId;
 
-            List<object> stepsForJson = new List<object>();
+            var stepsForJson = new List<object>();
             int screenshotCounter = 1;
 
-            foreach (var step in steps)
+            for (int i = 0; i < steps.Count; i++)
             {
+                var step = steps[i];
                 var stepDict = new Dictionary<string, object>
                 {
                     ["title"] = step.Title,
@@ -69,6 +75,7 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                 if (!string.IsNullOrWhiteSpace(step.Hint))
                     stepDict["hint"] = step.Hint;
 
+                // Обработка изображения для проверки (visionTarget)
                 if (!string.IsNullOrEmpty(step.VisionTarget) && File.Exists(step.VisionTarget))
                 {
                     string extension = Path.GetExtension(step.VisionTarget).ToLower();
@@ -88,6 +95,17 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                     stepDict["requiredMatches"] = 1;
                     stepDict["visionConfidence"] = 0.8;
                     stepDict["requiresVisionValidation"] = true;
+                }
+
+                // Обработка изображения для подсказки (hint)
+                if (!string.IsNullOrEmpty(step.HintImagePath) && File.Exists(step.HintImagePath))
+                {
+                    string ext = Path.GetExtension(step.HintImagePath);
+                    string hintFileName = $"{lessonId}_step{i + 1}_hint{ext}";
+                    string destHintPath = Path.Combine(_templatesPath, hintFileName);
+                    File.Copy(step.HintImagePath, destHintPath, true);
+                    stepDict["visionHint"] = hintFileName;
+                    stepDict["hintType"] = step.HintType ?? "rectangle";
                 }
 
                 stepsForJson.Add(stepDict);
@@ -113,17 +131,19 @@ namespace DigitalEducation.Pages.CreateCustomLesson
         {
             lesson.Id = lessonId;
 
+            // Удаляем старые файлы изображений, связанные с этим уроком
             var oldImages = Directory.GetFiles(_templatesPath, $"{lessonId}_*.*");
             foreach (var img in oldImages)
             {
                 try { File.Delete(img); } catch { }
             }
 
-            List<object> stepsForJson = new List<object>();
+            var stepsForJson = new List<object>();
             int screenshotCounter = 1;
 
-            foreach (var step in steps)
+            for (int i = 0; i < steps.Count; i++)
             {
+                var step = steps[i];
                 var stepDict = new Dictionary<string, object>
                 {
                     ["title"] = step.Title,
@@ -152,6 +172,16 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                     stepDict["requiredMatches"] = 1;
                     stepDict["visionConfidence"] = 0.8;
                     stepDict["requiresVisionValidation"] = true;
+                }
+
+                if (!string.IsNullOrEmpty(step.HintImagePath) && File.Exists(step.HintImagePath))
+                {
+                    string ext = Path.GetExtension(step.HintImagePath);
+                    string hintFileName = $"{lessonId}_step{i + 1}_hint{ext}";
+                    string destHintPath = Path.Combine(_templatesPath, hintFileName);
+                    File.Copy(step.HintImagePath, destHintPath, true);
+                    stepDict["visionHint"] = hintFileName;
+                    stepDict["hintType"] = step.HintType ?? "rectangle";
                 }
 
                 stepsForJson.Add(stepDict);

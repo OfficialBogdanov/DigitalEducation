@@ -43,7 +43,11 @@ namespace DigitalEducation
 
             if (currentStep.ShowHint && !string.IsNullOrEmpty(currentStep.VisionHint))
             {
-                _window.ShowHint(currentStep.VisionHint, currentStep.HintConfidence);
+                _window.ShowHint(currentStep.VisionHint, currentStep.HintConfidence, currentStep.HintType);
+            }
+            else if (currentStep.ShowHint && currentStep.HintType == "dim")
+            {
+                _window.ShowHint(null, 0, "dim");
             }
         }
 

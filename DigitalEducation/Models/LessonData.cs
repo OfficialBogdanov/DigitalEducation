@@ -36,5 +36,8 @@ namespace DigitalEducation
         public string VisionHint { get; set; }
         public double HintConfidence { get; set; } = 0.8;
         public bool ShowHint { get; set; }
+
+        public string HintType { get; set; } = "rectangle";
+        public string HintImagePath { get; set; }
     }
 }
