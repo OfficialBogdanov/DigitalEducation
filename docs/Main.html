@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigitalEducation – учитесь компьютерной грамотности</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        /* Цвета из темы приложения */
+        :root {
+            --primary: #2563eb;      /* PrimaryBrush */
+            --primary-dark: #1e40af;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --surface: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Шапка */
+        header {
+            background: var(--surface);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .logo span {
+            color: var(--text-primary);
+        }
+
+        nav a {
+            margin-left: 32px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        /* Hero секция */
+        .hero {
+            padding: 80px 0;
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .hero .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: var(--primary-dark);
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.05);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            margin-left: 16px;
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .hero-image {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 12px;
+        }
+
+        /* Особенности */
+        .features {
+            padding: 80px 0;
+            background: var(--surface);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .section-subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid var(--border);
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: white;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+        }
+
+        /* Как это работает */
+        .how-it-works {
+            padding: 80px 0;
+            background: linear-gradient(145deg, #f8fafc 0%, #ffffff 100%);
+        }
+
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .step {
+            flex: 1 1 200px;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 auto 20px;
+        }
+
+        .step h4 {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 60px 0;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .cta p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        .cta .btn {
+            background: white;
+            color: var(--primary);
+            font-size: 18px;
+            padding: 16px 48px;
+        }
+        .cta .btn:hover {
+            background: #f1f5f9;
+        }
+
+        /* Подвал */
+        footer {
+            background: #1e293b;
+            color: #cbd5e1;
+            padding: 40px 0;
+        }
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        footer a {
+            color: #cbd5e1;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: white;
+        }
+        .social-links a {
+            margin-left: 24px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .hero .container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-content h1 {
+                font-size: 36px;
+            }
+            nav {
+                display: none; /* для простоты скроем, можно заменить на бургер */
+            }
+            .steps {
+                flex-direction: column;
+                align-items: center;
+            }
+            footer .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .social-links a {
+                margin: 0 12px;
+            }
+        }
+
+        /* Placeholder для изображения */
+        .hero-image {
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            color: #64748b;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">Digital<span>Education</span></div>
+            <nav>
+                <a href="#features">Особенности</a>
+                <a href="#how">Как работает</a>
+                <a href="#download">Скачать</a>
+                <a href="#contact">Контакты</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Учитесь компьютерной грамотности легко и наглядно</h1>
+                <p>Интерактивные уроки с проверкой действий на экране. Создавайте собственные курсы и отслеживайте прогресс.</p>
+                <a href="#" class="btn">Скачать бесплатно</a>
+                <a href="#" class="btn btn-outline">Узнать больше</a>
+            </div>
+            <div class="hero-image">
+                <!-- Здесь будет скриншот приложения -->
+                [Скриншот приложения]
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Почему выбирают DigitalEducation</h2>
+            <p class="section-subtitle">Всё необходимое для быстрого старта и глубокого изучения</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📁</div>
+                    <h3>Готовые курсы</h3>
+                    <p>Файлы и папки, операционная система, офисные программы, интернет — освойте базовые навыки.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✏️</div>
+                    <h3>Конструктор уроков</h3>
+                    <p>Создавайте собственные уроки с пошаговыми инструкциями и проверкой действий.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👁️</div>
+                    <h3>Компьютерное зрение</h3>
+                    <p>Программа видит, что происходит на экране, и подсказывает, куда нажать или что выбрать.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Статистика прогресса</h3>
+                    <p>Отслеживайте свои достижения, дни подряд и время, потраченное на обучение.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how">
+        <div class="container">
+            <h2 class="section-title">Как это работает</h2>
+            <p class="section-subtitle">Всего несколько шагов — и вы уже учитесь</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>Выберите курс</h4>
+                    <p>Из готовых или создайте свой в конструкторе.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>Выполняйте шаги</h4>
+                    <p>Читайте инструкции и выполняйте действия на компьютере.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>Получайте подсказки</h4>
+                    <p>Если возникли трудности, система подсветит нужный элемент.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4>Следите за прогрессом</h4>
+                    <p>Статистика поможет увидеть свои успехи.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta" id="download">
+        <div class="container">
+            <h2>Начните обучение прямо сейчас</h2>
+            <p>Скачайте DigitalEducation бесплатно и сделайте первый шаг к цифровой грамотности.</p>
+            <a href="#" class="btn">Скачать для Windows</a>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div>© 2026 DigitalEducation. Разработчики: Богданов Данил и Туктаров Артем</div>
+            <div class="social-links">
+                <a href="#">VK</a>
+                <a href="#">Telegram</a>
+                <a href="#">GitHub</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
