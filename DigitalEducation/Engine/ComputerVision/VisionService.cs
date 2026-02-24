@@ -15,11 +15,13 @@ namespace DigitalEducation.ComputerVision.Services
         private bool _isDisposed;
         private readonly string _templatesBasePath;
         private readonly object _captureLock = new object();
+        private readonly ILessonLogger _logger;
 
-        public VisionService(string templatesBasePath = null)
+        public VisionService(string templatesBasePath = null, ILessonLogger logger = null)
         {
             _screenCapturer = new ScreenCapturer();
             _templates = new Dictionary<string, TemplateInfo>();
+            _logger = logger;
 
             _templatesBasePath = templatesBasePath ?? Path.Combine(
                 AppDomain.CurrentDomain.BaseDirectory,
@@ -34,13 +36,21 @@ namespace DigitalEducation.ComputerVision.Services
         public async Task<RecognitionResult> FindElementAsync(string elementName, double confidenceThreshold = 0.8)
         {
             if (!_templates.ContainsKey(elementName))
+            {
+                _logger?.LogVisionCheckFailed(elementName, confidenceThreshold);
                 return RecognitionResult.NotFound();
+            }
 
             var templateInfo = _templates[elementName];
             string templatePath = GetTemplatePath(templateInfo);
 
             if (!File.Exists(templatePath))
+            {
+                _logger?.LogVisionCheckFailed(elementName, confidenceThreshold);
                 return RecognitionResult.NotFound();
+            }
+
+            _logger?.LogVisionCheckStarted(elementName);
 
             return await Task.Run(() =>
             {
@@ -55,9 +65,15 @@ namespace DigitalEducation.ComputerVision.Services
                         {
                             if (!templateInfo.SearchArea.Contains(result.Bounds))
                             {
+                                _logger?.LogVisionCheckFailed(elementName, confidenceThreshold);
                                 return RecognitionResult.NotFound();
                             }
                         }
+
+                        if (result.IsDetected)
+                            _logger?.LogVisionCheckSucceeded(elementName, result.Confidence);
+                        else
+                            _logger?.LogVisionCheckFailed(elementName, confidenceThreshold);
 
                         return result;
                     }
@@ -199,7 +215,10 @@ namespace DigitalEducation.ComputerVision.Services
         private void LoadTemplates()
         {
             if (!Directory.Exists(_templatesBasePath))
+            {
+                _logger?.LogInfo($"Папка шаблонов не существует: {_templatesBasePath}");
                 return;
+            }
 
             var categories = Directory.GetDirectories(_templatesBasePath);
 
@@ -221,6 +240,8 @@ namespace DigitalEducation.ComputerVision.Services
                 var fileName = Path.GetFileNameWithoutExtension(filePath);
                 AddTemplate(fileName, "General", Path.GetFileName(filePath));
             }
+
+            _logger?.LogInfo($"Загружено шаблонов: {_templates.Count} из {_templatesBasePath}");
         }
 
         private string GetTemplatePath(TemplateInfo templateInfo)
@@ -273,20 +294,19 @@ namespace DigitalEducation.ComputerVision.Services
 
             if (!Directory.Exists(folderPath))
             {
-                Console.WriteLine($"Папка не существует: {folderPath}");
+                _logger?.LogError($"Папка не существует: {folderPath}");
                 return false;
             }
 
             var pngFiles = Directory.GetFiles(folderPath, "*.png");
             if (pngFiles.Length == 0)
             {
-                Console.WriteLine($"В папке нет PNG файлов: {folderPath}");
+                _logger?.LogError($"В папке нет PNG файлов: {folderPath}");
                 return false;
             }
 
-            Console.WriteLine($"Проверяем папку: {folderName}");
-            Console.WriteLine($"Файлов в папке: {pngFiles.Length}");
-            Console.WriteLine($"Требуется найти: {requiredMatches}");
+            _logger?.LogInfo($"Проверка папки: {folderPath}");
+            _logger?.LogVisionCheckStarted(folderName);
 
             int foundCount = 0;
 
@@ -296,30 +316,28 @@ namespace DigitalEducation.ComputerVision.Services
                 foreach (var filePath in pngFiles)
                 {
                     var fileName = Path.GetFileNameWithoutExtension(filePath);
-                    Console.WriteLine($"  Проверяем: {fileName}");
-
                     var result = matcher.FindTemplate(filePath, confidenceThreshold);
 
                     if (result.IsDetected)
                     {
                         foundCount++;
-                        Console.WriteLine($"    Найден (уверенность: {result.Confidence})");
+                        _logger?.LogVisionCheckSucceeded(fileName, result.Confidence);
 
                         if (foundCount >= requiredMatches)
                         {
-                            Console.WriteLine($"Достаточно элементов найдено: {foundCount}/{requiredMatches}");
+                            _logger?.LogVisionFolderCheck(folderName, requiredMatches, foundCount, true);
                             return true;
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"    Не найден");
+                        _logger?.LogVisionCheckFailed(fileName, confidenceThreshold);
                     }
                 }
             }
 
-            Console.WriteLine($"Найдено элементов: {foundCount}/{requiredMatches}");
-            return foundCount >= requiredMatches;
+            _logger?.LogVisionFolderCheck(folderName, requiredMatches, foundCount, false);
+            return false;
         }
     }
 }

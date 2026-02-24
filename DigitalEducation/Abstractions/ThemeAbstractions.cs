@@ -97,7 +97,8 @@ namespace DigitalEducation
             ["Edit"] = "Edit",
             ["Calendar"] = "Calendar",
             ["VK"] = "VK",
-            ["GitHub"] = "GitHub"
+            ["GitHub"] = "GitHub",
+            ["Square"] = "Square"
         };
 
         public BitmapImage GetIcon(string iconName, bool isDarkTheme)

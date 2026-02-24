@@ -55,6 +55,13 @@ namespace DigitalEducation
                             else
                                 lesson.CourseId = GetCourseIdFromLessonId(lesson.Id);
                         }
+                        foreach (var step in lesson.Steps)
+                        {
+                            if (!string.IsNullOrEmpty(step.VisionTarget))
+                                step.VisionTarget = Path.GetFileNameWithoutExtension(step.VisionTarget);
+                            if (!string.IsNullOrEmpty(step.VisionHint))
+                                step.VisionHint = Path.GetFileNameWithoutExtension(step.VisionHint);
+                        }
                         lessons.Add(lesson);
                     }
                 }

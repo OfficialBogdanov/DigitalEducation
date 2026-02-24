@@ -13,6 +13,15 @@ namespace DigitalEducation.Pages.CreateCustomLesson
     public class StepCardFactory
     {
         private readonly FrameworkElement _resourceParent;
+        private static readonly Dictionary<string, string> HintTypeIconNames = new Dictionary<string, string>
+        {
+            { "rectangle", "Rectangle" },
+            { "arrow", "Arrow" },
+            { "highlight", "Highlight" },
+            { "corner", "Corner" },
+            { "glow", "Glow" },
+            { "dim", "Dim" }
+        };
 
         public StepCardFactory(FrameworkElement resourceParent)
         {
@@ -46,12 +55,10 @@ namespace DigitalEducation.Pages.CreateCustomLesson
             var titleGrid = CreateTitleGrid(step, stepNumber, stepIndex, onDelete);
             var contentStack = new StackPanel { UseLayoutRounding = true };
 
-            // Панели ввода
             contentStack.Children.Add(CreateDescriptionPanel(step, stepIndex));
             contentStack.Children.Add(CreateHintPanel(step, stepIndex));
             contentStack.Children.Add(CreateImagePanel(step, stepIndex, onImageSelected, onImageCleared));
 
-            // Новая панель для изображения подсказки и типа
             contentStack.Children.Add(CreateHintImagePanel(step, stepIndex, onHintImageSelected, onHintImageCleared));
 
             mainStack.Children.Add(titleGrid);
@@ -230,16 +237,14 @@ namespace DigitalEducation.Pages.CreateCustomLesson
             return panel;
         }
 
-        // НОВЫЙ МЕТОД: панель выбора изображения для подсказки и типа подсказки
         private StackPanel CreateHintImagePanel(LessonStep step, int stepIndex,
             Action<int, string> onHintImageSelected, Action<int> onHintImageCleared)
         {
             var panel = new StackPanel { Margin = new Thickness(0, 0, 0, 20) };
-            var header = CreateHeader("Hint", "Изображение для визуальной подсказки (необязательно)");
+            var header = CreateHeader("Folder", "Изображение для визуальной подсказки (необязательно)");
 
-            // Селектор файла
             var fileContainer = CreateFileSelector(
-                step.HintImagePath, // временный путь
+                step.HintImagePath, 
                 (file) => { step.HintImagePath = file; step.ShowHint = true; },
                 () => { step.HintImagePath = ""; step.ShowHint = false; step.VisionHint = ""; },
                 stepIndex,
@@ -247,7 +252,6 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                 onHintImageCleared
             );
 
-            // Селектор типа подсказки
             var typeSelector = CreateHintTypeSelector(step);
 
             panel.Children.Add(header);
@@ -419,29 +423,75 @@ namespace DigitalEducation.Pages.CreateCustomLesson
 
             var types = new Dictionary<string, string>
             {
-                { "rectangle", "🟦 Прямоугольник" },
-                { "arrow", "⬅️ Стрелка" },
-                { "highlight", "✨ Подсветка" },
-                { "corner", "🔸 Уголок" },
-                { "glow", "💫 Свечение" },
-                { "dim", "🌑 Затемнение" }
+                { "rectangle", "Прямоугольник" },
+                { "arrow", "Стрелка" },
+                { "highlight", "Подсветка" },
+                { "corner", "Уголок" },
+                { "glow", "Свечение" },
+                { "dim", "Затемнение" }
             };
 
             var wrapPanel = new WrapPanel { Margin = new Thickness(0, 8, 0, 0) };
+            var buttons = new Dictionary<string, Button>();
+
             foreach (var type in types)
             {
-                var radio = new RadioButton
+                var button = new Button
                 {
-                    GroupName = "HintType_" + step.GetHashCode(),
-                    Content = type.Value,
+                    Style = (Style)_resourceParent.FindResource("HintTypeButtonStyle"),
                     Tag = type.Key,
-                    Margin = new Thickness(0, 0, 8, 8),
-                    Style = (Style)_resourceParent.FindResource("HintTypeRadioButtonStyle")
+                    Cursor = Cursors.Hand,
+                    UseLayoutRounding = true
                 };
-                radio.IsChecked = (step.HintType == type.Key);
-                radio.Checked += (s, e) => step.HintType = (string)((RadioButton)s).Tag;
-                wrapPanel.Children.Add(radio);
+
+                var stack = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                var icon = new Image
+                {
+                    Tag = HintTypeIconNames[type.Key],
+                    Width = 18,
+                    Height = 18,
+                    Margin = new Thickness(0, 0, 8, 0),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                ThemeManager.UpdateImageSource(icon, HintTypeIconNames[type.Key]);
+
+                var text = new TextBlock
+                {
+                    Text = type.Value,
+                    FontSize = 14,
+                    FontWeight = FontWeights.Medium,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Foreground = (Brush)_resourceParent.FindResource("TextPrimaryBrush")
+                };
+
+                stack.Children.Add(icon);
+                stack.Children.Add(text);
+                button.Content = stack;
+
+                button.Click += (s, e) =>
+                {
+                    foreach (var btn in buttons.Values)
+                    {
+                        btn.Style = (Style)_resourceParent.FindResource("HintTypeButtonStyle");
+                    }
+                    button.Style = (Style)_resourceParent.FindResource("ActiveHintTypeButtonStyle");
+                    step.HintType = (string)button.Tag;
+                };
+
+                if (step.HintType == type.Key)
+                {
+                    button.Style = (Style)_resourceParent.FindResource("ActiveHintTypeButtonStyle");
+                }
+
+                buttons[type.Key] = button;
+                wrapPanel.Children.Add(button);
             }
+
             panel.Children.Add(wrapPanel);
             return panel;
         }

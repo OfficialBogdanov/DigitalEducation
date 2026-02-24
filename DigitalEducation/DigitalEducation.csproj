@@ -165,11 +165,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Abstractions\ILessonLogger.cs" />
     <Compile Include="Engine\ComputerVision\RecognitionResult.cs" />
     <Compile Include="Engine\ComputerVision\ScreenCapturer.cs" />
     <Compile Include="Engine\ComputerVision\TemplateInfo.cs" />
     <Compile Include="Engine\ComputerVision\TemplateMatcher.cs" />
     <Compile Include="Engine\ComputerVision\VisionService.cs" />
+    <Compile Include="Services\Common\DebugLessonLogger.cs" />
     <Compile Include="Views\Windows\ConfirmDialog.xaml.cs">
       <DependentUpon>ConfirmDialog.xaml</DependentUpon>
     </Compile>

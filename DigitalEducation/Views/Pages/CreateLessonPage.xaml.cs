@@ -136,18 +136,25 @@ namespace DigitalEducation.Pages
                         if (!string.IsNullOrEmpty(step.VisionHint))
                         {
                             string templatesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Engine", "ComputerVision", "Templates");
-                            string fullPath = Path.Combine(templatesPath, step.VisionHint);
+                            string fullPath = Path.Combine(templatesPath, step.VisionHint + ".png");
                             if (File.Exists(fullPath))
                             {
                                 newStep.HintImagePath = fullPath;
                                 newStep.ShowHint = true;
-                                _originalStepHintImages[i] = step.VisionHint;
+                                newStep.VisionHint = step.VisionHint;
+                                _originalStepHintImages[i] = step.VisionHint + ".png";
                             }
                         }
 
                         if (!string.IsNullOrEmpty(step.VisionTarget))
                         {
-                            _originalStepImages[i] = step.VisionTarget;
+                            string templatesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Engine", "ComputerVision", "Templates");
+                            string targetPath = Path.Combine(templatesPath, step.VisionTarget + ".png");
+                            if (File.Exists(targetPath))
+                            {
+                                newStep.VisionTarget = targetPath;
+                            }
+                            _originalStepImages[i] = step.VisionTarget + ".png";
                         }
 
                         _steps.Add(newStep);
@@ -257,16 +264,25 @@ namespace DigitalEducation.Pages
                     },
                     onImageSelected: (idx, fileName) =>
                     {
+                        var currentStep = _steps[idx];
+                        currentStep.VisionTarget = fileName;
+                        currentStep.RequiresVisionValidation = true;
                         if (_isEditMode)
                             _originalStepImages[idx] = Path.GetFileName(fileName);
                     },
                     onImageCleared: (idx) =>
                     {
+                        var currentStep = _steps[idx];
+                        currentStep.VisionTarget = "";
+                        currentStep.RequiresVisionValidation = false;
                         if (_isEditMode && _originalStepImages.ContainsKey(idx))
                             _originalStepImages.Remove(idx);
                     },
                     onHintImageSelected: (idx, fileName) =>
                     {
+                        var currentStep = _steps[idx];
+                        currentStep.HintImagePath = fileName;
+                        currentStep.ShowHint = true;
                         if (_isEditMode)
                         {
                             string fileNameOnly = Path.GetFileName(fileName);
@@ -275,6 +291,10 @@ namespace DigitalEducation.Pages
                     },
                     onHintImageCleared: (idx) =>
                     {
+                        var currentStep = _steps[idx];
+                        currentStep.HintImagePath = "";
+                        currentStep.ShowHint = false;
+                        currentStep.VisionHint = null;
                         if (_isEditMode && _originalStepHintImages.ContainsKey(idx))
                             _originalStepHintImages.Remove(idx);
                     }
@@ -336,15 +356,18 @@ namespace DigitalEducation.Pages
                 {
                     Title = TitleTextBox.Text.Trim(),
                     CourseId = "Custom",
-                    CompletionMessage = CompletionMessageTextBox.Text.Trim(),
-                    Steps = new List<LessonStep>()
+                    CompletionMessage = CompletionMessageTextBox.Text.Trim()
                 };
 
                 string lessonId = _storage.GenerateNewLessonId();
-                CopyHintImagesForLesson(lessonId, new List<LessonStep>(_steps), false);
-                lesson.Steps = new List<LessonStep>(_steps);
+                var stepsList = new List<LessonStep>(_steps);
 
-                _storage.SaveNewLesson(lesson, lesson.Steps);
+                // Копируем изображения подсказок перед сохранением
+                CopyImagesForLesson(lessonId, stepsList, false);
+
+                lesson.Steps = stepsList;
+
+                _storage.SaveNewLesson(lesson, stepsList);
                 LessonManager.ReloadAllLessons();
 
                 DialogService.ShowSuccessDialog("Урок успешно сохранен!", Window.GetWindow(this));
@@ -365,14 +388,17 @@ namespace DigitalEducation.Pages
                     Id = _editingLessonId,
                     Title = TitleTextBox.Text.Trim(),
                     CourseId = "Custom",
-                    CompletionMessage = CompletionMessageTextBox.Text.Trim(),
-                    Steps = new List<LessonStep>()
+                    CompletionMessage = CompletionMessageTextBox.Text.Trim()
                 };
 
-                CopyHintImagesForLesson(_editingLessonId, new List<LessonStep>(_steps), true);
-                lesson.Steps = new List<LessonStep>(_steps);
+                var stepsList = new List<LessonStep>(_steps);
 
-                _storage.UpdateLesson(_editingLessonId, lesson, lesson.Steps);
+                // Копируем изображения подсказок перед обновлением
+                CopyImagesForLesson(_editingLessonId, stepsList, true);
+
+                lesson.Steps = stepsList;
+
+                _storage.UpdateLesson(_editingLessonId, lesson, stepsList);
                 LessonManager.ReloadAllLessons();
 
                 DialogService.ShowSuccessDialog("Урок успешно обновлен!", Window.GetWindow(this));
@@ -384,7 +410,11 @@ namespace DigitalEducation.Pages
             }
         }
 
-        private void CopyHintImagesForLesson(string lessonId, List<LessonStep> steps, bool isUpdate)
+        /// <summary>
+        /// Копирует изображения для визуальных подсказок в папку Templates
+        /// и обновляет поля VisionHint в шагах.
+        /// </summary>
+        private void CopyImagesForLesson(string lessonId, List<LessonStep> steps, bool isUpdate)
         {
             string templatesDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Engine", "ComputerVision", "Templates");
             if (!Directory.Exists(templatesDir))
@@ -395,8 +425,32 @@ namespace DigitalEducation.Pages
                 var step = steps[i];
                 string sourcePath = step.HintImagePath;
 
-                if (string.IsNullOrEmpty(sourcePath) || !File.Exists(sourcePath))
+                // Если есть путь к исходному изображению и файл существует
+                if (!string.IsNullOrEmpty(sourcePath) && File.Exists(sourcePath))
                 {
+                    string ext = Path.GetExtension(sourcePath);
+                    string fileName = $"{lessonId}_step{i + 1}_hint{ext}";
+                    string destPath = Path.Combine(templatesDir, fileName);
+
+                    // При обновлении удаляем старый файл, если он отличается
+                    if (isUpdate && _originalStepHintImages.ContainsKey(i))
+                    {
+                        string oldFile = Path.Combine(templatesDir, _originalStepHintImages[i]);
+                        if (File.Exists(oldFile) && oldFile != destPath)
+                        {
+                            try { File.Delete(oldFile); } catch { }
+                        }
+                    }
+
+                    File.Copy(sourcePath, destPath, true);
+                    step.VisionHint = Path.GetFileNameWithoutExtension(fileName);
+                    step.ShowHint = true;
+                    // Очищаем временный путь, чтобы не сериализовать его
+                    step.HintImagePath = null;
+                }
+                else
+                {
+                    // Если изображение не выбрано, удаляем старое (при обновлении)
                     if (isUpdate && _originalStepHintImages.ContainsKey(i))
                     {
                         string oldFile = Path.Combine(templatesDir, _originalStepHintImages[i]);
@@ -407,25 +461,8 @@ namespace DigitalEducation.Pages
                     }
                     step.VisionHint = null;
                     step.ShowHint = false;
-                    continue;
+                    step.HintImagePath = null;
                 }
-
-                string ext = Path.GetExtension(sourcePath);
-                string fileName = $"{lessonId}_step{i + 1}_hint{ext}";
-                string destPath = Path.Combine(templatesDir, fileName);
-
-                if (isUpdate && _originalStepHintImages.ContainsKey(i))
-                {
-                    string oldFile = Path.Combine(templatesDir, _originalStepHintImages[i]);
-                    if (File.Exists(oldFile) && oldFile != destPath)
-                    {
-                        try { File.Delete(oldFile); } catch { }
-                    }
-                }
-
-                File.Copy(sourcePath, destPath, true);
-                step.VisionHint = fileName;
-                step.ShowHint = true;
             }
         }
     }

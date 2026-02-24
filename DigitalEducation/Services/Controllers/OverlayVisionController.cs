@@ -10,14 +10,20 @@ namespace DigitalEducation
         private readonly OverlayLessonController _lessonController;
         private readonly OverlayWindow _window;
         private readonly VisionService _visionService;
+        private readonly ILessonLogger _logger;
         private DispatcherTimer _visionCheckTimer;
         private bool _isVisionChecking = false;
 
-        public OverlayVisionController(OverlayLessonController lessonController, OverlayWindow window, VisionService visionService)
+        public OverlayVisionController(
+            OverlayLessonController lessonController,
+            OverlayWindow window,
+            VisionService visionService,
+            ILessonLogger logger)
         {
             _lessonController = lessonController;
             _window = window;
             _visionService = visionService;
+            _logger = logger;
             _lessonController.StepChanged += OnStepChanged;
         }
 
@@ -79,22 +85,32 @@ namespace DigitalEducation
             try
             {
                 bool isDetected = false;
+                string target = null;
 
                 if (!string.IsNullOrEmpty(currentStep.VisionTargetFolder))
                 {
+                    target = currentStep.VisionTargetFolder;
+                    _logger.LogVisionCheckStarted(target);
                     isDetected = await _visionService.ValidateFolderElementsAsync(
                         currentStep.VisionTargetFolder,
                         currentStep.RequiredMatches,
                         currentStep.VisionConfidence
                     );
+                    _logger.LogVisionFolderCheck(target, currentStep.RequiredMatches, isDetected ? 1 : 0, isDetected);
                 }
                 else if (!string.IsNullOrEmpty(currentStep.VisionTarget))
                 {
+                    target = currentStep.VisionTarget;
+                    _logger.LogVisionCheckStarted(target);
                     var result = await _visionService.FindElementAsync(
                         currentStep.VisionTarget,
                         currentStep.VisionConfidence
                     );
                     isDetected = result.IsDetected;
+                    if (isDetected)
+                        _logger.LogVisionCheckSucceeded(target, result.Confidence);
+                    else
+                        _logger.LogVisionCheckFailed(target, currentStep.VisionConfidence);
                 }
 
                 if (isDetected)
@@ -114,8 +130,9 @@ namespace DigitalEducation
                     });
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError("Ошибка при проверке компьютерного зрения", ex);
             }
             finally
             {

@@ -7,14 +7,10 @@
     {
       "title": "Шаг 1",
       "description": "3",
-      "hint": "4"
-    },
-    {
-      "title": "Шаг 2",
-      "description": "4",
-      "hint": "5",
-      "visionHint": "842352753202602_step2_hint.png",
-      "hintType": "dim"
+      "hint": "4",
+      "visionTarget": "842352753202602_001",
+      "visionConfidence": 0.84999999999999998,
+      "requiresVisionValidation": true
     }
   ]
 }

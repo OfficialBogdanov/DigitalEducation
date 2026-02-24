@@ -58,33 +58,26 @@
             </Setter>
         </Style>
 
-        <Style x:Key="HintTypeRadioButtonStyle" TargetType="RadioButton">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RadioButton">
-                        <Border x:Name="border" 
-                                Background="{DynamicResource BackgroundLightBrush}" 
-                                CornerRadius="6" 
-                                Padding="12,8" 
-                                BorderThickness="1" 
-                                BorderBrush="{DynamicResource SurfaceBorderBrush}">
-                            <ContentPresenter HorizontalAlignment="Center" 
-                                              VerticalAlignment="Center"
-                                              RecognizesAccessKey="False"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{DynamicResource HoverBrush}"/>
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{DynamicResource CustomBrush}"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource CustomBrush}"/>
-                                <Setter Property="Foreground" Value="White"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+        <Style x:Key="HintTypeButtonStyle" TargetType="Button" BasedOn="{StaticResource NavigationButtonStyle}">
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="0,0,16,16"/>
+            <Setter Property="RenderTransform" Value="{x:Null}"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="RenderTransform" Value="{x:Null}"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="RenderTransform" Value="{x:Null}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Новый стиль для активной кнопки выбора типа подсказки -->
+        <Style x:Key="ActiveHintTypeButtonStyle" 
+               TargetType="Button" 
+               BasedOn="{StaticResource HintTypeButtonStyle}">
+            <Setter Property="Background" Value="{DynamicResource SelectedBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
         </Style>
 
         <Style x:Key="AddStepBlockStyle" TargetType="Border">

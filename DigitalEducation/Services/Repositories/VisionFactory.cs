@@ -6,12 +6,12 @@ namespace DigitalEducation
 {
     public interface IVisionServiceFactory
     {
-        VisionService Create();
+        VisionService Create(ILessonLogger logger = null);
     }
 
     public class VisionFactory : IVisionServiceFactory
     {
-        public VisionService Create()
+        public VisionService Create(ILessonLogger logger = null)
         {
             try
             {
@@ -20,10 +20,12 @@ namespace DigitalEducation
                 {
                     Directory.CreateDirectory(templatesPath);
                 }
-                return new VisionService(templatesPath);
+                logger?.LogInfo($"Путь к шаблонам: {templatesPath}");
+                return new VisionService(templatesPath, logger);
             }
-            catch
+            catch (Exception ex)
             {
+                logger?.LogError("Ошибка создания VisionService", ex);
                 return null;
             }
         }

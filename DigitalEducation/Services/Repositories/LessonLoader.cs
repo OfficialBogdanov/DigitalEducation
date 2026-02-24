@@ -37,6 +37,17 @@ namespace DigitalEducation
                 if (lesson != null && string.IsNullOrEmpty(lesson.CourseId))
                     lesson.CourseId = "Custom";
 
+                if (lesson?.Steps != null)
+                {
+                    foreach (var step in lesson.Steps)
+                    {
+                        if (!string.IsNullOrEmpty(step.VisionTarget))
+                            step.VisionTarget = Path.GetFileNameWithoutExtension(step.VisionTarget);
+                        if (!string.IsNullOrEmpty(step.VisionHint))
+                            step.VisionHint = Path.GetFileNameWithoutExtension(step.VisionHint);
+                    }
+                }
+
                 return lesson;
             }
             catch

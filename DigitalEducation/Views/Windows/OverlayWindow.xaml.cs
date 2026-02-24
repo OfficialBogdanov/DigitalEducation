@@ -24,6 +24,7 @@ namespace DigitalEducation
         private readonly IErrorPresenter _errorPresenter;
         private readonly IHintRenderer _hintRenderer;
         private readonly IVisionServiceFactory _visionServiceFactory;
+        private readonly ILessonLogger _logger;
         private string _currentHintType;
 
         [DllImport("user32.dll")]
@@ -40,7 +41,8 @@ namespace DigitalEducation
             new ProgressSaver(),
             new ErrorPresenter(Application.Current?.MainWindow),
             new VisionFactory(),
-            new WindowsApiWindowManager())
+            new WindowsApiWindowManager(),
+            new DebugLessonLogger())
         {
         }
 
@@ -51,7 +53,8 @@ namespace DigitalEducation
             IProgressSaver progressSaver,
             IErrorPresenter errorPresenter,
             IVisionServiceFactory visionServiceFactory,
-            IWindowManager windowManager)
+            IWindowManager windowManager,
+            ILessonLogger logger)
         {
             InitializeComponent();
 
@@ -61,8 +64,9 @@ namespace DigitalEducation
             _errorPresenter = errorPresenter;
             _visionServiceFactory = visionServiceFactory;
             _windowManager = windowManager;
+            _logger = logger;
 
-            _visionService = _visionServiceFactory.Create();
+            _visionService = _visionServiceFactory.Create(_logger);
             _hintRenderer = new HintRenderer(_visionService, HintCanvas, Dispatcher);
 
             _lessonController = new OverlayLessonController(
@@ -70,9 +74,10 @@ namespace DigitalEducation
                 this,
                 id => _lessonLoader.LoadLesson(id),
                 (lid, cid, minutes) => _progressSaver.Save(lid, cid, minutes),
-                id => _courseIdResolver.GetCourseId(id));
+                id => _courseIdResolver.GetCourseId(id),
+                _logger);
 
-            _visionController = new OverlayVisionController(_lessonController, this, _visionService);
+            _visionController = new OverlayVisionController(_lessonController, this, _visionService, _logger);
 
             if (!_lessonController.Initialize())
             {
@@ -363,6 +368,7 @@ namespace DigitalEducation
         public void ShowError(string message)
         {
             _errorPresenter.ShowError(message);
+            _logger.LogError(message);
         }
 
         public async Task ShowHint(string hintTemplateName, double confidence, string hintType = "rectangle")

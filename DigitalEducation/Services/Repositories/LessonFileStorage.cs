@@ -38,7 +38,18 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                 return null;
 
             string json = File.ReadAllText(filePath, Encoding.UTF8);
-            return JsonSerializer.Deserialize<LessonData>(json, _jsonOptions);
+            var lesson = JsonSerializer.Deserialize<LessonData>(json, _jsonOptions);
+            if (lesson?.Steps != null)
+            {
+                foreach (var step in lesson.Steps)
+                {
+                    if (!string.IsNullOrEmpty(step.VisionTarget))
+                        step.VisionTarget = Path.GetFileNameWithoutExtension(step.VisionTarget);
+                    if (!string.IsNullOrEmpty(step.VisionHint))
+                        step.VisionHint = Path.GetFileNameWithoutExtension(step.VisionHint);
+                }
+            }
+            return lesson;
         }
 
         public string GenerateLessonId(string lessonTitle)
@@ -75,7 +86,6 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                 if (!string.IsNullOrWhiteSpace(step.Hint))
                     stepDict["hint"] = step.Hint;
 
-                // Обработка изображения для проверки (visionTarget)
                 if (!string.IsNullOrEmpty(step.VisionTarget) && File.Exists(step.VisionTarget))
                 {
                     string extension = Path.GetExtension(step.VisionTarget).ToLower();
@@ -97,7 +107,6 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                     stepDict["requiresVisionValidation"] = true;
                 }
 
-                // Обработка изображения для подсказки (hint)
                 if (!string.IsNullOrEmpty(step.HintImagePath) && File.Exists(step.HintImagePath))
                 {
                     string ext = Path.GetExtension(step.HintImagePath);
@@ -131,7 +140,6 @@ namespace DigitalEducation.Pages.CreateCustomLesson
         {
             lesson.Id = lessonId;
 
-            // Удаляем старые файлы изображений, связанные с этим уроком
             var oldImages = Directory.GetFiles(_templatesPath, $"{lessonId}_*.*");
             foreach (var img in oldImages)
             {
@@ -158,12 +166,10 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                     string extension = Path.GetExtension(step.VisionTarget).ToLower();
                     string numericFileName = $"{lessonId}_{screenshotCounter:000}{extension}";
                     string destPath = Path.Combine(_templatesPath, numericFileName);
-
                     File.Copy(step.VisionTarget, destPath, true);
-                    stepDict["visionTarget"] = numericFileName;
+                    stepDict["visionTarget"] = Path.GetFileNameWithoutExtension(numericFileName); 
                     stepDict["visionConfidence"] = 0.85;
                     stepDict["requiresVisionValidation"] = true;
-
                     screenshotCounter++;
                 }
                 else if (!string.IsNullOrEmpty(step.VisionTargetFolder))
@@ -180,7 +186,7 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                     string hintFileName = $"{lessonId}_step{i + 1}_hint{ext}";
                     string destHintPath = Path.Combine(_templatesPath, hintFileName);
                     File.Copy(step.HintImagePath, destHintPath, true);
-                    stepDict["visionHint"] = hintFileName;
+                    stepDict["visionHint"] = Path.GetFileNameWithoutExtension(hintFileName);
                     stepDict["hintType"] = step.HintType ?? "rectangle";
                 }
 

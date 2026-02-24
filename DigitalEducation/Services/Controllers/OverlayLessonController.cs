@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Windows;
 
 namespace DigitalEducation
 {
@@ -18,6 +17,7 @@ namespace DigitalEducation
         private readonly Func<string, LessonData> _lessonLoader;
         private readonly Action<string, string, double> _progressSaver;
         private readonly Func<string, string> _courseIdResolver;
+        private readonly ILessonLogger _logger;
 
         public event EventHandler StepChanged;
         public event EventHandler LessonCompleted;
@@ -27,7 +27,8 @@ namespace DigitalEducation
             OverlayWindow window,
             Func<string, LessonData> lessonLoader,
             Action<string, string, double> progressSaver,
-            Func<string, string> courseIdResolver)
+            Func<string, string> courseIdResolver,
+            ILessonLogger logger)
         {
             _lessonId = lessonId;
             _window = window;
@@ -35,6 +36,7 @@ namespace DigitalEducation
             _lessonLoader = lessonLoader;
             _progressSaver = progressSaver;
             _courseIdResolver = courseIdResolver;
+            _logger = logger;
         }
 
         public bool Initialize()
@@ -43,6 +45,7 @@ namespace DigitalEducation
             if (_currentLesson == null)
             {
                 _window.ShowError($"Урок '{_lessonId}' не найден");
+                _logger.LogError($"Урок не найден: {_lessonId}");
                 return false;
             }
 
@@ -50,11 +53,13 @@ namespace DigitalEducation
             if (_totalSteps == 0)
             {
                 _window.ShowError("В уроке нет шагов");
+                _logger.LogError($"Урок '{_lessonId}' не содержит шагов");
                 return false;
             }
 
             _window.SetLessonTitle(_currentLesson.Title);
             _lessonStartTime = DateTime.Now;
+            _logger.LogLessonStarted(_lessonId, _currentLesson.Title, _totalSteps);
             return true;
         }
 
@@ -76,6 +81,8 @@ namespace DigitalEducation
             _window.SetNavigationButtons(showBack, nextButtonText, showNext);
             UpdateProgressBar();
             StepChanged?.Invoke(this, EventArgs.Empty);
+
+            _logger.LogStepChanged(_currentStep, step.Title, step.RequiresVisionValidation);
         }
 
         public void UpdateProgressBar()
@@ -138,6 +145,8 @@ namespace DigitalEducation
             _isCompleted = true;
             ShowCompletionMessage();
             LessonCompleted?.Invoke(this, EventArgs.Empty);
+
+            _logger.LogLessonCompleted(_lessonId, minutesSpent);
         }
 
         public void StartLessonTimer()
