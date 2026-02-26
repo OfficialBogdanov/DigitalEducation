@@ -1,4 +1,4 @@
-## ℹ️ О приложении DigitalEducation
+# ℹ️ О приложении DigitalEducation
 
 🌐 **Официальный сайт:** [https://digitaleducation.ru](https://digitaleducation.ru)  
 
