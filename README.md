@@ -72,6 +72,7 @@
   "requiresVisionValidation": true,
   "visionTargetFolder": "string",
   "requiredMatches": 1,
+  "showHint": true,
   "visionHint": "string",
   "hintType": "rectangle",
   "hintConfidence": 0.8
@@ -104,6 +105,7 @@
 
 | Поле | Тип | По умолчанию | Описание |
 |------|-----|--------------|----------|
+| `showHint` | boolean | `true`, если задан `visionHint` | Указывает, требуется ли визуальная подсказка на этом шаге. |
 | `visionHint` | string | — | Имя файла шаблона **без расширения** для поиска места, где рисовать подсказку. |
 | `hintType` | string | `"rectangle"` | Тип визуальной подсказки (см. таблицу ниже). |
 | `hintConfidence` | number | 0.8 | Порог уверенности для поиска элемента подсказки. |
@@ -149,7 +151,6 @@
       "visionTarget": "CustomLesson_20250226123045_001",
       "visionConfidence": 0.85,
       "requiresVisionValidation": true,
-      "hintType": "rectangle"
     },
     {
       "title": "Шаг 2: Нажмите правую кнопку мыши",
@@ -159,7 +160,9 @@
       "requiredMatches": 1,
       "visionConfidence": 0.8,
       "requiresVisionValidation": true,
+      "showHint": true,
       "visionHint": "CustomLesson_20250226123045_step2_hint",
+      "hintConfidence": 0.8
       "hintType": "arrow"
     }
   ]
@@ -173,7 +176,6 @@
 - Для проверки используйте точные скриншоты элементов в натуральную величину.
 - Порог уверенности (`visionConfidence`) подбирайте экспериментально: слишком низкий → ложные срабатывания, слишком высокий → элемент может не находиться из-за мелких отличий.
 - Если на шаге не требуется проверка, просто не указывайте `visionTarget` и `visionTargetFolder`.
-- Для `hintType = "dim"` изображение для подсказки (`visionHint`) не требуется — затемнение создаётся вокруг области, найденной по `visionTarget` (если задан) или на весь экран.
 
 ---
 
