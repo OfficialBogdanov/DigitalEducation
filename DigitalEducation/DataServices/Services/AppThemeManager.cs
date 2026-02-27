@@ -62,7 +62,11 @@ namespace DigitalEducation
 
         public static bool IsDarkTheme() => _currentTheme == "Dark";
 
-        public static string GetThemeConfigFilePath() => Repository.GetType().Name;
+        public static string GetThemeConfigFilePath() => Repository.GetConfigPath();
+
+        public static string GetOverlayPosition() => Repository.LoadOverlayPosition();
+        public static void SetOverlayPosition(string position) => Repository.SaveOverlayPosition(position);
+
 
         public static void ApplyTheme(string themeName)
         {

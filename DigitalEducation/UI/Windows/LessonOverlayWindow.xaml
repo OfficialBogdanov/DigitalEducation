@@ -31,9 +31,6 @@
                 Width="400"
                 MaxHeight="600"
                 Padding="20"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Margin="20,20,20,0"
                 UseLayoutRounding="True"
                 SnapsToDevicePixels="True"
                 Panel.ZIndex="3">

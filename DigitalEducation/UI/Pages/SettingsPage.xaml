@@ -150,109 +150,87 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Border Grid.Column="0"
-                                        Width="28"
-                                        Height="28"
-                                        Background="Transparent"
-                                        CornerRadius="6"
-                                        Margin="6,10,6,0"
-                                        VerticalAlignment="Top">
-                                    <Image x:Name="ScaleSectionIcon"
-                                           Tag="ZoomIn"
-                                           Width="18"
-                                           Height="18"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
-                                </Border>
+                                <StackPanel Grid.Row="1" Margin="0,24,0,0" UseLayoutRounding="True">
+                                    <Grid Margin="0,0,0,12" UseLayoutRounding="True">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
 
-                                <StackPanel Grid.Column="1" UseLayoutRounding="True">
-                                    <TextBlock Text="Масштаб" 
-                                               FontSize="16"
-                                               FontWeight="Medium"
-                                               Foreground="{DynamicResource TextPrimaryBrush}"
-                                               Margin="0,0,0,4"/>
-                                    <TextBlock Text="Настройте размер всех элементов интерфейса для комфортного просмотра."
-                                               Style="{DynamicResource BodyTextStyle}"
-                                               Margin="0,0,0,16"/>
+                                        <Border Grid.Column="0"
+                                                Width="28"
+                                                Height="28"
+                                                Background="Transparent"
+                                                CornerRadius="6"
+                                                Margin="6,10,6,0"
+                                                VerticalAlignment="Top">
+                                            <Image x:Name="PositionIcon"
+                                                   Tag="Layout"
+                                                   Width="18"
+                                                   Height="18"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
+                                        </Border>
 
-                                    <Border CornerRadius="8"
-                                            Padding="4"
-                                            HorizontalAlignment="Left"
-                                            Margin="0,0,0,20">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="1" UseLayoutRounding="True">
+                                            <TextBlock Text="Положение окна урока" 
+                                                       FontSize="16"
+                                                       FontWeight="Medium"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                                       Margin="0,0,0,4"/>
+                                            <TextBlock Text="Выберите, в каком углу экрана будет отображаться окно с инструкциями."
+                                                       Style="{DynamicResource BodyTextStyle}"
+                                                       Margin="0,0,0,16"/>
 
-                                            <Button x:Name="btnSmallScale"
-                                                    Grid.Column="0"
-                                                    Style="{DynamicResource NavigationButtonStyle}"
-                                                    Cursor="Hand"
-                                                    Padding="16,12"
-                                                    Margin="0,0,10,0">
-                                                <StackPanel Orientation="Horizontal"
-                                                            VerticalAlignment="Center">
-                                                    <Image x:Name="Small"
-                                                           Tag="ZoomOut"
-                                                           Width="18"
-                                                           Height="18"
-                                                           Margin="0,0,8,0"
-                                                           VerticalAlignment="Center"/>
-                                                    <TextBlock Text="Маленький 75%"
-                                                               FontSize="14"
-                                                               FontWeight="Medium"
-                                                               VerticalAlignment="Center"
-                                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                                </StackPanel>
-                                            </Button>
-
-                                            <Button x:Name="btnMediumScale"
-                                                    Grid.Column="1"
-                                                    Style="{DynamicResource NavigationButtonStyle}"
-                                                    Cursor="Hand"
-                                                    Padding="16,12"
-                                                    Margin="0,0,10,0">
-                                                <StackPanel Orientation="Horizontal"
-                                                            VerticalAlignment="Center">
-                                                    <Image x:Name="Average"
-                                                           Tag="Search"
-                                                           Width="18"
-                                                           Height="18"
-                                                           Margin="0,0,8,0"
-                                                           VerticalAlignment="Center"/>
-                                                    <TextBlock Text="Средний 100%"
-                                                               FontSize="14"
-                                                               FontWeight="Medium"
-                                                               VerticalAlignment="Center"
-                                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                                </StackPanel>
-                                            </Button>
-
-                                            <Button x:Name="btnLargeScale"
-                                                    Grid.Column="2"
-                                                    Style="{DynamicResource NavigationButtonStyle}"
-                                                    Cursor="Hand"
-                                                    Padding="16,12"
-                                                    Margin="0,0,10,0">
-                                                <StackPanel Orientation="Horizontal"
-                                                            VerticalAlignment="Center">
-                                                    <Image x:Name="Big"
-                                                           Tag="ZoomIn"
-                                                           Width="18"
-                                                           Height="18"
-                                                           Margin="0,0,8,0"
-                                                           VerticalAlignment="Center"/>
-                                                    <TextBlock Text="Большой 125%"
-                                                               FontSize="14"
-                                                               FontWeight="Medium"
-                                                               VerticalAlignment="Center"
-                                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                                </StackPanel>
-                                            </Button>
-                                        </Grid>
-                                    </Border>
+                                            <WrapPanel>
+                                                <Button x:Name="btnTopLeft"
+                                                        Style="{DynamicResource NavigationButtonStyle}"
+                                                        Padding="16,12"
+                                                        Margin="0,0,8,8"
+                                                        Tag="TopLeft"
+                                                        Click="OnPositionButtonClick">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Image Tag="Square" Width="18" Height="18" Margin="0,0,8,0"/>
+                                                        <TextBlock Text="Верхний левый" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                    </StackPanel>
+                                                </Button>
+                                                <Button x:Name="btnTopRight"
+                                                        Style="{DynamicResource NavigationButtonStyle}"
+                                                        Padding="16,12"
+                                                        Margin="0,0,8,8"
+                                                        Tag="TopRight"
+                                                        Click="OnPositionButtonClick">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Image Tag="Square" Width="18" Height="18" Margin="0,0,8,0"/>
+                                                        <TextBlock Text="Верхний правый" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                    </StackPanel>
+                                                </Button>
+                                                <Button x:Name="btnBottomLeft"
+                                                        Style="{DynamicResource NavigationButtonStyle}"
+                                                        Padding="16,12"
+                                                        Margin="0,0,8,8"
+                                                        Tag="BottomLeft"
+                                                        Click="OnPositionButtonClick">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Image Tag="Square" Width="18" Height="18" Margin="0,0,8,0"/>
+                                                        <TextBlock Text="Нижний левый" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                    </StackPanel>
+                                                </Button>
+                                                <Button x:Name="btnBottomRight"
+                                                        Style="{DynamicResource NavigationButtonStyle}"
+                                                        Padding="16,12"
+                                                        Margin="0,0,8,8"
+                                                        Tag="BottomRight"
+                                                        Click="OnPositionButtonClick">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Image Tag="Square" Width="18" Height="18" Margin="0,0,8,0"/>
+                                                        <TextBlock Text="Нижний правый" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                    </StackPanel>
+                                                </Button>
+                                            </WrapPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Separator Background="{DynamicResource SurfaceBorderBrush}" Margin="0,0,0,20"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>

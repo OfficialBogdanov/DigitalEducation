@@ -86,33 +86,114 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                 if (!string.IsNullOrWhiteSpace(step.Hint))
                     stepDict["hint"] = step.Hint;
 
-                if (!string.IsNullOrEmpty(step.VisionTarget) && File.Exists(step.VisionTarget))
+                if (!string.IsNullOrEmpty(step.SelectedFolderPath) && Directory.Exists(step.SelectedFolderPath))
                 {
-                    string extension = Path.GetExtension(step.VisionTarget).ToLower();
+                    string destFolderName = $"{lessonId}_folder_{i + 1}";
+                    string destFolderPath = Path.Combine(_templatesPath, destFolderName);
+
+                    bool isInTemplates = Path.GetDirectoryName(step.SelectedFolderPath).Equals(_templatesPath, StringComparison.OrdinalIgnoreCase);
+                    bool isSameFolder = isInTemplates && Path.GetFileName(step.SelectedFolderPath).Equals(destFolderName, StringComparison.OrdinalIgnoreCase);
+
+                    if (!isSameFolder)
+                    {
+                        Directory.CreateDirectory(destFolderPath);
+                        var pngFiles = Directory.GetFiles(step.SelectedFolderPath, "*.png");
+                        foreach (var file in pngFiles)
+                        {
+                            string fileName = Path.GetFileName(file);
+                            string destFile = Path.Combine(destFolderPath, fileName);
+                            File.Copy(file, destFile, true);
+                        }
+                    }
+
+                    stepDict["visionTargetFolder"] = destFolderName;
+                    stepDict["requiredMatches"] = step.RequiredMatches;
+                    stepDict["visionConfidence"] = step.VisionConfidence;
+                    stepDict["requiresVisionValidation"] = true;
+                }
+                else if (!string.IsNullOrEmpty(step.SelectedFilePath) && File.Exists(step.SelectedFilePath))
+                {
+                    string extension = Path.GetExtension(step.SelectedFilePath).ToLower();
                     string numericFileName = $"{lessonId}_{screenshotCounter:000}{extension}";
                     string destPath = Path.Combine(_templatesPath, numericFileName);
-                    File.Copy(step.VisionTarget, destPath, true);
+
+                    bool isInTemplates = Path.GetDirectoryName(step.SelectedFilePath).Equals(_templatesPath, StringComparison.OrdinalIgnoreCase);
+                    if (!(isInTemplates && Path.GetFileName(step.SelectedFilePath).Equals(numericFileName, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        File.Copy(step.SelectedFilePath, destPath, true);
+                    }
+
                     stepDict["visionTarget"] = Path.GetFileNameWithoutExtension(numericFileName);
-                    stepDict["visionConfidence"] = 0.85;
+                    stepDict["visionConfidence"] = step.VisionConfidence;
                     stepDict["requiresVisionValidation"] = true;
                     screenshotCounter++;
                 }
                 else if (!string.IsNullOrEmpty(step.VisionTargetFolder))
                 {
                     stepDict["visionTargetFolder"] = step.VisionTargetFolder;
-                    stepDict["requiredMatches"] = 1;
-                    stepDict["visionConfidence"] = 0.8;
+                    stepDict["requiredMatches"] = step.RequiredMatches;
+                    stepDict["visionConfidence"] = step.VisionConfidence;
                     stepDict["requiresVisionValidation"] = true;
                 }
 
-                if (!string.IsNullOrEmpty(step.HintImagePath) && File.Exists(step.HintImagePath))
+                if (!string.IsNullOrEmpty(step.SelectedHintFolderPath) && Directory.Exists(step.SelectedHintFolderPath))
                 {
-                    string ext = Path.GetExtension(step.HintImagePath);
+                    string destFolderName = $"{lessonId}_hintfolder_{i + 1}";
+                    string destFolderPath = Path.Combine(_templatesPath, destFolderName);
+
+                    bool isInTemplates = Path.GetDirectoryName(step.SelectedHintFolderPath).Equals(_templatesPath, StringComparison.OrdinalIgnoreCase);
+                    bool isSameFolder = isInTemplates && Path.GetFileName(step.SelectedHintFolderPath).Equals(destFolderName, StringComparison.OrdinalIgnoreCase);
+
+                    if (!isSameFolder)
+                    {
+                        Directory.CreateDirectory(destFolderPath);
+                        var pngFiles = Directory.GetFiles(step.SelectedHintFolderPath, "*.png");
+                        foreach (var file in pngFiles)
+                        {
+                            string fileName = Path.GetFileName(file);
+                            string destFile = Path.Combine(destFolderPath, fileName);
+                            File.Copy(file, destFile, true);
+                        }
+                    }
+
+                    stepDict["visionHintFolder"] = destFolderName;
+                    stepDict["requiredHintMatches"] = step.RequiredHintMatches;
+                    stepDict["hintType"] = step.HintType ?? "rectangle";
+                    stepDict["hintConfidence"] = step.HintConfidence;
+                }
+                else if (!string.IsNullOrEmpty(step.SelectedHintFilePath) && File.Exists(step.SelectedHintFilePath))
+                {
+                    string ext = Path.GetExtension(step.SelectedHintFilePath);
                     string hintFileName = $"{lessonId}_step{i + 1}_hint{ext}";
                     string destHintPath = Path.Combine(_templatesPath, hintFileName);
-                    File.Copy(step.HintImagePath, destHintPath, true);
+
+                    bool isInTemplates = Path.GetDirectoryName(step.SelectedHintFilePath).Equals(_templatesPath, StringComparison.OrdinalIgnoreCase);
+                    if (!(isInTemplates && Path.GetFileName(step.SelectedHintFilePath).Equals(hintFileName, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        File.Copy(step.SelectedHintFilePath, destHintPath, true);
+                    }
+
                     stepDict["visionHint"] = Path.GetFileNameWithoutExtension(hintFileName);
                     stepDict["hintType"] = step.HintType ?? "rectangle";
+                    stepDict["hintConfidence"] = step.HintConfidence;
+                }
+                else if (!string.IsNullOrEmpty(step.VisionHintFolder))
+                {
+                    stepDict["visionHintFolder"] = step.VisionHintFolder;
+                    stepDict["requiredHintMatches"] = step.RequiredHintMatches;
+                    stepDict["hintType"] = step.HintType ?? "rectangle";
+                    stepDict["hintConfidence"] = step.HintConfidence;
+                }
+                else if (!string.IsNullOrEmpty(step.VisionHint))
+                {
+                    stepDict["visionHint"] = step.VisionHint;
+                    stepDict["hintType"] = step.HintType ?? "rectangle";
+                    stepDict["hintConfidence"] = step.HintConfidence;
+                }
+
+                if (step.ShowHint)
+                {
+                    stepDict["showHint"] = true;
                 }
 
                 stepsForJson.Add(stepDict);
@@ -138,12 +219,6 @@ namespace DigitalEducation.Pages.CreateCustomLesson
         {
             lesson.Id = lessonId;
 
-            var oldImages = Directory.GetFiles(_templatesPath, $"{lessonId}_*.*");
-            foreach (var img in oldImages)
-            {
-                try { File.Delete(img); } catch { }
-            }
-
             var stepsForJson = new List<object>();
             int screenshotCounter = 1;
 
@@ -159,33 +234,114 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                 if (!string.IsNullOrWhiteSpace(step.Hint))
                     stepDict["hint"] = step.Hint;
 
-                if (!string.IsNullOrEmpty(step.VisionTarget) && File.Exists(step.VisionTarget))
+                if (!string.IsNullOrEmpty(step.SelectedFolderPath) && Directory.Exists(step.SelectedFolderPath))
                 {
-                    string extension = Path.GetExtension(step.VisionTarget).ToLower();
+                    string destFolderName = $"{lessonId}_folder_{i + 1}";
+                    string destFolderPath = Path.Combine(_templatesPath, destFolderName);
+
+                    bool isInTemplates = Path.GetDirectoryName(step.SelectedFolderPath).Equals(_templatesPath, StringComparison.OrdinalIgnoreCase);
+                    bool isSameFolder = isInTemplates && Path.GetFileName(step.SelectedFolderPath).Equals(destFolderName, StringComparison.OrdinalIgnoreCase);
+
+                    if (!isSameFolder)
+                    {
+                        Directory.CreateDirectory(destFolderPath);
+                        var pngFiles = Directory.GetFiles(step.SelectedFolderPath, "*.png");
+                        foreach (var file in pngFiles)
+                        {
+                            string fileName = Path.GetFileName(file);
+                            string destFile = Path.Combine(destFolderPath, fileName);
+                            File.Copy(file, destFile, true);
+                        }
+                    }
+
+                    stepDict["visionTargetFolder"] = destFolderName;
+                    stepDict["requiredMatches"] = step.RequiredMatches;
+                    stepDict["visionConfidence"] = step.VisionConfidence;
+                    stepDict["requiresVisionValidation"] = true;
+                }
+                else if (!string.IsNullOrEmpty(step.SelectedFilePath) && File.Exists(step.SelectedFilePath))
+                {
+                    string extension = Path.GetExtension(step.SelectedFilePath).ToLower();
                     string numericFileName = $"{lessonId}_{screenshotCounter:000}{extension}";
                     string destPath = Path.Combine(_templatesPath, numericFileName);
-                    File.Copy(step.VisionTarget, destPath, true);
+
+                    bool isInTemplates = Path.GetDirectoryName(step.SelectedFilePath).Equals(_templatesPath, StringComparison.OrdinalIgnoreCase);
+                    if (!(isInTemplates && Path.GetFileName(step.SelectedFilePath).Equals(numericFileName, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        File.Copy(step.SelectedFilePath, destPath, true);
+                    }
+
                     stepDict["visionTarget"] = Path.GetFileNameWithoutExtension(numericFileName);
-                    stepDict["visionConfidence"] = 0.85;
+                    stepDict["visionConfidence"] = step.VisionConfidence;
                     stepDict["requiresVisionValidation"] = true;
                     screenshotCounter++;
                 }
                 else if (!string.IsNullOrEmpty(step.VisionTargetFolder))
                 {
                     stepDict["visionTargetFolder"] = step.VisionTargetFolder;
-                    stepDict["requiredMatches"] = 1;
-                    stepDict["visionConfidence"] = 0.8;
+                    stepDict["requiredMatches"] = step.RequiredMatches;
+                    stepDict["visionConfidence"] = step.VisionConfidence;
                     stepDict["requiresVisionValidation"] = true;
                 }
 
-                if (!string.IsNullOrEmpty(step.HintImagePath) && File.Exists(step.HintImagePath))
+                if (!string.IsNullOrEmpty(step.SelectedHintFolderPath) && Directory.Exists(step.SelectedHintFolderPath))
                 {
-                    string ext = Path.GetExtension(step.HintImagePath);
+                    string destFolderName = $"{lessonId}_hintfolder_{i + 1}";
+                    string destFolderPath = Path.Combine(_templatesPath, destFolderName);
+
+                    bool isInTemplates = Path.GetDirectoryName(step.SelectedHintFolderPath).Equals(_templatesPath, StringComparison.OrdinalIgnoreCase);
+                    bool isSameFolder = isInTemplates && Path.GetFileName(step.SelectedHintFolderPath).Equals(destFolderName, StringComparison.OrdinalIgnoreCase);
+
+                    if (!isSameFolder)
+                    {
+                        Directory.CreateDirectory(destFolderPath);
+                        var pngFiles = Directory.GetFiles(step.SelectedHintFolderPath, "*.png");
+                        foreach (var file in pngFiles)
+                        {
+                            string fileName = Path.GetFileName(file);
+                            string destFile = Path.Combine(destFolderPath, fileName);
+                            File.Copy(file, destFile, true);
+                        }
+                    }
+
+                    stepDict["visionHintFolder"] = destFolderName;
+                    stepDict["requiredHintMatches"] = step.RequiredHintMatches;
+                    stepDict["hintType"] = step.HintType ?? "rectangle";
+                    stepDict["hintConfidence"] = step.HintConfidence;
+                }
+                else if (!string.IsNullOrEmpty(step.SelectedHintFilePath) && File.Exists(step.SelectedHintFilePath))
+                {
+                    string ext = Path.GetExtension(step.SelectedHintFilePath);
                     string hintFileName = $"{lessonId}_step{i + 1}_hint{ext}";
                     string destHintPath = Path.Combine(_templatesPath, hintFileName);
-                    File.Copy(step.HintImagePath, destHintPath, true);
+
+                    bool isInTemplates = Path.GetDirectoryName(step.SelectedHintFilePath).Equals(_templatesPath, StringComparison.OrdinalIgnoreCase);
+                    if (!(isInTemplates && Path.GetFileName(step.SelectedHintFilePath).Equals(hintFileName, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        File.Copy(step.SelectedHintFilePath, destHintPath, true);
+                    }
+
                     stepDict["visionHint"] = Path.GetFileNameWithoutExtension(hintFileName);
                     stepDict["hintType"] = step.HintType ?? "rectangle";
+                    stepDict["hintConfidence"] = step.HintConfidence;
+                }
+                else if (!string.IsNullOrEmpty(step.VisionHintFolder))
+                {
+                    stepDict["visionHintFolder"] = step.VisionHintFolder;
+                    stepDict["requiredHintMatches"] = step.RequiredHintMatches;
+                    stepDict["hintType"] = step.HintType ?? "rectangle";
+                    stepDict["hintConfidence"] = step.HintConfidence;
+                }
+                else if (!string.IsNullOrEmpty(step.VisionHint))
+                {
+                    stepDict["visionHint"] = step.VisionHint;
+                    stepDict["hintType"] = step.HintType ?? "rectangle";
+                    stepDict["hintConfidence"] = step.HintConfidence;
+                }
+
+                if (step.ShowHint)
+                {
+                    stepDict["showHint"] = true;
                 }
 
                 stepsForJson.Add(stepDict);

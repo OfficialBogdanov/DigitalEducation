@@ -9,9 +9,11 @@ using DigitalEducation.ComputerVision.Services;
 
 namespace DigitalEducation
 {
-    public interface IHintRenderer { 
-        Task ShowHint(string hintTemplateName, double confidence, string hintType = "rectangle"); 
-        Task ClearHint(); 
+    public interface IHintRenderer
+    {
+        Task ShowHint(string hintTemplateName, double confidence, string hintType = "rectangle");
+        Task ShowHintFromFolder(string folderName, int requiredMatches, double confidence, string hintType = "rectangle");
+        Task ClearHint();
     }
 
     public class VisionHintRenderer : IHintRenderer
@@ -36,20 +38,29 @@ namespace DigitalEducation
         {
             try
             {
+                await _dispatcher.InvokeAsync(() =>
+                {
+                    _overlayRect.Fill = Brushes.Transparent;
+                    _overlayRect.IsHitTestVisible = false;
+                });
+
                 if (hintType == "dim")
                 {
+                    await _dispatcher.InvokeAsync(() =>
+                    {
+                        _hintCanvas.IsHitTestVisible = true;
+                        _hintCanvas.Children.Clear();
+                    });
+
                     VisionRecognitionResult result = null;
                     if (!string.IsNullOrEmpty(hintTemplateName))
                     {
                         result = await _visionService.FindElementAsync(hintTemplateName, confidence)
-                                                      .ConfigureAwait(false); 
+                                                      .ConfigureAwait(false);
                     }
 
                     await _dispatcher.InvokeAsync(() =>
                     {
-                        _hintCanvas.Children.Clear();
-                        _overlayRect.Fill = Brushes.Transparent; 
-
                         if (result != null && result.IsDetected)
                         {
                             var hole = new Rect(result.Location.X, result.Location.Y, result.Size.Width, result.Size.Height);
@@ -65,7 +76,7 @@ namespace DigitalEducation
                 {
                     await _dispatcher.InvokeAsync(() =>
                     {
-                        _overlayRect.Fill = _defaultOverlayBrush;
+                        _hintCanvas.IsHitTestVisible = false;
                         _hintCanvas.Children.Clear();
                     });
 
@@ -79,11 +90,21 @@ namespace DigitalEducation
                             var bounds = new Rect(result.Location.X, result.Location.Y, result.Size.Width, result.Size.Height);
                             switch (hintType)
                             {
-                                case "arrow": DrawArrow(bounds); break;
-                                case "highlight": DrawHighlight(bounds); break;
-                                case "corner": DrawCornerMarker(bounds); break;
-                                case "glow": DrawGlow(bounds); break;
-                                default: DrawRectangle(bounds); break;
+                                case "arrow":
+                                    DrawArrow(bounds);
+                                    break;
+                                case "highlight":
+                                    DrawHighlight(bounds);
+                                    break;
+                                case "corner":
+                                    DrawCornerMarker(bounds);
+                                    break;
+                                case "glow":
+                                    DrawGlow(bounds);
+                                    break;
+                                default:
+                                    DrawRectangle(bounds);
+                                    break;
                             }
                         });
                     }
@@ -95,12 +116,94 @@ namespace DigitalEducation
             }
         }
 
+        public async Task ShowHintFromFolder(string folderName, int requiredMatches, double confidence, string hintType = "rectangle")
+        {
+            try
+            {
+                await _dispatcher.InvokeAsync(() =>
+                {
+                    _overlayRect.Fill = Brushes.Transparent;
+                    _overlayRect.IsHitTestVisible = false;
+                });
+
+                if (hintType == "dim")
+                {
+                    // Для затемнения нужен один элемент, чтобы сделать "дырку"
+                    await _dispatcher.InvokeAsync(() =>
+                    {
+                        _hintCanvas.IsHitTestVisible = true;
+                        _hintCanvas.Children.Clear();
+                    });
+
+                    var result = await _visionService.FindFirstInFolderAsync(folderName, confidence)
+                                                      .ConfigureAwait(false);
+
+                    await _dispatcher.InvokeAsync(() =>
+                    {
+                        if (result != null && result.IsDetected)
+                        {
+                            var hole = new Rect(result.Location.X, result.Location.Y, result.Size.Width, result.Size.Height);
+                            DrawDimWithHole(hole);
+                        }
+                        else
+                        {
+                            DrawDimFull();
+                        }
+                    });
+                }
+                else
+                {
+                    await _dispatcher.InvokeAsync(() =>
+                    {
+                        _hintCanvas.IsHitTestVisible = false;
+                        _hintCanvas.Children.Clear();
+                    });
+
+                    var result = await _visionService.FindFirstInFolderAsync(folderName, confidence)
+                                                      .ConfigureAwait(false);
+
+                    if (result.IsDetected)
+                    {
+                        await _dispatcher.InvokeAsync(() =>
+                        {
+                            var bounds = new Rect(result.Location.X, result.Location.Y, result.Size.Width, result.Size.Height);
+                            switch (hintType)
+                            {
+                                case "arrow":
+                                    DrawArrow(bounds);
+                                    break;
+                                case "highlight":
+                                    DrawHighlight(bounds);
+                                    break;
+                                case "corner":
+                                    DrawCornerMarker(bounds);
+                                    break;
+                                case "glow":
+                                    DrawGlow(bounds);
+                                    break;
+                                default:
+                                    DrawRectangle(bounds);
+                                    break;
+                            }
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[HintRenderer] Ошибка: {ex}");
+            }
+        }
+
+
         public async Task ClearHint()
         {
             await _dispatcher.InvokeAsync(() =>
             {
                 _hintCanvas.Children.Clear();
+                _hintCanvas.IsHitTestVisible = false;
                 _overlayRect.Fill = _defaultOverlayBrush;
+                _overlayRect.IsHitTestVisible = true;
             });
         }
 
@@ -116,13 +219,7 @@ namespace DigitalEducation
                 StrokeDashArray = new DoubleCollection { 5, 3 },
                 RadiusX = 6,
                 RadiusY = 6,
-                Effect = new System.Windows.Media.Effects.DropShadowEffect
-                {
-                    Color = Color.FromRgb(0x42, 0xA5, 0xF5),
-                    BlurRadius = 15,
-                    ShadowDepth = 2,
-                    Opacity = 0.5
-                }
+                IsHitTestVisible = false
             };
             Canvas.SetLeft(rect, bounds.X);
             Canvas.SetTop(rect, bounds.Y);
@@ -143,13 +240,7 @@ namespace DigitalEducation
                 Stroke = Brushes.White,
                 StrokeThickness = 1.5,
                 Opacity = 0.9,
-                Effect = new System.Windows.Media.Effects.DropShadowEffect
-                {
-                    Color = Colors.Black,
-                    BlurRadius = 8,
-                    ShadowDepth = 2,
-                    Opacity = 0.3
-                }
+                IsHitTestVisible = false
             };
             Canvas.SetLeft(arrow, bounds.Left - 30);
             Canvas.SetTop(arrow, bounds.Top + (bounds.Height - 24) / 2);
@@ -173,7 +264,8 @@ namespace DigitalEducation
                     RadiusX = 0.7,
                     RadiusY = 0.7
                 },
-                Opacity = 0.7
+                Opacity = 0.7,
+                IsHitTestVisible = false
             };
             Canvas.SetLeft(highlight, bounds.X);
             Canvas.SetTop(highlight, bounds.Y);
@@ -189,13 +281,7 @@ namespace DigitalEducation
                 Fill = new SolidColorBrush(Color.FromRgb(0xFF, 0xA5, 0x00)),
                 RadiusX = 4,
                 RadiusY = 4,
-                Effect = new System.Windows.Media.Effects.DropShadowEffect
-                {
-                    Color = Colors.Orange,
-                    BlurRadius = 12,
-                    ShadowDepth = 2,
-                    Opacity = 0.6
-                }
+                IsHitTestVisible = false
             };
             Canvas.SetLeft(marker, bounds.Left - 8);
             Canvas.SetTop(marker, bounds.Top - 8);
@@ -211,7 +297,8 @@ namespace DigitalEducation
                 Fill = new SolidColorBrush(Color.FromArgb(0x44, 0x1E, 0x90, 0xFF)),
                 RadiusX = 10,
                 RadiusY = 10,
-                Effect = new System.Windows.Media.Effects.BlurEffect { Radius = 12 }
+                Effect = new System.Windows.Media.Effects.BlurEffect { Radius = 12 },
+                IsHitTestVisible = false
             };
             Canvas.SetLeft(outerGlow, bounds.X - 8);
             Canvas.SetTop(outerGlow, bounds.Y - 8);
@@ -224,7 +311,8 @@ namespace DigitalEducation
                 Fill = new SolidColorBrush(Color.FromArgb(0xAA, 0x1E, 0x90, 0xFF)),
                 RadiusX = 8,
                 RadiusY = 8,
-                Effect = new System.Windows.Media.Effects.BlurEffect { Radius = 4 }
+                Effect = new System.Windows.Media.Effects.BlurEffect { Radius = 4 },
+                IsHitTestVisible = false
             };
             Canvas.SetLeft(innerGlow, bounds.X - 3);
             Canvas.SetTop(innerGlow, bounds.Y - 3);
@@ -260,8 +348,7 @@ namespace DigitalEducation
             {
                 Width = width,
                 Height = height,
-                Fill = brush,
-                IsHitTestVisible = false
+                Fill = brush
             };
             Canvas.SetLeft(rect, x);
             Canvas.SetTop(rect, y);

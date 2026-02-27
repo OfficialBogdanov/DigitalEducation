@@ -10,6 +10,9 @@ namespace DigitalEducation
     {
         string LoadTheme();
         void SaveTheme(string themeName);
+        string LoadOverlayPosition();
+        void SaveOverlayPosition(string position);
+        string GetConfigPath();
     }
 
     public interface IIconProvider
@@ -21,7 +24,7 @@ namespace DigitalEducation
     public class FileSystemThemeRepository : IThemeRepository
     {
         private readonly string _configPath;
-        private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions();
+        private readonly JsonSerializerOptions _jsonOptions;
 
         public FileSystemThemeRepository()
         {
@@ -30,38 +33,67 @@ namespace DigitalEducation
             if (!Directory.Exists(appFolder))
                 Directory.CreateDirectory(appFolder);
             _configPath = Path.Combine(appFolder, "theme_config.json");
-        }
-
-        public string LoadTheme()
-        {
-            if (!File.Exists(_configPath))
-                return "Light";
-            try
-            {
-                string json = File.ReadAllText(_configPath);
-                var config = JsonSerializer.Deserialize<ThemeConfig>(json);
-                return config?.ThemeName ?? "Light";
-            }
-            catch
-            {
-                return "Light";
-            }
-        }
-
-        public void SaveTheme(string themeName)
-        {
-            try
-            {
-                var config = new ThemeConfig { ThemeName = themeName };
-                string json = JsonSerializer.Serialize(config);
-                File.WriteAllText(_configPath, json);
-            }
-            catch { }
+            _jsonOptions = new JsonSerializerOptions { WriteIndented = true };
         }
 
         private class ThemeConfig
         {
             public string ThemeName { get; set; } = "Light";
+            public string OverlayPosition { get; set; } = "TopRight";
+        }
+
+        private ThemeConfig LoadConfig()
+        {
+            if (!File.Exists(_configPath))
+                return new ThemeConfig();
+            try
+            {
+                string json = File.ReadAllText(_configPath);
+                return JsonSerializer.Deserialize<ThemeConfig>(json) ?? new ThemeConfig();
+            }
+            catch
+            {
+                return new ThemeConfig();
+            }
+        }
+
+        private void SaveConfig(ThemeConfig config)
+        {
+            try
+            {
+                string json = JsonSerializer.Serialize(config, _jsonOptions);
+                File.WriteAllText(_configPath, json);
+            }
+            catch { }
+        }
+
+        public string LoadTheme()
+        {
+            return LoadConfig().ThemeName;
+        }
+
+        public void SaveTheme(string themeName)
+        {
+            var config = LoadConfig();
+            config.ThemeName = themeName;
+            SaveConfig(config);
+        }
+
+        public string LoadOverlayPosition()
+        {
+            return LoadConfig().OverlayPosition;
+        }
+
+        public void SaveOverlayPosition(string position)
+        {
+            var config = LoadConfig();
+            config.OverlayPosition = position;
+            SaveConfig(config);
+        }
+
+        public string GetConfigPath()
+        {
+            return _configPath;
         }
     }
 
@@ -98,7 +130,13 @@ namespace DigitalEducation
             ["Calendar"] = "Calendar",
             ["VK"] = "VK",
             ["GitHub"] = "GitHub",
-            ["Square"] = "Square"
+            ["Square"] = "Square",
+            ["Copy"] = "Copy",
+            ["Git"] = "Git",
+            ["Layers"] = "Layers",
+            ["Layout"] = "Layout",
+            ["Maximize"] = "Maximize",
+            ["Image"] = "Image"
         };
 
         public BitmapImage GetIcon(string iconName, bool isDarkTheme)

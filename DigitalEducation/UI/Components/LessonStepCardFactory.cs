@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace DigitalEducation.Pages.CreateCustomLesson
 {
@@ -15,12 +14,12 @@ namespace DigitalEducation.Pages.CreateCustomLesson
         private readonly FrameworkElement _resourceParent;
         private static readonly Dictionary<string, string> HintTypeIconNames = new Dictionary<string, string>
         {
-            { "rectangle", "Rectangle" },
-            { "arrow", "Arrow" },
+            { "rectangle", "Maximize" },
+            { "arrow", "Right" },
             { "highlight", "Highlight" },
-            { "corner", "Corner" },
+            { "corner", "Layout" },
             { "glow", "Glow" },
-            { "dim", "Dim" }
+            { "dim", "Layers" }
         };
 
         public LessonStepCardFactory(FrameworkElement resourceParent)
@@ -33,10 +32,14 @@ namespace DigitalEducation.Pages.CreateCustomLesson
             int stepNumber,
             int stepIndex,
             Action<int> onDelete,
-            Action<int, string> onImageSelected,
-            Action<int> onImageCleared,
-            Action<int, string> onHintImageSelected,
-            Action<int> onHintImageCleared)
+            Action<int, string> onValidationFileSelected,
+            Action<int> onValidationFileCleared,
+            Action<int, string> onValidationFolderSelected,
+            Action<int> onValidationFolderCleared,
+            Action<int, string> onHintFileSelected,
+            Action<int> onHintFileCleared,
+            Action<int, string> onHintFolderSelected,
+            Action<int> onHintFolderCleared)
         {
             var card = new Border
             {
@@ -57,9 +60,8 @@ namespace DigitalEducation.Pages.CreateCustomLesson
 
             contentStack.Children.Add(CreateDescriptionPanel(step, stepIndex));
             contentStack.Children.Add(CreateHintPanel(step, stepIndex));
-            contentStack.Children.Add(CreateImagePanel(step, stepIndex, onImageSelected, onImageCleared));
-
-            contentStack.Children.Add(CreateHintImagePanel(step, stepIndex, onHintImageSelected, onHintImageCleared));
+            contentStack.Children.Add(CreateValidationSourcePanel(step, stepIndex, onValidationFileSelected, onValidationFileCleared, onValidationFolderSelected, onValidationFolderCleared));
+            contentStack.Children.Add(CreateHintSourcePanel(step, stepIndex, onHintFileSelected, onHintFileCleared, onHintFolderSelected, onHintFolderCleared));
 
             mainStack.Children.Add(titleGrid);
             mainStack.Children.Add(contentStack);
@@ -217,47 +219,340 @@ namespace DigitalEducation.Pages.CreateCustomLesson
             return panel;
         }
 
-        private StackPanel CreateImagePanel(LessonStep step, int stepIndex,
-            Action<int, string> onImageSelected, Action<int> onImageCleared)
+        private StackPanel CreateValidationSourcePanel(LessonStep step, int stepIndex,
+            Action<int, string> onFileSelected, Action<int> onFileCleared,
+            Action<int, string> onFolderSelected, Action<int> onFolderCleared)
         {
             var panel = new StackPanel { Margin = new Thickness(0, 0, 0, 20) };
-            var header = CreateHeader("Folder", "Изображение для проверки (необязательно)");
+            var header = CreateHeader("Image", "Изображение для проверки (выберите файл или папку)");
 
-            var fileContainer = CreateFileSelector(
-                step.VisionTarget,
-                (file) => { step.VisionTarget = file; step.RequiresVisionValidation = true; },
-                () => { step.VisionTarget = ""; step.RequiresVisionValidation = false; },
-                stepIndex,
-                onImageSelected,
-                onImageCleared
-            );
+            var sourceGrid = new Grid();
+            sourceGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            sourceGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var pathText = new TextBlock
+            {
+                Text = GetValidationDisplayPath(step),
+                Style = (Style)_resourceParent.FindResource("BodyTextStyle"),
+                Foreground = (Brush)_resourceParent.FindResource("TextSecondaryBrush"),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var pathBorder = new Border
+            {
+                Background = (Brush)_resourceParent.FindResource("BackgroundLightBrush"),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(16),
+                BorderBrush = (Brush)_resourceParent.FindResource("SurfaceBorderBrush"),
+                BorderThickness = new Thickness(1),
+                Child = pathText
+            };
+            Grid.SetColumn(pathBorder, 0);
+
+            var buttonPanel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(12, 0, 0, 0) };
+            Grid.SetColumn(buttonPanel, 1);
+
+            var clearButton = CreateIconButton("Trash", "Очистить", null);
+            clearButton.Visibility = (step.SelectedFilePath != null || step.SelectedFolderPath != null) ? Visibility.Visible : Visibility.Collapsed;
+            clearButton.Click += (s, e) =>
+            {
+                step.SelectedFilePath = null;
+                step.SelectedFolderPath = null;
+                step.VisionTarget = null;
+                step.VisionTargetFolder = null;
+                step.RequiresVisionValidation = false;
+                pathText.Text = "Ничего не выбрано";
+                clearButton.Visibility = Visibility.Collapsed;
+                HideValidationOptions(panel);
+                onFileCleared?.Invoke(stepIndex);
+                onFolderCleared?.Invoke(stepIndex);
+            };
+
+            var fileButton = CreateIconButton("Image", "Выбрать файл", () =>
+            {
+                var dialog = new OpenFileDialog
+                {
+                    Filter = "Изображения (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp|Все файлы (*.*)|*.*",
+                    Title = "Выберите изображение"
+                };
+                if (dialog.ShowDialog() == true)
+                {
+                    step.SelectedFilePath = dialog.FileName;
+                    step.VisionTarget = dialog.FileName;
+                    step.RequiresVisionValidation = true;
+                    step.SelectedFolderPath = null;
+                    step.VisionTargetFolder = null;
+                    pathText.Text = Path.GetFileName(dialog.FileName);
+                    clearButton.Visibility = Visibility.Visible;
+                    ShowValidationFileOptions(panel, step);
+                    onFileSelected?.Invoke(stepIndex, dialog.FileName);
+                    onFolderCleared?.Invoke(stepIndex);
+                }
+            });
+
+            var folderButton = CreateIconButton("Folder", "Выбрать папку", () =>
+            {
+                var dialog = new System.Windows.Forms.FolderBrowserDialog();
+                dialog.Description = "Выберите папку с PNG-шаблонами";
+                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    step.SelectedFolderPath = dialog.SelectedPath;
+                    step.VisionTargetFolder = Path.GetFileName(dialog.SelectedPath);
+                    step.RequiresVisionValidation = true;
+                    step.SelectedFilePath = null;
+                    step.VisionTarget = null;
+                    pathText.Text = Path.GetFileName(dialog.SelectedPath);
+                    clearButton.Visibility = Visibility.Visible;
+                    ShowValidationFolderOptions(panel, step);
+                    onFolderSelected?.Invoke(stepIndex, dialog.SelectedPath);
+                    onFileCleared?.Invoke(stepIndex);
+                }
+            });
+
+            buttonPanel.Children.Add(clearButton);
+            buttonPanel.Children.Add(fileButton);
+            buttonPanel.Children.Add(folderButton);
+
+            sourceGrid.Children.Add(pathBorder);
+            sourceGrid.Children.Add(buttonPanel);
 
             panel.Children.Add(header);
-            panel.Children.Add(fileContainer);
+            panel.Children.Add(sourceGrid);
+
+            var optionsContainer = new StackPanel { Name = "ValidationOptionsContainer", Margin = new Thickness(0, 12, 0, 0) };
+            panel.Children.Add(optionsContainer);
+
+            if (step.SelectedFilePath != null)
+                ShowValidationFileOptions(panel, step);
+            else if (step.SelectedFolderPath != null)
+                ShowValidationFolderOptions(panel, step);
+
             return panel;
         }
 
-        private StackPanel CreateHintImagePanel(LessonStep step, int stepIndex,
-            Action<int, string> onHintImageSelected, Action<int> onHintImageCleared)
+        private void ShowValidationFileOptions(StackPanel parentPanel, LessonStep step)
+        {
+            var container = FindValidationOptionsContainer(parentPanel);
+            if (container == null) return;
+            container.Children.Clear();
+            container.Children.Add(CreateConfidenceField(
+                "Точность совпадения (0.6 - 0.9):",
+                step.VisionConfidence,
+                val => step.VisionConfidence = val,
+                "Задайте минимальную точность совпадения изображения (от 0.6 до 0.9)"
+            ));
+        }
+
+        private void ShowValidationFolderOptions(StackPanel parentPanel, LessonStep step)
+        {
+            var container = FindValidationOptionsContainer(parentPanel);
+            if (container == null) return;
+            container.Children.Clear();
+            container.Children.Add(CreateIntegerField(
+                "Необходимое количество совпадений:",
+                step.RequiredMatches,
+                val => step.RequiredMatches = val,
+                "Сколько элементов из папки должно быть найдено одновременно (минимум 1)"
+            ));
+            container.Children.Add(CreateConfidenceField(
+                "Точность совпадения (0.6 - 0.9):",
+                step.VisionConfidence,
+                val => step.VisionConfidence = val,
+                "Задайте минимальную точность для поиска элементов из папки"
+            ));
+        }
+
+        private void HideValidationOptions(StackPanel parentPanel)
+        {
+            var container = FindValidationOptionsContainer(parentPanel);
+            container?.Children.Clear();
+        }
+
+        private StackPanel FindValidationOptionsContainer(StackPanel parentPanel)
+        {
+            foreach (var child in parentPanel.Children)
+            {
+                if (child is StackPanel sp && sp.Name == "ValidationOptionsContainer")
+                    return sp;
+            }
+            return null;
+        }
+
+        private string GetValidationDisplayPath(LessonStep step)
+        {
+            if (!string.IsNullOrEmpty(step.SelectedFilePath))
+                return Path.GetFileName(step.SelectedFilePath);
+            if (!string.IsNullOrEmpty(step.SelectedFolderPath))
+                return Path.GetFileName(step.SelectedFolderPath);
+            return "Ничего не выбрано";
+        }
+
+        private StackPanel CreateHintSourcePanel(LessonStep step, int stepIndex,
+            Action<int, string> onFileSelected, Action<int> onFileCleared,
+            Action<int, string> onFolderSelected, Action<int> onFolderCleared)
         {
             var panel = new StackPanel { Margin = new Thickness(0, 0, 0, 20) };
-            var header = CreateHeader("Folder", "Изображение для визуальной подсказки (необязательно)");
+            var header = CreateHeader("Image", "Изображение для визуальной подсказки (выберите файл или папку)");
 
-            var fileContainer = CreateFileSelector(
-                step.HintImagePath, 
-                (file) => { step.HintImagePath = file; step.ShowHint = true; },
-                () => { step.HintImagePath = ""; step.ShowHint = false; step.VisionHint = ""; },
-                stepIndex,
-                onHintImageSelected,
-                onHintImageCleared
-            );
+            var sourceGrid = new Grid();
+            sourceGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            sourceGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-            var typeSelector = CreateHintTypeSelector(step);
+            var pathText = new TextBlock
+            {
+                Text = GetHintDisplayPath(step),
+                Style = (Style)_resourceParent.FindResource("BodyTextStyle"),
+                Foreground = (Brush)_resourceParent.FindResource("TextSecondaryBrush"),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var pathBorder = new Border
+            {
+                Background = (Brush)_resourceParent.FindResource("BackgroundLightBrush"),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(16),
+                BorderBrush = (Brush)_resourceParent.FindResource("SurfaceBorderBrush"),
+                BorderThickness = new Thickness(1),
+                Child = pathText
+            };
+            Grid.SetColumn(pathBorder, 0);
+
+            var buttonPanel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(12, 0, 0, 0) };
+            Grid.SetColumn(buttonPanel, 1);
+
+            var clearButton = CreateIconButton("Trash", "Очистить", null);
+            clearButton.Visibility = (step.SelectedHintFilePath != null || step.SelectedHintFolderPath != null) ? Visibility.Visible : Visibility.Collapsed;
+            clearButton.Click += (s, e) =>
+            {
+                step.SelectedHintFilePath = null;
+                step.SelectedHintFolderPath = null;
+                step.VisionHint = null;
+                step.VisionHintFolder = null;
+                step.ShowHint = false;
+                pathText.Text = "Ничего не выбрано";
+                clearButton.Visibility = Visibility.Collapsed;
+                HideHintOptions(panel);
+                onFileCleared?.Invoke(stepIndex);
+                onFolderCleared?.Invoke(stepIndex);
+            };
+
+            var fileButton = CreateIconButton("Image", "Выбрать файл", () =>
+            {
+                var dialog = new OpenFileDialog
+                {
+                    Filter = "Изображения (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp|Все файлы (*.*)|*.*",
+                    Title = "Выберите изображение для подсказки"
+                };
+                if (dialog.ShowDialog() == true)
+                {
+                    step.SelectedHintFilePath = dialog.FileName;
+                    step.VisionHint = Path.GetFileNameWithoutExtension(dialog.FileName);
+                    step.ShowHint = true;
+                    step.SelectedHintFolderPath = null;
+                    step.VisionHintFolder = null;
+                    pathText.Text = Path.GetFileName(dialog.FileName);
+                    clearButton.Visibility = Visibility.Visible;
+                    ShowHintFileOptions(panel, step);
+                    onFileSelected?.Invoke(stepIndex, dialog.FileName);
+                    onFolderCleared?.Invoke(stepIndex);
+                }
+            });
+
+            var folderButton = CreateIconButton("Folder", "Выбрать папку", () =>
+            {
+                var dialog = new System.Windows.Forms.FolderBrowserDialog();
+                dialog.Description = "Выберите папку с PNG-шаблонами для подсказки";
+                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    step.SelectedHintFolderPath = dialog.SelectedPath;
+                    step.VisionHintFolder = Path.GetFileName(dialog.SelectedPath);
+                    step.ShowHint = true;
+                    step.SelectedHintFilePath = null;
+                    step.VisionHint = null;
+                    pathText.Text = Path.GetFileName(dialog.SelectedPath);
+                    clearButton.Visibility = Visibility.Visible;
+                    ShowHintFolderOptions(panel, step);
+                    onFolderSelected?.Invoke(stepIndex, dialog.SelectedPath);
+                    onFileCleared?.Invoke(stepIndex);
+                }
+            });
+
+            buttonPanel.Children.Add(clearButton);
+            buttonPanel.Children.Add(fileButton);
+            buttonPanel.Children.Add(folderButton);
+
+            sourceGrid.Children.Add(pathBorder);
+            sourceGrid.Children.Add(buttonPanel);
 
             panel.Children.Add(header);
-            panel.Children.Add(fileContainer);
-            panel.Children.Add(typeSelector);
+            panel.Children.Add(sourceGrid);
+
+            var optionsContainer = new StackPanel { Name = "HintOptionsContainer", Margin = new Thickness(0, 12, 0, 0) };
+            panel.Children.Add(optionsContainer);
+
+            if (step.SelectedHintFilePath != null)
+                ShowHintFileOptions(panel, step);
+            else if (step.SelectedHintFolderPath != null)
+                ShowHintFolderOptions(panel, step);
+
             return panel;
+        }
+
+        private void ShowHintFileOptions(StackPanel parentPanel, LessonStep step)
+        {
+            var container = FindHintOptionsContainer(parentPanel);
+            if (container == null) return;
+            container.Children.Clear();
+            container.Children.Add(CreateConfidenceField(
+                "Точность подсказки (0.6 - 0.9):",
+                step.HintConfidence,
+                val => step.HintConfidence = val,
+                "Задайте точность для поиска изображения-подсказки (от 0.6 до 0.9)"
+            ));
+            container.Children.Add(CreateHintTypeSelector(step));
+        }
+
+        private void ShowHintFolderOptions(StackPanel parentPanel, LessonStep step)
+        {
+            var container = FindHintOptionsContainer(parentPanel);
+            if (container == null) return;
+            container.Children.Clear();
+            container.Children.Add(CreateIntegerField(
+                "Необходимое количество совпадений:",
+                step.RequiredHintMatches,
+                val => step.RequiredHintMatches = val,
+                "Сколько элементов из папки должно быть найдено для показа подсказки (минимум 1)"
+            ));
+            container.Children.Add(CreateConfidenceField(
+                "Точность подсказки (0.6 - 0.9):",
+                step.HintConfidence,
+                val => step.HintConfidence = val,
+                "Задайте точность для поиска изображений в папке (от 0.6 до 0.9)"
+            ));
+            container.Children.Add(CreateHintTypeSelector(step));
+        }
+
+        private void HideHintOptions(StackPanel parentPanel)
+        {
+            var container = FindHintOptionsContainer(parentPanel);
+            container?.Children.Clear();
+        }
+
+        private StackPanel FindHintOptionsContainer(StackPanel parentPanel)
+        {
+            foreach (var child in parentPanel.Children)
+            {
+                if (child is StackPanel sp && sp.Name == "HintOptionsContainer")
+                    return sp;
+            }
+            return null;
+        }
+
+        private string GetHintDisplayPath(LessonStep step)
+        {
+            if (!string.IsNullOrEmpty(step.SelectedHintFilePath))
+                return Path.GetFileName(step.SelectedHintFilePath);
+            if (!string.IsNullOrEmpty(step.SelectedHintFolderPath))
+                return Path.GetFileName(step.SelectedHintFolderPath);
+            return "Ничего не выбрано";
         }
 
         private StackPanel CreateHeader(string iconName, string text)
@@ -283,135 +578,32 @@ namespace DigitalEducation.Pages.CreateCustomLesson
             return stack;
         }
 
-        private Grid CreateFileSelector(string currentFilePath, Action<string> onFileSelected, Action onFileCleared,
-            int stepIndex, Action<int, string> onImageSelected, Action<int> onImageCleared)
-        {
-            var grid = new Grid();
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-            var fileInfoBorder = new Border
-            {
-                Background = (Brush)_resourceParent.FindResource("BackgroundLightBrush"),
-                CornerRadius = new CornerRadius(8),
-                Padding = new Thickness(16),
-                BorderBrush = (Brush)_resourceParent.FindResource("SurfaceBorderBrush"),
-                BorderThickness = new Thickness(1)
-            };
-            var fileInfoText = new TextBlock
-            {
-                Text = string.IsNullOrEmpty(currentFilePath) ? "Файл не выбран" : Path.GetFileName(currentFilePath),
-                Style = (Style)_resourceParent.FindResource("BodyTextStyle"),
-                Foreground = (Brush)_resourceParent.FindResource("TextSecondaryBrush"),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            fileInfoBorder.Child = fileInfoText;
-            Grid.SetColumn(fileInfoBorder, 0);
-
-            var buttonPanel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(12, 0, 0, 0) };
-            Grid.SetColumn(buttonPanel, 1);
-
-            var clearButton = CreateClearButton(currentFilePath, fileInfoText, onFileCleared, stepIndex, onImageCleared);
-            var selectButton = CreateSelectButton(fileInfoText, clearButton, onFileSelected, stepIndex, onImageSelected);
-
-            buttonPanel.Children.Add(clearButton);
-            buttonPanel.Children.Add(selectButton);
-
-            grid.Children.Add(fileInfoBorder);
-            grid.Children.Add(buttonPanel);
-            return grid;
-        }
-
-        private Button CreateClearButton(string currentFilePath, TextBlock fileInfoText, Action onFileCleared,
-            int stepIndex, Action<int> onImageCleared)
-        {
-            var button = new Button
-            {
-                Style = (Style)_resourceParent.FindResource("NavigationButtonStyle"),
-                Margin = new Thickness(0, 0, 8, 0),
-                Visibility = string.IsNullOrEmpty(currentFilePath) ? Visibility.Collapsed : Visibility.Visible
-            };
-
-            var icon = new Image
-            {
-                Tag = "Trash",
-                Width = 18,
-                Height = 18,
-                Margin = new Thickness(0, 0, 6, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            AppThemeManager.UpdateImageSource(icon, "Trash");
-
-            var text = new TextBlock
-            {
-                Text = "Очистить",
-                FontSize = 14,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
-            var stack = new StackPanel { Orientation = Orientation.Horizontal };
-            stack.Children.Add(icon);
-            stack.Children.Add(text);
-            button.Content = stack;
-
-            button.Click += (s, e) =>
-            {
-                onFileCleared?.Invoke();
-                fileInfoText.Text = "Файл не выбран";
-                button.Visibility = Visibility.Collapsed;
-                onImageCleared?.Invoke(stepIndex);
-            };
-
-            return button;
-        }
-
-        private Button CreateSelectButton(TextBlock fileInfoText, Button clearButton, Action<string> onFileSelected,
-            int stepIndex, Action<int, string> onImageSelected)
+        private Button CreateIconButton(string iconName, string text, Action onClick)
         {
             var button = new Button
             {
                 Style = (Style)_resourceParent.FindResource("NavigationButtonStyle")
             };
-
+            var stack = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
             var icon = new Image
             {
-                Tag = "Folder",
+                Tag = iconName,
                 Width = 18,
                 Height = 18,
-                Margin = new Thickness(0, 0, 6, 0),
-                VerticalAlignment = VerticalAlignment.Center
+                Margin = new Thickness(0, 0, 6, 0)
             };
-            AppThemeManager.UpdateImageSource(icon, "Folder");
-
-            var text = new TextBlock
+            AppThemeManager.UpdateImageSource(icon, iconName);
+            var label = new TextBlock
             {
-                Text = "Выбрать файл",
+                Text = text,
                 FontSize = 14,
                 VerticalAlignment = VerticalAlignment.Center
             };
-
-            var stack = new StackPanel { Orientation = Orientation.Horizontal };
             stack.Children.Add(icon);
-            stack.Children.Add(text);
+            stack.Children.Add(label);
             button.Content = stack;
-
-            button.Click += (s, e) =>
-            {
-                var dialog = new OpenFileDialog
-                {
-                    Filter = "Изображения (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp|Все файлы (*.*)|*.*",
-                    Title = "Выберите изображение"
-                };
-
-                if (dialog.ShowDialog() == true)
-                {
-                    onFileSelected?.Invoke(dialog.FileName);
-                    fileInfoText.Text = Path.GetFileName(dialog.FileName);
-                    clearButton.Visibility = Visibility.Visible;
-                    onImageSelected?.Invoke(stepIndex, dialog.FileName);
-                }
-            };
-
+            if (onClick != null)
+                button.Click += (s, e) => onClick();
             return button;
         }
 
@@ -425,9 +617,7 @@ namespace DigitalEducation.Pages.CreateCustomLesson
             {
                 { "rectangle", "Прямоугольник" },
                 { "arrow", "Стрелка" },
-                { "highlight", "Подсветка" },
                 { "corner", "Уголок" },
-                { "glow", "Свечение" },
                 { "dim", "Затемнение" }
             };
 
@@ -493,6 +683,113 @@ namespace DigitalEducation.Pages.CreateCustomLesson
             }
 
             panel.Children.Add(wrapPanel);
+            return panel;
+        }
+
+        private StackPanel CreateConfidenceField(string labelText, double initialValue, Action<double> onValueChanged, string tooltip)
+        {
+            var panel = new StackPanel { Margin = new Thickness(0, 12, 0, 0) };
+
+            var header = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 4) };
+            var icon = new Image
+            {
+                Tag = "Confidence",
+                Width = 16,
+                Height = 16,
+                Margin = new Thickness(0, 0, 8, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            AppThemeManager.UpdateImageSource(icon, "Chart");
+            var label = new TextBlock
+            {
+                Text = labelText,
+                Style = (Style)_resourceParent.FindResource("BodyTextStyle"),
+                FontWeight = FontWeights.Medium
+            };
+            header.Children.Add(icon);
+            header.Children.Add(label);
+
+            var textBox = new TextBox
+            {
+                Style = (Style)_resourceParent.FindResource("RoundedTextBox"),
+                Height = 48,
+                Width = 120,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Text = initialValue.ToString("F2"),
+                ToolTip = tooltip
+            };
+
+            textBox.LostFocus += (s, e) =>
+            {
+                if (double.TryParse(textBox.Text, out double value))
+                {
+                    if (value < 0.6) value = 0.6;
+                    if (value > 0.9) value = 0.9;
+                    textBox.Text = value.ToString("F2");
+                    onValueChanged(value);
+                }
+                else
+                {
+                    textBox.Text = initialValue.ToString("F2");
+                    onValueChanged(initialValue);
+                }
+            };
+
+            panel.Children.Add(header);
+            panel.Children.Add(textBox);
+            return panel;
+        }
+
+        private StackPanel CreateIntegerField(string labelText, int initialValue, Action<int> onValueChanged, string tooltip)
+        {
+            var panel = new StackPanel { Margin = new Thickness(0, 12, 0, 0) };
+
+            var header = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 4) };
+            var icon = new Image
+            {
+                Tag = "Number",
+                Width = 16,
+                Height = 16,
+                Margin = new Thickness(0, 0, 8, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            AppThemeManager.UpdateImageSource(icon, "List");
+            var label = new TextBlock
+            {
+                Text = labelText,
+                Style = (Style)_resourceParent.FindResource("BodyTextStyle"),
+                FontWeight = FontWeights.Medium
+            };
+            header.Children.Add(icon);
+            header.Children.Add(label);
+
+            var textBox = new TextBox
+            {
+                Style = (Style)_resourceParent.FindResource("RoundedTextBox"),
+                Height = 48,
+                Width = 120,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Text = initialValue.ToString(),
+                ToolTip = tooltip
+            };
+
+            textBox.LostFocus += (s, e) =>
+            {
+                if (int.TryParse(textBox.Text, out int value))
+                {
+                    if (value < 1) value = 1;
+                    textBox.Text = value.ToString();
+                    onValueChanged(value);
+                }
+                else
+                {
+                    textBox.Text = initialValue.ToString();
+                    onValueChanged(initialValue);
+                }
+            };
+
+            panel.Children.Add(header);
+            panel.Children.Add(textBox);
             return panel;
         }
     }

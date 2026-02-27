@@ -10,6 +10,7 @@ namespace DigitalEducation
 
         private string _currentTheme;
         private string _currentScale = "Medium";
+        private string _currentPosition;
 
         public SettingsPage()
         {
@@ -24,7 +25,37 @@ namespace DigitalEducation
             LoadCurrentTheme();
             LoadSettingsData();
             UpdateAllButtons();
+            LoadCurrentPosition();
             AppThemeManager.UpdateAllIconsInContainer(this);
+        }
+
+        private void LoadCurrentPosition()
+        {
+            _currentPosition = AppThemeManager.GetOverlayPosition();
+            UpdatePositionButtons();
+        }
+
+        private void UpdatePositionButtons()
+        {
+            var activeStyle = (Style)TryFindResource("ActiveNavigationButtonStyle");
+            var defaultStyle = (Style)TryFindResource("NavigationButtonStyle");
+            btnTopLeft.Style = _currentPosition == "TopLeft" ? activeStyle : defaultStyle;
+            btnTopRight.Style = _currentPosition == "TopRight" ? activeStyle : defaultStyle;
+            btnBottomLeft.Style = _currentPosition == "BottomLeft" ? activeStyle : defaultStyle;
+            btnBottomRight.Style = _currentPosition == "BottomRight" ? activeStyle : defaultStyle;
+        }
+
+        private void OnPositionButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is string position)
+            {
+                if (_currentPosition != position)
+                {
+                    _currentPosition = position;
+                    AppThemeManager.SetOverlayPosition(position);
+                    UpdatePositionButtons();
+                }
+            }
         }
 
         private void LoadCurrentTheme()
@@ -45,9 +76,6 @@ namespace DigitalEducation
             btnResetSettings.Click += OnResetSettingsClick;
             btnLightTheme.Click += OnLightThemeClick;
             btnDarkTheme.Click += OnDarkThemeClick;
-            btnSmallScale.Click += OnSmallScaleClick;
-            btnMediumScale.Click += OnMediumScaleClick;
-            btnLargeScale.Click += OnLargeScaleClick;
         }
 
         private void LoadSettingsData()
@@ -69,7 +97,6 @@ namespace DigitalEducation
         private void UpdateAllButtons()
         {
             UpdateThemeButtons();
-            UpdateScaleButtons();
         }
 
         private void OnLightThemeClick(object sender, RoutedEventArgs e)
@@ -101,43 +128,6 @@ namespace DigitalEducation
 
             if (btnLightTheme != null) btnLightTheme.Style = _currentTheme == "Light" ? activeStyle : defaultStyle;
             if (btnDarkTheme != null) btnDarkTheme.Style = _currentTheme == "Dark" ? activeStyle : defaultStyle;
-        }
-
-        private void OnSmallScaleClick(object sender, RoutedEventArgs e)
-        {
-            if (_currentScale != "Small")
-            {
-                _currentScale = "Small";
-                UpdateScaleButtons();
-            }
-        }
-
-        private void OnMediumScaleClick(object sender, RoutedEventArgs e)
-        {
-            if (_currentScale != "Medium")
-            {
-                _currentScale = "Medium";
-                UpdateScaleButtons();
-            }
-        }
-
-        private void OnLargeScaleClick(object sender, RoutedEventArgs e)
-        {
-            if (_currentScale != "Large")
-            {
-                _currentScale = "Large";
-                UpdateScaleButtons();
-            }
-        }
-
-        private void UpdateScaleButtons()
-        {
-            var activeStyle = (Style)TryFindResource("ActiveNavigationButtonStyle");
-            var defaultStyle = (Style)TryFindResource("NavigationButtonStyle");
-
-            if (btnSmallScale != null) btnSmallScale.Style = _currentScale == "Small" ? activeStyle : defaultStyle;
-            if (btnMediumScale != null) btnMediumScale.Style = _currentScale == "Medium" ? activeStyle : defaultStyle;
-            if (btnLargeScale != null) btnLargeScale.Style = _currentScale == "Large" ? activeStyle : defaultStyle;
         }
 
         private void OnClearProgressClick(object sender, RoutedEventArgs e)

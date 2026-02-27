@@ -12,6 +12,7 @@ namespace DigitalEducation
         private readonly ComputerVisionService _visionService;
         private readonly ILessonLogger _logger;
         private DispatcherTimer _visionCheckTimer;
+        private DispatcherTimer _hintHideTimer;
         private bool _isVisionChecking = false;
 
         public LessonVisionController(
@@ -34,6 +35,7 @@ namespace DigitalEducation
             var currentStep = _lessonController.GetCurrentStep();
             if (currentStep == null) return;
 
+            // Запуск проверки (validation)
             if (currentStep.RequiresVisionValidation &&
                 (!string.IsNullOrEmpty(currentStep.VisionTarget) ||
                  !string.IsNullOrEmpty(currentStep.VisionTargetFolder)))
@@ -47,19 +49,37 @@ namespace DigitalEducation
                 _visionCheckTimer.Start();
             }
 
-            if (currentStep.ShowHint && !string.IsNullOrEmpty(currentStep.VisionHint))
+            // Показ подсказки (hint)
+            if (currentStep.ShowHint)
             {
-                _window.ShowHint(currentStep.VisionHint, currentStep.HintConfidence, currentStep.HintType);
-            }
-            else if (currentStep.ShowHint && currentStep.HintType == "dim")
-            {
-                _window.ShowHint(null, 0, "dim");
+                if (!string.IsNullOrEmpty(currentStep.VisionHintFolder))
+                {
+                    _window.ShowHintFromFolder(
+                        currentStep.VisionHintFolder,
+                        currentStep.RequiredHintMatches,
+                        currentStep.HintConfidence,
+                        currentStep.HintType
+                    );
+                    StartHintHideTimer();
+                }
+                else if (!string.IsNullOrEmpty(currentStep.VisionHint))
+                {
+                    _window.ShowHint(currentStep.VisionHint, currentStep.HintConfidence, currentStep.HintType);
+                    StartHintHideTimer();
+                }
+                else if (currentStep.HintType == "dim")
+                {
+                    // Если тип затемнение, но нет изображения, показываем полное затемнение
+                    _window.ShowHint(null, currentStep.HintConfidence, "dim");
+                    StartHintHideTimer();
+                }
             }
         }
 
         public void StopVisionCheck()
         {
             _visionCheckTimer?.Stop();
+            _hintHideTimer?.Stop();
         }
 
         public async Task ClearHint()
@@ -70,7 +90,22 @@ namespace DigitalEducation
         private void OnStepChanged(object sender, EventArgs e)
         {
             StopVisionCheck();
-            ClearHint().ConfigureAwait(false);
+            _ = ClearHint();
+        }
+
+        private void StartHintHideTimer()
+        {
+            _hintHideTimer?.Stop();
+            _hintHideTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(3)
+            };
+            _hintHideTimer.Tick += async (s, e) =>
+            {
+                await _window.ClearHintCanvas();
+                _hintHideTimer.Stop();
+            };
+            _hintHideTimer.Start();
         }
 
         private async Task CheckVisionStepAsync()
@@ -90,27 +125,27 @@ namespace DigitalEducation
                 if (!string.IsNullOrEmpty(currentStep.VisionTargetFolder))
                 {
                     target = currentStep.VisionTargetFolder;
-                    _logger.LogVisionCheckStarted(target);
+                    _logger?.LogVisionCheckStarted(target);
                     isDetected = await _visionService.ValidateFolderElementsAsync(
                         currentStep.VisionTargetFolder,
                         currentStep.RequiredMatches,
                         currentStep.VisionConfidence
                     );
-                    _logger.LogVisionFolderCheck(target, currentStep.RequiredMatches, isDetected ? 1 : 0, isDetected);
+                    _logger?.LogVisionFolderCheck(target, currentStep.RequiredMatches, isDetected ? 1 : 0, isDetected);
                 }
                 else if (!string.IsNullOrEmpty(currentStep.VisionTarget))
                 {
                     target = currentStep.VisionTarget;
-                    _logger.LogVisionCheckStarted(target);
+                    _logger?.LogVisionCheckStarted(target);
                     var result = await _visionService.FindElementAsync(
                         currentStep.VisionTarget,
                         currentStep.VisionConfidence
                     );
                     isDetected = result.IsDetected;
                     if (isDetected)
-                        _logger.LogVisionCheckSucceeded(target, result.Confidence);
+                        _logger?.LogVisionCheckSucceeded(target, result.Confidence);
                     else
-                        _logger.LogVisionCheckFailed(target, currentStep.VisionConfidence);
+                        _logger?.LogVisionCheckFailed(target, currentStep.VisionConfidence);
                 }
 
                 if (isDetected)
@@ -132,7 +167,7 @@ namespace DigitalEducation
             }
             catch (Exception ex)
             {
-                _logger.LogError("Ошибка при проверке компьютерного зрения", ex);
+                _logger?.LogError("Ошибка при проверке компьютерного зрения", ex);
             }
             finally
             {
@@ -143,6 +178,7 @@ namespace DigitalEducation
         public void Dispose()
         {
             _visionCheckTimer?.Stop();
+            _hintHideTimer?.Stop();
             _visionService?.Dispose();
             if (_lessonController != null)
             {

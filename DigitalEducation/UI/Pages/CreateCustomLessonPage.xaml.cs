@@ -22,6 +22,8 @@ namespace DigitalEducation.Pages
         private LessonDataModel _originalLesson;
         private readonly Dictionary<int, string> _originalStepImages = new Dictionary<int, string>();
         private readonly Dictionary<int, string> _originalStepHintImages = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> _originalStepFolders = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> _originalStepHintFolders = new Dictionary<int, string>();
 
         public CreateLessonPage(string lessonId = null)
         {
@@ -114,6 +116,11 @@ namespace DigitalEducation.Pages
                 _steps.Clear();
                 _originalStepImages.Clear();
                 _originalStepHintImages.Clear();
+                _originalStepFolders.Clear();
+                _originalStepHintFolders.Clear();
+
+                string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", ".."));
+                string templatesPath = Path.Combine(projectRoot, "Learning", "Engine", "Templates");
 
                 if (_originalLesson.Steps != null)
                 {
@@ -129,32 +136,66 @@ namespace DigitalEducation.Pages
                             VisionTargetFolder = step.VisionTargetFolder,
                             RequiresVisionValidation = step.RequiresVisionValidation,
                             VisionConfidence = step.VisionConfidence,
+                            HintConfidence = step.HintConfidence,
                             RequiredMatches = step.RequiredMatches,
-                            HintType = step.HintType ?? "rectangle"
+                            RequiredHintMatches = step.RequiredHintMatches,
+                            HintType = step.HintType ?? "rectangle",
+                            ShowHint = step.ShowHint
                         };
 
+                        // Загрузка подсказки (файл)
                         if (!string.IsNullOrEmpty(step.VisionHint))
                         {
-                            string templatesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Learning", "Engine", "Templates");
-                            string fullPath = Path.Combine(templatesPath, step.VisionHint + ".png");
-                            if (File.Exists(fullPath))
+                            string[] possibleHintFiles = Directory.GetFiles(templatesPath, step.VisionHint + ".*");
+                            if (possibleHintFiles.Length > 0)
                             {
-                                newStep.HintImagePath = fullPath;
-                                newStep.ShowHint = true;
+                                newStep.SelectedHintFilePath = possibleHintFiles[0];
                                 newStep.VisionHint = step.VisionHint;
-                                _originalStepHintImages[i] = step.VisionHint + ".png";
+                                _originalStepHintImages[i] = Path.GetFileName(possibleHintFiles[0]);
                             }
                         }
 
+                        // Загрузка подсказки (папка)
+                        if (!string.IsNullOrEmpty(step.VisionHintFolder))
+                        {
+                            string folderPath = Path.Combine(templatesPath, step.VisionHintFolder);
+                            if (Directory.Exists(folderPath))
+                            {
+                                newStep.SelectedHintFolderPath = folderPath;
+                                newStep.VisionHintFolder = step.VisionHintFolder;
+                                _originalStepHintFolders[i] = step.VisionHintFolder;
+                            }
+                        }
+
+                        // Устанавливаем ShowHint в true, если есть хотя бы один источник подсказки
+                        if (!string.IsNullOrEmpty(newStep.SelectedHintFilePath) || !string.IsNullOrEmpty(newStep.SelectedHintFolderPath))
+                        {
+                            newStep.ShowHint = true;
+                        }
+
+                        // Загрузка проверки (файл)
                         if (!string.IsNullOrEmpty(step.VisionTarget))
                         {
-                            string templatesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Learning", "Engine", "Templates");
-                            string targetPath = Path.Combine(templatesPath, step.VisionTarget + ".png");
-                            if (File.Exists(targetPath))
+                            string[] possibleTargetFiles = Directory.GetFiles(templatesPath, step.VisionTarget + ".*");
+                            if (possibleTargetFiles.Length > 0)
                             {
-                                newStep.VisionTarget = targetPath;
+                                newStep.SelectedFilePath = possibleTargetFiles[0];
+                                newStep.VisionTarget = possibleTargetFiles[0];
+                                _originalStepImages[i] = Path.GetFileName(possibleTargetFiles[0]);
                             }
-                            _originalStepImages[i] = step.VisionTarget + ".png";
+                        }
+
+                        // Загрузка проверки (папка)
+                        if (!string.IsNullOrEmpty(step.VisionTargetFolder))
+                        {
+                            string folderPath = Path.Combine(templatesPath, step.VisionTargetFolder);
+                            if (Directory.Exists(folderPath))
+                            {
+                                newStep.SelectedFolderPath = folderPath;
+                                newStep.VisionTargetFolder = step.VisionTargetFolder;
+                                newStep.RequiredMatches = step.RequiredMatches;
+                                _originalStepFolders[i] = step.VisionTargetFolder;
+                            }
                         }
 
                         _steps.Add(newStep);
@@ -226,6 +267,7 @@ namespace DigitalEducation.Pages
                 RequiresVisionValidation = false,
                 VisionConfidence = 0.85,
                 RequiredMatches = 1,
+                RequiredHintMatches = 1,
                 HintType = "rectangle",
                 HintImagePath = "",
                 ShowHint = false
@@ -260,43 +302,92 @@ namespace DigitalEducation.Pages
                             _steps.RemoveAt(idx);
                             _originalStepImages.Remove(idx);
                             _originalStepHintImages.Remove(idx);
+                            _originalStepFolders.Remove(idx);
+                            _originalStepHintFolders.Remove(idx);
                         }
                     },
-                    onImageSelected: (idx, fileName) =>
+                    onValidationFileSelected: (idx, fileName) =>
                     {
                         var currentStep = _steps[idx];
+                        currentStep.SelectedFilePath = fileName;
                         currentStep.VisionTarget = fileName;
                         currentStep.RequiresVisionValidation = true;
+                        currentStep.SelectedFolderPath = null;
+                        currentStep.VisionTargetFolder = null;
                         if (_isEditMode)
                             _originalStepImages[idx] = Path.GetFileName(fileName);
                     },
-                    onImageCleared: (idx) =>
+                    onValidationFileCleared: (idx) =>
                     {
                         var currentStep = _steps[idx];
+                        currentStep.SelectedFilePath = null;
                         currentStep.VisionTarget = "";
                         currentStep.RequiresVisionValidation = false;
                         if (_isEditMode && _originalStepImages.ContainsKey(idx))
                             _originalStepImages.Remove(idx);
                     },
-                    onHintImageSelected: (idx, fileName) =>
+                    onValidationFolderSelected: (idx, folderPath) =>
                     {
                         var currentStep = _steps[idx];
-                        currentStep.HintImagePath = fileName;
+                        currentStep.SelectedFolderPath = folderPath;
+                        currentStep.VisionTargetFolder = Path.GetFileName(folderPath);
+                        currentStep.RequiresVisionValidation = true;
+                        currentStep.SelectedFilePath = null;
+                        currentStep.VisionTarget = null;
+                        if (_isEditMode)
+                            _originalStepFolders[idx] = Path.GetFileName(folderPath);
+                    },
+                    onValidationFolderCleared: (idx) =>
+                    {
+                        var currentStep = _steps[idx];
+                        currentStep.SelectedFolderPath = null;
+                        currentStep.VisionTargetFolder = null;
+                        currentStep.RequiresVisionValidation = false;
+                        if (_isEditMode && _originalStepFolders.ContainsKey(idx))
+                            _originalStepFolders.Remove(idx);
+                    },
+                    onHintFileSelected: (idx, fileName) =>
+                    {
+                        var currentStep = _steps[idx];
+                        currentStep.SelectedHintFilePath = fileName;
+                        currentStep.VisionHint = Path.GetFileNameWithoutExtension(fileName);
                         currentStep.ShowHint = true;
+                        currentStep.SelectedHintFolderPath = null;
+                        currentStep.VisionHintFolder = null;
                         if (_isEditMode)
                         {
                             string fileNameOnly = Path.GetFileName(fileName);
                             _originalStepHintImages[idx] = fileNameOnly;
                         }
                     },
-                    onHintImageCleared: (idx) =>
+                    onHintFileCleared: (idx) =>
                     {
                         var currentStep = _steps[idx];
-                        currentStep.HintImagePath = "";
-                        currentStep.ShowHint = false;
+                        currentStep.SelectedHintFilePath = null;
                         currentStep.VisionHint = null;
+                        currentStep.ShowHint = false;
                         if (_isEditMode && _originalStepHintImages.ContainsKey(idx))
                             _originalStepHintImages.Remove(idx);
+                    },
+                    onHintFolderSelected: (idx, folderPath) =>
+                    {
+                        var currentStep = _steps[idx];
+                        currentStep.SelectedHintFolderPath = folderPath;
+                        currentStep.VisionHintFolder = Path.GetFileName(folderPath);
+                        currentStep.ShowHint = true;
+                        currentStep.SelectedHintFilePath = null;
+                        currentStep.VisionHint = null;
+                        if (_isEditMode)
+                            _originalStepHintFolders[idx] = Path.GetFileName(folderPath);
+                    },
+                    onHintFolderCleared: (idx) =>
+                    {
+                        var currentStep = _steps[idx];
+                        currentStep.SelectedHintFolderPath = null;
+                        currentStep.VisionHintFolder = null;
+                        currentStep.ShowHint = false;
+                        if (_isEditMode && _originalStepHintFolders.ContainsKey(idx))
+                            _originalStepHintFolders.Remove(idx);
                     }
                 );
 

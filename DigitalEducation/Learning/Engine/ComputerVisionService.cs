@@ -116,6 +116,49 @@ namespace DigitalEducation.ComputerVision.Services
             });
         }
 
+        public async Task<VisionRecognitionResult> FindFirstInFolderAsync(string folderName, double confidenceThreshold = 0.8)
+        {
+            if (string.IsNullOrEmpty(folderName))
+                return VisionRecognitionResult.NotFound();
+
+            string folderPath = Path.Combine(_templatesBasePath, folderName);
+            if (!Directory.Exists(folderPath))
+            {
+                _logger?.LogError($"Папка не существует: {folderPath}");
+                return VisionRecognitionResult.NotFound();
+            }
+
+            var pngFiles = Directory.GetFiles(folderPath, "*.png");
+            if (pngFiles.Length == 0)
+            {
+                _logger?.LogError($"В папке нет PNG файлов: {folderPath}");
+                return VisionRecognitionResult.NotFound();
+            }
+
+            _logger?.LogInfo($"Поиск первого элемента в папке: {folderPath}");
+
+            using (var screenBitmap = _screenCapturer.CaptureScreen())
+            using (var matcher = new VisionTemplateMatcher(screenBitmap))
+            {
+                VisionRecognitionResult bestResult = VisionRecognitionResult.NotFound();
+                foreach (var filePath in pngFiles)
+                {
+                    var fileName = Path.GetFileNameWithoutExtension(filePath);
+                    var result = matcher.FindTemplate(filePath, confidenceThreshold);
+                    if (result.IsDetected && result.Confidence > bestResult.Confidence)
+                    {
+                        bestResult = result;
+                        _logger?.LogVisionCheckSucceeded(fileName, result.Confidence);
+                    }
+                    else
+                    {
+                        _logger?.LogVisionCheckFailed(fileName, confidenceThreshold);
+                    }
+                }
+                return bestResult;
+            }
+        }
+
         public async Task<bool> ValidateActionAsync(string elementName, string expectedAction, double confidenceThreshold = 0.8)
         {
             var result = await FindElementAsync(elementName, confidenceThreshold);

@@ -1,0 +1,34 @@
+﻿{
+  "id": "139732685920260",
+  "title": "Тестовый урок",
+  "courseId": "Custom",
+  "completionMessage": "Поздравляем с завершением тестового урока!",
+  "steps": [
+    {
+      "title": "Шаг 1",
+      "description": "Шаг с ручным переходом",
+      "hint": "Ничего интересного"
+    },
+    {
+      "title": "Шаг 2",
+      "description": "Шаг с автоматическим переходом",
+      "hint": "Найти контекстное меню (пкм на рабочем столе)",
+      "visionTarget": "139732685920260_001",
+      "visionConfidence": 0.69999999999999996,
+      "requiresVisionValidation": true
+    },
+    {
+      "title": "Шаг 3",
+      "description": "Шаг с автоматическим переходом + визуальная подсказка",
+      "hint": "Найти подменю \"создать\" + подсветить пункт \"создать\" в контекстном меню",
+      "visionTarget": "139732685920260_002",
+      "visionConfidence": 0.80000000000000004,
+      "requiresVisionValidation": true,
+      "visionHintFolder": "139732685920260_hintfolder_3",
+      "requiredHintMatches": 1,
+      "hintType": "dim",
+      "hintConfidence": 0.65000000000000002,
+      "showHint": true
+    }
+  ]
+}

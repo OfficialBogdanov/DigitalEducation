@@ -27,9 +27,12 @@ namespace DigitalEducation
         public string Hint { get; set; }
 
         public string VisionTarget { get; set; }
-        public double VisionConfidence { get; set; } = 0.85;
+        public double VisionConfidence { get; set; } = 0.8;
         public bool RequiresVisionValidation { get; set; }
 
+
+        public string SelectedFilePath { get; set; }
+        public string SelectedFolderPath { get; set; }
         public string VisionTargetFolder { get; set; }
         public int RequiredMatches { get; set; } = 1;
 
@@ -39,5 +42,10 @@ namespace DigitalEducation
 
         public string HintType { get; set; } = "rectangle";
         public string HintImagePath { get; set; }
+
+        public string VisionHintFolder { get; set; }
+        public string SelectedHintFilePath { get; set; }
+        public string SelectedHintFolderPath { get; set; }
+        public int RequiredHintMatches { get; set; } = 1;
     }
 }

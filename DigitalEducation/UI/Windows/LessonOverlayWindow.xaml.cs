@@ -57,6 +57,7 @@ namespace DigitalEducation
             ILessonLogger logger)
         {
             InitializeComponent();
+            ApplyOverlayPosition();
 
             _lessonLoader = lessonLoader;
             _courseIdResolver = courseIdResolver;
@@ -78,6 +79,7 @@ namespace DigitalEducation
                 _logger);
 
             _visionController = new LessonVisionController(_lessonController, this, _visionService, _logger);
+
 
             if (!_lessonController.Initialize())
             {
@@ -102,7 +104,7 @@ namespace DigitalEducation
 
             AppThemeManager.ThemeChanged += OnThemeChanged;
 
-            this.Loaded += (s, e) =>
+            this.Loaded += (s, e) => ApplyOverlayPosition();
             {
                 if (BtnClose != null)
                 {
@@ -117,6 +119,39 @@ namespace DigitalEducation
             };
         }
 
+        private void ApplyOverlayPosition()
+        {
+            string position = AppThemeManager.GetOverlayPosition();
+            switch (position)
+            {
+                case "TopLeft":
+                    LessonContainer.HorizontalAlignment = HorizontalAlignment.Left;
+                    LessonContainer.VerticalAlignment = VerticalAlignment.Top;
+                    LessonContainer.Margin = new Thickness(20, 20, 0, 0);
+                    break;
+                case "TopRight":
+                    LessonContainer.HorizontalAlignment = HorizontalAlignment.Right;
+                    LessonContainer.VerticalAlignment = VerticalAlignment.Top;
+                    LessonContainer.Margin = new Thickness(0, 20, 20, 0);
+                    break;
+                case "BottomLeft":
+                    LessonContainer.HorizontalAlignment = HorizontalAlignment.Left;
+                    LessonContainer.VerticalAlignment = VerticalAlignment.Bottom;
+                    LessonContainer.Margin = new Thickness(20, 0, 0, 20);
+                    break;
+                case "BottomRight":
+                    LessonContainer.HorizontalAlignment = HorizontalAlignment.Right;
+                    LessonContainer.VerticalAlignment = VerticalAlignment.Bottom;
+                    LessonContainer.Margin = new Thickness(0, 0, 20, 20);
+                    break;
+                default:
+                    LessonContainer.HorizontalAlignment = HorizontalAlignment.Right;
+                    LessonContainer.VerticalAlignment = VerticalAlignment.Top;
+                    LessonContainer.Margin = new Thickness(0, 20, 20, 0);
+                    break;
+            }
+        }
+
         private void InitializeUI()
         {
             this.Loaded += (s, e) =>
@@ -128,6 +163,12 @@ namespace DigitalEducation
 
             this.KeyDown += OverlayWindow_KeyDown;
             this.Closed += Window_Closed;
+        }
+
+        public async Task ShowHintFromFolder(string folderName, int requiredMatches, double confidence, string hintType = "rectangle")
+        {
+            await _hintRenderer.ShowHintFromFolder(folderName, requiredMatches, confidence, hintType);
+            BringToTopmost();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
