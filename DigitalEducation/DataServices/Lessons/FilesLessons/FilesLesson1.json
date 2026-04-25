@@ -28,7 +28,7 @@
       "hint": "\uD83D\uDCA1 На вашем экране появится контексное меню различных десйтвий.",
       "visionTargetFolder": "ContextMenu",
       "requiredMatches": 1,
-      "visionConfidence": 0.8,
+      "visionConfidence": 0.65,
       "requiresVisionValidation": true
     },
     {
@@ -36,11 +36,12 @@
       "description": "В открывшемся контекстном меню наведите курсор на пункт 'Создать'. Откроется дополнительное подменю с вариантами того, что можно создать: папку, документ, ярлык и другие элементы.",
       "hint": "\uD83D\uDCA1 Убедитесь, что курсор чётко указывает на 'Создать' перед тем, как откроется подменю.",
       "visionTarget": "create_menu",
-      "visionConfidence": 0.8,
+      "visionConfidence": 0.65,
       "requiresVisionValidation": true,
       "showHint": true,
-      "visionHint": "create",
-      "hintConfidence": 0.8,
+      "visionHintFolder": "create",
+      "hintConfidence": 0.85,
+      "requiredMatches": 1,
       "hintType": "dim"
     },
     {
@@ -49,7 +50,7 @@
       "hint": "\uD83D\uDCA1 Если меню случайно закрылось, просто повторите правый клик в том же месте.",
       "showHint": true,
       "visionHint": "folder",
-      "hintConfidence": 0.7,
+      "hintConfidence": 0.65,
       "hintType": "dim"
     },
     {

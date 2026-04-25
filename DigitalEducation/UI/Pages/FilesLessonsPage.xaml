@@ -125,7 +125,7 @@
                                     BorderThickness="1"
                                     UseLayoutRounding="True"
                                     SnapsToDevicePixels="True">
-                                <TextBlock Text="2-4 минуты" 
+                                <TextBlock Text="2-4 минут" 
                                            Foreground="{DynamicResource PrimaryDarkBrush}"
                                            FontWeight="Medium"
                                            TextOptions.TextFormattingMode="Display"/>
@@ -244,7 +244,7 @@
                                     BorderThickness="1"
                                     UseLayoutRounding="True"
                                     SnapsToDevicePixels="True">
-                                <TextBlock Text="17 практических шагов" 
+                                <TextBlock Text="11 практических шагов" 
                                            Foreground="{DynamicResource PrimaryDarkBrush}"
                                            FontWeight="Medium"
                                            TextOptions.TextFormattingMode="Display"/>

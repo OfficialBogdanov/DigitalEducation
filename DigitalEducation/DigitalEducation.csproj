@@ -437,7 +437,6 @@
   <ItemGroup>
     <Resource Include="Learning\Engine\Templates\creater_menu.png" />
     <Resource Include="Learning\Engine\Templates\create_menu.png" />
-    <Resource Include="Learning\Engine\Templates\create_menu_folder.png" />
     <Resource Include="Learning\Engine\Templates\folder_menu_item.png" />
   </ItemGroup>
   <ItemGroup>
@@ -450,8 +449,6 @@
     <Resource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Learning\Engine\Templates\create.png" />
-    <Resource Include="Learning\Engine\Templates\create2.png" />
     <Resource Include="Learning\Engine\Templates\folder.png" />
   </ItemGroup>
   <ItemGroup>
