@@ -6,16 +6,16 @@ using System.Windows.Media;
 
 namespace DigitalEducation
 {
-    public partial class FilesLessonsPage : UserControl, IPage
+    public partial class SystemLessonsPage : UserControl, IPage
     {
-        public FilesLessonsPage()
+        public SystemLessonsPage()
         {
             InitializeComponent();
-            this.Loaded += FilesLessonsPage_Loaded;
+            this.Loaded += SystemLessonsPage_Loaded;
             AppThemeManager.ThemeChanged += OnThemeChanged;
         }
 
-        private void FilesLessonsPage_Loaded(object sender, RoutedEventArgs e)
+        private void SystemLessonsPage_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -27,13 +27,13 @@ namespace DigitalEducation
             catch (Exception ex)
             {
                 AppDialogService.ShowErrorDialog(
-                $"Ошибка при загрузке страницы уроков: {ex.Message}",
-                Window.GetWindow(this)
+                    $"Ошибка при загрузке страницы уроков: {ex.Message}",
+                    Window.GetWindow(this)
                 );
             }
         }
 
-        private void FilesLessonsPage_Unloaded(object sender, RoutedEventArgs e)
+        private void SystemLessonsPage_Unloaded(object sender, RoutedEventArgs e)
         {
             AppThemeManager.ThemeChanged -= OnThemeChanged;
         }
@@ -63,7 +63,7 @@ namespace DigitalEducation
 
             string tag = button.Tag.ToString();
 
-            if (tag.StartsWith("FilesLesson"))
+            if (tag.StartsWith("OsLesson"))
             {
                 button.Click -= LessonButton_Click;
                 button.Click += LessonButton_Click;
@@ -75,7 +75,6 @@ namespace DigitalEducation
             if (sender is Button button && button.Tag != null)
             {
                 string lessonTag = button.Tag.ToString();
-                string lessonName = GetLessonName(lessonTag);
 
                 bool isCompleted = UserProgressManager.IsLessonCompleted(lessonTag);
 
@@ -83,7 +82,7 @@ namespace DigitalEducation
                 {
                     var result = AppDialogService.ShowConfirmDialog(
                         "Повторное прохождение",
-                        $"Вы уже завершили урок.\nХотите пройти его снова?",
+                        $"Вы уже завершили этот урок.\nХотите пройти его снова?",
                         "Повторить",
                         "Отмена",
                         Window.GetWindow(this)
@@ -134,7 +133,6 @@ namespace DigitalEducation
             }
             catch (Exception ex)
             {
-                string lessonName = GetLessonName(lessonId);
                 AppDialogService.ShowErrorDialog(
                     $"Не удалось запустить урок: {ex.Message}",
                     Window.GetWindow(this)
@@ -144,47 +142,21 @@ namespace DigitalEducation
 
         private void ShowLessonNotAvailable(string lessonTag)
         {
-            string lessonName = GetLessonName(lessonTag);
             AppDialogService.ShowMessageDialog(
                 "Урок недоступен",
-                $"Урок временно недоступен.\nПожалуйста, попробуйте позже.",
+                "Этот урок временно недоступен.\nПожалуйста, попробуйте позже.",
                 "OK",
                 Window.GetWindow(this)
             );
         }
 
-        private string GetLessonName(string lessonTag)
-        {
-            switch (lessonTag)
-            {
-                case "FilesLesson1":
-                    return "Работа с папками";
-                case "FilesLesson2":
-                    return "Корзина и восстановление";
-                case "FilesLesson3":
-                    return "Типы файлов и расширения";
-                case "FilesLesson4":
-                    return "Проводник Windows";
-                case "FilesLesson5":
-                    return "Свойства файлов";
-                case "FilesLesson6":
-                    return "Копирование и перемещение файлов";
-                default:
-                    return "Неизвестный урок";
-            }
-        }
-
         public void UpdateLessonStatus(string lessonTag, bool isCompleted)
         {
-            if (isCompleted)
-            {
-                Console.WriteLine($"Урок {lessonTag} завершен");
-            }
         }
 
         private void UpdateLessonCards()
         {
-            string[] lessonIds = { "FilesLesson1", "FilesLesson2", "FilesLesson3", "FilesLesson4", "FilesLesson5", "FilesLesson6" };
+            string[] lessonIds = { "OsLesson1", "OsLesson2", "OsLesson3", "OsLesson4", "OsLesson5", "OsLesson6", "OsLesson7" };
 
             foreach (string lessonId in lessonIds)
             {
@@ -273,18 +245,10 @@ namespace DigitalEducation
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                var courseProgress = UserProgressManager.GetCourseProgress("Files");
-
-                var progressText = VisualTreeHelperExtensions.FindVisualChild<TextBlock>(this, tb => tb.Text?.Contains("уроков") == true);
-                if (progressText != null)
+                var courseProgress = UserProgressManager.GetCourseProgress("System");
+                if (CourseProgressText != null)
                 {
-                    progressText.Text = $"{courseProgress.CompletedLessons}/{courseProgress.TotalLessons} уроков";
-                }
-
-                var timeText = VisualTreeHelperExtensions.FindVisualChild<TextBlock>(this, tb => tb.Text?.Contains("минут") == true);
-                if (timeText != null)
-                {
-                    timeText.Text = $"{courseProgress.TotalTimeMinutes:F0} минут обучения";
+                    CourseProgressText.Text = $"{courseProgress.CompletedLessons}/{courseProgress.TotalLessons} уроков";
                 }
             }));
         }

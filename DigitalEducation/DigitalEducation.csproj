@@ -173,6 +173,9 @@
     <Compile Include="Learning\Engine\ComputerVisionService.cs" />
     <Compile Include="DataServices\Services\DebugLessonLogger.cs" />
     <Compile Include="DataServices\Services\VisualTreeHelperExtensions.cs" />
+    <Compile Include="UI\Pages\SystemLessonPage.xaml.cs">
+      <DependentUpon>SystemLessonPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Windows\ConfirmationDialog.xaml.cs">
       <DependentUpon>ConfirmationDialog.xaml</DependentUpon>
     </Compile>
@@ -234,6 +237,10 @@
     </Compile>
     <Compile Include="DataServices\Services\UserProgressManager.cs" />
     <Compile Include="DataServices\Models\UserProgressModel.cs" />
+    <Page Include="UI\Pages\SystemLessonPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Windows\ConfirmationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -335,6 +342,14 @@
     <None Include="DataServices\Lessons\FilesLessons\FilesLesson4.json" />
     <None Include="DataServices\Lessons\FilesLessons\FilesLesson1.json" />
     <None Include="DataServices\Lessons\FilesLessons\FilesLesson5.json" />
+    <None Include="DataServices\Lessons\FilesLessons\FilesLesson6.json" />
+    <None Include="DataServices\Lessons\OsLessons\OsLesson1.json" />
+    <None Include="DataServices\Lessons\OsLessons\OsLesson2.json" />
+    <None Include="DataServices\Lessons\OsLessons\OsLesson3.json" />
+    <None Include="DataServices\Lessons\OsLessons\OsLesson4.json" />
+    <None Include="DataServices\Lessons\OsLessons\OsLesson5.json" />
+    <None Include="DataServices\Lessons\OsLessons\OsLesson6.json" />
+    <None Include="DataServices\Lessons\OsLessons\OsLesson7.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -349,7 +364,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataServices\Lessons\CustomLessons\" />
-    <Folder Include="DataServices\Lessons\OsLessons\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Icons\Icon.ico" />

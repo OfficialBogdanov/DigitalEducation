@@ -133,7 +133,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock x:Name="FooterText"
-                           Text="© 2025 DigitalEducation"
+                           Text="2026 DigitalEducation"
                            Foreground="{DynamicResource TextSecondaryBrush}"/>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">

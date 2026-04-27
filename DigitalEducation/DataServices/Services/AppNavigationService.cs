@@ -43,6 +43,11 @@ namespace DigitalEducation
             NavigateToPage<FilesLessonsPage>();
         }
 
+        public void NavigateToSystemLessons()
+        {
+            NavigateToPage<SystemLessonsPage>();
+        }
+
         public void NavigateToCustomLessons()
         {
             NavigateToPage<CustomLessonsPage>();
@@ -62,7 +67,7 @@ namespace DigitalEducation
         private string GetNavigationKeyForPage<T>() where T : IPage
         {
             if (typeof(T) == typeof(HomePage)) return "Home";
-            if (typeof(T) == typeof(CoursesPage) || typeof(T) == typeof(FilesLessonsPage) || typeof(T) == typeof(CustomLessonsPage)) return "Courses";
+            if (typeof(T) == typeof(CoursesPage) || typeof(T) == typeof(FilesLessonsPage) || typeof(T) == typeof(CustomLessonsPage) || typeof(T) == typeof(SystemLessonsPage)) return "Courses";
             if (typeof(T) == typeof(SettingsPage)) return "Settings";
             return "";
         }
@@ -105,6 +110,8 @@ namespace DigitalEducation
         {
             if (categoryName == "Files")
                 NavigateToFilesLessons();
+            else if (categoryName == "System")
+                NavigateToSystemLessons();
             else if (categoryName == "Custom")
                 NavigateToCustomLessons();
             else
@@ -115,6 +122,8 @@ namespace DigitalEducation
         {
             if (courseTag == "OpenFilesLessons")
                 NavigateToFilesLessons();
+            else if (courseTag == "System")
+                NavigateToSystemLessons();
             else if (courseTag == "Custom")
                 NavigateToCustomLessons();
             else

@@ -82,7 +82,7 @@
       "showHint": true,
       "visionHint": "CloseButton",
       "hintConfidence": 0.7,
-      "hintType": "rectangle"
+      "hintType": "dim"
     },
     {
       "title": "Шаг 10. Найдите созданный файл на рабочем столе",
