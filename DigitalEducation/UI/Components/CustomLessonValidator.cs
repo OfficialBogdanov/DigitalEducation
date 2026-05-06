@@ -1,5 +1,4 @@
-﻿// CustomLessonValidator.cs
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -47,7 +46,6 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                         break;
                     }
 
-                    // Валидация источника для проверки (validation)
                     bool hasValidationFile = !string.IsNullOrEmpty(step.SelectedFilePath);
                     bool hasValidationFolder = !string.IsNullOrEmpty(step.SelectedFolderPath);
 
@@ -103,7 +101,6 @@ namespace DigitalEducation.Pages.CreateCustomLesson
                         }
                     }
 
-                    // Валидация источника для подсказки (hint)
                     bool hasHintFile = !string.IsNullOrEmpty(step.SelectedHintFilePath);
                     bool hasHintFolder = !string.IsNullOrEmpty(step.SelectedHintFolderPath);
 

@@ -143,7 +143,6 @@ namespace DigitalEducation.Pages
                             ShowHint = step.ShowHint
                         };
 
-                        // Загрузка подсказки (файл)
                         if (!string.IsNullOrEmpty(step.VisionHint))
                         {
                             string[] possibleHintFiles = Directory.GetFiles(templatesPath, step.VisionHint + ".*");
@@ -155,7 +154,6 @@ namespace DigitalEducation.Pages
                             }
                         }
 
-                        // Загрузка подсказки (папка)
                         if (!string.IsNullOrEmpty(step.VisionHintFolder))
                         {
                             string folderPath = Path.Combine(templatesPath, step.VisionHintFolder);
@@ -167,13 +165,11 @@ namespace DigitalEducation.Pages
                             }
                         }
 
-                        // Устанавливаем ShowHint в true, если есть хотя бы один источник подсказки
                         if (!string.IsNullOrEmpty(newStep.SelectedHintFilePath) || !string.IsNullOrEmpty(newStep.SelectedHintFolderPath))
                         {
                             newStep.ShowHint = true;
                         }
 
-                        // Загрузка проверки (файл)
                         if (!string.IsNullOrEmpty(step.VisionTarget))
                         {
                             string[] possibleTargetFiles = Directory.GetFiles(templatesPath, step.VisionTarget + ".*");
@@ -185,7 +181,6 @@ namespace DigitalEducation.Pages
                             }
                         }
 
-                        // Загрузка проверки (папка)
                         if (!string.IsNullOrEmpty(step.VisionTargetFolder))
                         {
                             string folderPath = Path.Combine(templatesPath, step.VisionTargetFolder);

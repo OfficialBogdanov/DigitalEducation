@@ -128,7 +128,6 @@ namespace DigitalEducation
 
                 if (hintType == "dim")
                 {
-                    // Для затемнения нужен один элемент, чтобы сделать "дырку"
                     await _dispatcher.InvokeAsync(() =>
                     {
                         _hintCanvas.IsHitTestVisible = true;

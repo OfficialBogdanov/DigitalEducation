@@ -318,6 +318,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <Resource Include="Assets\Fonts\Comfortaa\Comfortaa-Bold.ttf" />
     <Resource Include="Assets\Fonts\Comfortaa\Comfortaa-Light.ttf" />

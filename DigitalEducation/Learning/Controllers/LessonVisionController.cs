@@ -35,7 +35,6 @@ namespace DigitalEducation
             var currentStep = _lessonController.GetCurrentStep();
             if (currentStep == null) return;
 
-            // Запуск проверки (validation)
             if (currentStep.RequiresVisionValidation &&
                 (!string.IsNullOrEmpty(currentStep.VisionTarget) ||
                  !string.IsNullOrEmpty(currentStep.VisionTargetFolder)))
@@ -49,7 +48,6 @@ namespace DigitalEducation
                 _visionCheckTimer.Start();
             }
 
-            // Показ подсказки (hint)
             if (currentStep.ShowHint)
             {
                 if (!string.IsNullOrEmpty(currentStep.VisionHintFolder))
@@ -69,7 +67,6 @@ namespace DigitalEducation
                 }
                 else if (currentStep.HintType == "dim")
                 {
-                    // Если тип затемнение, но нет изображения, показываем полное затемнение
                     _window.ShowHint(null, currentStep.HintConfidence, "dim");
                     StartHintHideTimer();
                 }
