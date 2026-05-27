@@ -40,6 +40,12 @@ DigitalEducation спроектирован так, чтобы быть поня
 Во время урока приложение показывает **визуальные подсказки** прямо поверх рабочего стола.  
 На скриншотах ниже — два типа подсказок: **затемнение** (dim) и **стрелка** (arrow).
 
+![Демонстрация окна](https://github.com/OfficialBogdanov/DigitalEducation/blob/master/images/lesson.png)
+*По стандарту оверлейное окно расположено в верхнем углу экрана.*
+
+![Демонстрация окна](https://github.com/OfficialBogdanov/DigitalEducation/blob/master/images/lesson2.png)
+*Окно урока даже видно поверх визуальной подсказки.*
+
 ![Урок с подсказкой типа "затемнение"](https://github.com/OfficialBogdanov/DigitalEducation/blob/master/images/dim.png)  
 *Затемнение фокусирует внимание на нужном элементе, скрывая всё остальное.*
 
@@ -55,7 +61,9 @@ DigitalEducation спроектирован так, чтобы быть поня
 ### ⚙️ Настройки и темы
 В разделе настроек можно переключаться между **светлой и тёмной темами**, выбирать положение оверлейного окна и управлять прогрессом обучения.
 
-![Страница настроек](https://github.com/OfficialBogdanov/DigitalEducation/blob/master/images/settings.png) <!-- если есть скриншот светлой темы, добавь -->
+![Страница настроек](https://github.com/OfficialBogdanov/DigitalEducation/blob/master/images/settings.png)
+
+![Страница настроек](https://github.com/OfficialBogdanov/DigitalEducation/blob/master/images/black.png)
 
 *Светлая и тёмная темы — выберите ту, которая приятнее глазу.*
 
