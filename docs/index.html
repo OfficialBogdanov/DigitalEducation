@@ -6,6 +6,8 @@
     <title>DigitalEducation | Презентация проекта</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     <style>
         * {
             margin: 0;
@@ -14,167 +16,227 @@
         }
 
         :root {
-            --primary: #2196F3;
-            --primary-light: #64B5F6;
-            --primary-dark: #1976D2;
-            --primary-soft: #1E3A8A;
-            --bg-dark: #121212;
-            --bg-light: #1E1E1E;
-            --bg-darker: #0D0D0D;
-            --surface: #1E1E1E;
-            --surface-border: #2D2D2D;
-            --text-primary: #E1E1E1;
-            --text-secondary: #A0A0A0;
-            --text-disabled: #666666;
-            --shadow: rgba(0,0,0,0.5);
+            --bg-dark: #02050a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --border-card: rgba(255, 255, 255, 0.06);
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0c0;
+            --accent-primary: #0078D7;
+            --accent-secondary: #2196F3;
+            --accent-glow: rgba(0, 120, 215, 0.6);
+            --gradient-hero: linear-gradient(135deg, #0078D7 0%, #2196F3 50%, #64B5F6 100%);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --font-main: 'Inter', sans-serif;
+        }
+
+        body.light-mode {
+            --bg-dark: #f4f6f9;
+            --bg-card: #ffffff;
+            --border-card: #d0d5dc;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a5a;
+            --accent-primary: #0078D7;
+            --accent-secondary: #0050a0;
+            --accent-glow: rgba(0, 120, 215, 0.3);
+            --gradient-hero: linear-gradient(135deg, #0078D7 0%, #0050a0 50%, #003d80 100%);
+            --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-main);
             background: var(--bg-dark);
             color: var(--text-primary);
             overflow: hidden;
             height: 100vh;
             width: 100vw;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        .slides-container {
-            display: flex;
+        .swiper {
             width: 100%;
             height: 100%;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-        .slides-container::-webkit-scrollbar {
-            display: none;
         }
 
-        .slide {
-            flex: 0 0 100%;
-            scroll-snap-align: start;
-            overflow-y: auto;
-            padding: 2rem 3rem;
+        .swiper-slide {
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .slide::-webkit-scrollbar {
-            width: 8px;
-        }
-        .slide::-webkit-scrollbar-track {
-            background: var(--surface-border);
-            border-radius: 10px;
-        }
-        .slide::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
+            padding: 40px 60px;
+            overflow-y: auto;
+            background: radial-gradient(ellipse at center, #0a1a2e 0%, #02050a 70%);
+            transition: background 0.3s ease;
         }
 
-        .container {
-            max-width: 1400px;
+        body.light-mode .swiper-slide {
+            background: radial-gradient(ellipse at center, #e2e6ec 0%, #f4f6f9 70%);
+        }
+
+        .slide-content {
+            max-width: 1200px;
             width: 100%;
             margin: 0 auto;
+            position: relative;
         }
 
-        h1, h2, h3 {
-            font-weight: 800;
-            letter-spacing: -0.02em;
-        }
         h1 {
-            font-size: 5.5rem;
-            background: linear-gradient(135deg, #FFFFFF, var(--primary-light));
+            font-size: 5rem;
+            font-weight: 800;
+            background: var(--gradient-hero);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 1.5rem;
-        }
-        h2 {
-            font-size: 3.5rem;
-            margin-bottom: 2rem;
-            border-left: 6px solid var(--primary);
-            padding-left: 1.5rem;
-            color: var(--text-primary);
-        }
-        h3 {
-            font-size: 2.2rem;
             margin-bottom: 1.2rem;
-            color: var(--primary-light);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
         }
-        p, li {
-            font-size: 1.5rem;
-            line-height: 1.5;
+
+        h2 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            padding-left: 1.8rem;
+            border-left: 5px solid var(--accent-primary);
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: -3px;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: var(--accent-primary);
+            box-shadow: 0 0 20px var(--accent-glow);
+            border-radius: 3px;
+        }
+
+        h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-secondary);
+            font-weight: 600;
+        }
+
+        p,
+        li {
+            font-size: 1.2rem;
+            line-height: 1.7;
             color: var(--text-secondary);
         }
+
         .highlight {
-            color: var(--primary-light);
+            color: var(--accent-secondary);
             font-weight: 700;
         }
 
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.8rem;
             margin: 2rem 0;
         }
+
         .card {
-            background: var(--surface);
-            border: 1px solid var(--surface-border);
-            border-radius: 32px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 24px;
             padding: 2rem;
-            transition: transform 0.2s, border-color 0.2s;
-            box-shadow: 0 12px 28px var(--shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            box-shadow: var(--shadow-card);
         }
+
         .card:hover {
-            transform: translateY(-6px);
-            border-color: var(--primary);
+            transform: translateY(-8px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 12px 40px var(--accent-glow);
         }
+
         .card i {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 1.2rem;
+            font-size: 2.8rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
         }
+
+        .card:hover i {
+            transform: scale(1.1);
+            color: var(--accent-secondary);
+        }
+
         .card h4 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             margin-bottom: 0.8rem;
             color: var(--text-primary);
+            font-weight: 600;
         }
+
         .card p {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
         }
 
         .badge {
-            background: var(--bg-darker);
+            background: rgba(0, 120, 215, 0.1);
             padding: 0.5rem 1.2rem;
             border-radius: 40px;
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 600;
-            color: var(--primary-light);
+            color: var(--accent-secondary);
             display: inline-block;
-            margin-bottom: 1rem;
-            border: 1px solid var(--surface-border);
+            margin: 0.3rem;
+            border: 1px solid rgba(33, 150, 243, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .badge:hover {
+            background: rgba(0, 120, 215, 0.2);
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .badge i {
+            margin-right: 0.4rem;
         }
 
         .analog-card {
-            background: rgba(13,13,13,0.7);
-            border-radius: 28px;
+            background: var(--bg-card);
+            border-radius: 20px;
             padding: 1.5rem;
-            border-left: 5px solid var(--primary);
+            border-left: 5px solid var(--accent-primary);
             margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-card);
         }
+
+        .analog-card:hover {
+            border-left-color: var(--accent-secondary);
+            background: var(--bg-card);
+        }
+
         .analog-card h4 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            margin-bottom: 0.4rem;
+            color: var(--text-primary);
         }
+
         .analog-card .org {
-            font-size: 1.1rem;
-            color: var(--primary-light);
+            font-size: 0.95rem;
+            color: var(--accent-secondary);
         }
+
         .analog-card p {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             margin-top: 0.5rem;
+            color: var(--text-secondary);
         }
 
         .two-columns {
@@ -183,312 +245,649 @@
             margin: 2rem 0;
             flex-wrap: wrap;
         }
+
         .col {
             flex: 1;
-            background: var(--surface);
-            border-radius: 32px;
+            background: var(--bg-card);
+            border-radius: 24px;
             padding: 2rem;
-            border: 1px solid var(--surface-border);
+            border: 1px solid var(--border-card);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-card);
         }
-        .col p, .col li {
-            font-size: 1.4rem;
+
+        .col:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .col p,
+        .col li {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
         }
 
         .screenshot-mock {
-            background: var(--bg-darker);
-            border: 2px dashed var(--primary);
-            border-radius: 28px;
-            padding: 1.5rem;
-            text-align: center;
-            color: var(--text-disabled);
-            margin: 1.5rem 0;
-            font-family: monospace;
-            font-size: 1.2rem;
-        }
-        .screenshot-mock i {
-            font-size: 3rem;
-            margin-bottom: 0.8rem;
+            background: var(--bg-card);
+            border: 2px solid var(--accent-primary);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: var(--shadow-card);
         }
 
-        pre {
-            background: var(--bg-darker);
-            padding: 1.5rem;
-            border-radius: 24px;
-            overflow-x: auto;
-            font-size: 1rem;
-            border-left: 5px solid var(--primary);
-            margin: 1.5rem 0;
+        .screenshot-mock:hover {
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 50px var(--accent-glow);
         }
-        code {
-            font-family: 'JetBrains Mono', monospace;
-            color: #A5F3C3;
-            font-size: 1rem;
+
+        .screenshot-mock img {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .process-chain {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+        }
+
+        .process-step {
+            background: var(--bg-card);
+            border-radius: 60px;
+            padding: 0.8rem 1.5rem;
+            text-align: center;
+            flex: 1;
+            min-width: 130px;
+            border: 1px solid var(--border-card);
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .process-step:hover {
+            border-color: var(--accent-primary);
+            background: rgba(0, 120, 215, 0.1);
+            transform: scale(1.05);
+        }
+
+        .process-arrow {
+            color: var(--accent-primary);
+            font-size: 2rem;
+            opacity: 0.7;
         }
 
         footer {
             margin-top: 2rem;
-            font-size: 1.2rem;
             text-align: center;
-            color: var(--text-disabled);
+            color: var(--text-secondary);
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .swiper-pagination-bullet {
+            background: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        .swiper-pagination-bullet-active {
+            opacity: 1;
+            background: var(--accent-primary);
+        }
+
+        .swiper-slide::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .swiper-slide::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .swiper-slide::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 10px;
+        }
+
+        [data-aos] {
+            transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1.2);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            color: var(--text-primary);
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-size: 1.4rem;
+            z-index: 1000;
+            box-shadow: var(--shadow-card);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 24px var(--accent-glow);
+            transform: scale(1.05);
+        }
+
+        .video-wrapper {
+            position: relative;
+            background: var(--bg-card);
+            border: 2px solid var(--accent-primary);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            transition: all 0.4s ease;
+            margin: 0 auto;
+            max-width: 1000px;
+        }
+
+        .video-wrapper:hover {
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 50px var(--accent-glow);
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            display: block;
+            background: #000;
+            outline: none;
+        }
+
+        .custom-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-card);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .play-pause-btn,
+        .fullscreen-btn {
+            background: none;
+            border: none;
+            color: var(--accent-primary);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
+
+        .play-pause-btn:hover,
+        .fullscreen-btn:hover {
+            color: var(--accent-secondary);
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--border-card);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-primary);
+            width: 0%;
+            transition: width 0.1s linear;
+            border-radius: 3px;
+        }
+
+        .time-display {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            min-width: 80px;
+            text-align: right;
         }
 
         @media (max-width: 800px) {
-            .slide { padding: 1.5rem; }
-            h1 { font-size: 3.2rem; }
-            h2 { font-size: 2.2rem; }
-            .card h4 { font-size: 1.5rem; }
-            .card p { font-size: 1.1rem; }
-            p, li { font-size: 1.2rem; }
+            .swiper-slide {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2.8rem;
+            }
+            h2 {
+                font-size: 2rem;
+                padding-left: 1rem;
+            }
+            .card h4 {
+                font-size: 1.3rem;
+            }
+            .card p,
+            li {
+                font-size: 1rem;
+            }
+            .two-columns {
+                flex-direction: column;
+            }
+            .process-chain {
+                flex-direction: column;
+            }
+            .process-arrow {
+                transform: rotate(90deg);
+            }
         }
     </style>
 </head>
 <body>
-
-<div class="slides-container" id="slidesContainer">
-    <div class="slide">
-        <div class="container" style="text-align: center;">
-            <div class="badge" style="font-size: 1.3rem;">Выпускная квалификационная работа</div>
-            <h1>DigitalEducation</h1>
-            <p style="font-size: 2rem; margin: 1.5rem 0;">Приложение для формирования базовых цифровых компетенций<br>у начинающих пользователей</p>
-            <div style="margin: 2rem 0;">
-                <span class="badge" style="font-size: 1.2rem;"><i class="fas fa-desktop"></i> WPF + .NET 8</span>
-                <span class="badge" style="font-size: 1.2rem;"><i class="fas fa-eye"></i> OpenCvSharp</span>
-                <span class="badge" style="font-size: 1.2rem;"><i class="fas fa-brain"></i> Computer Vision</span>
-            </div>
-            <p style="margin-top: 2rem; font-size: 1.4rem;"><strong>Студенты:</strong> Богданов Д.Р., Туктаров А.Р. &nbsp;|&nbsp; <strong>Руководитель:</strong> Кильдибаева С.Р.</p>
-            <p style="margin-top: 2rem; font-size: 1.3rem;">2026</p>
-        </div>
+    <div class="theme-toggle" id="themeToggle" title="Переключить тему">
+        <i class="fas fa-moon"></i>
     </div>
 
-    <div class="slide">
-        <div class="container">
-            <h2>Актуальность</h2>
-            <div class="card-grid">
-                <div class="card"><i class="fas fa-chart-line"></i><h4>Социальная значимость</h4><p>Низкий уровень цифровой грамотности у большинства населения.</p></div>
-                <div class="card"><i class="fas fa-tools"></i><h4>Дефицит инструментов</h4><p>Большинство существующих ресурсов ориентированы только на теорию</p></div>
-                <div class="card"><i class="fas fa-school"></i><h4>Практическая востребованность</h4><p>Внедрение в школы, колледжи, вузы, центры занятости.</p></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="slide">
-        <div class="container">
-            <h2>Цель и задачи</h2>
-            <div class="two-columns">
-                <div class="col">
-                    <i class="fas fa-flag-checkered" style="font-size: 3rem; color: var(--primary);"></i>
-                    <h3 style="margin-top: 0.8rem;">Цель</h3>
-                    <p>Создание интерактивной платформы, позволяющей повысить эффективность освоения цифровой грамотности за счёт автоматической валидации практических действий в реальной среде Windows</p>
-                </div>
-                <div class="col">
-                    <h3>Задачи</h3>
-                    <ul style="margin-left: 1.5rem;">
-                        <li>Разработать алгоритм анализа экрана</li>
-                        <li>Создать редактор уроков на основе JSON и PNG-шаблонов</li>
-                        <li>Реализовать несколько типов визуальных подсказок</li>
-                        <li>Внедрить сбор статистики обучения</li>
-                        <li>Разработать конструктор, позволяющий создавать и редактировать пользовательские уроки</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="slide">
-        <div class="container">
-            <h2>Целевая аудитория</h2>
-            <div class="card-grid">
-                <div class="card"><i class="fas fa-school"></i><h4>Школьники и студенты</h4><p>Освоение ПК, файловой системы, Windows</p></div>
-                <div class="card"><i class="fas fa-chalkboard"></i><h4>Преподаватели</h4><p>Создание курсов, отслеживание прогресса обучения</p></div>
-                <div class="card"><i class="fas fa-user-graduate"></i><h4>Люди старшего возраста</h4><p>Адаптивные подсказки, низкий порог входа</p></div>
-                <div class="card"><i class="fas fa-building"></i><h4>Корпоративные сотрудники</h4><p>Повышение ИТ-компетенций</p></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="slide">
-        <div class="container">
-            <h2>Обзор аналогов</h2>
-            <div class="analog-card">
-                <h4>«Азбука Интернета»</h4>
-                <div class="org">СФР + Ростелеком</div>
-                <p>Электронный учебник, курсы для пенсионеров. Формат: текст + видео. ❌ Нет проверки реальных действий.</p>
-            </div>
-            <div class="analog-card">
-                <h4>«Цифровой ликбез» / «Урок цифры»</h4>
-                <div class="org">АНО «Цифровая экономика»</div>
-                <p>Видеоуроки и методички для школьников. Формат: видео + тесты. ❌ Нет интерактивной проверки в ОС.</p>
-            </div>
-            <div class="analog-card">
-                <h4>Stepik / Foxford</h4>
-                <div class="org">Онлайн-школы</div>
-                <p>Курсы по цифровой грамотности с видео и тестами. ❌ Не анализируют реальные действия пользователя.</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="slide">
-        <div class="container">
-            <h2>Архитектура и технологии</h2>
-            <div style="display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap;">
-                <div style="flex: 1; background: rgba(13,13,13,0.6); border-radius: 28px; padding: 1.5rem;">
-                    <h3 style="font-size: 1.8rem; margin-bottom: 1rem;"><i class="fas fa-cogs"></i> Технологии</h3>
-                    <ul style="font-size: 1.3rem; list-style: none; padding-left: 0;">
-                        <li><span class="badge" style="font-size: 1rem;">C# / .NET 8</span> – основной язык и платформа</li>
-                        <li><span class="badge" style="font-size: 1rem;">WPF</span> – графический интерфейс, оверлейные окна</li>
-                        <li><span class="badge" style="font-size: 1rem;">OpenCvSharp</span> – компьютерное зрение</li>
-                        <li><span class="badge" style="font-size: 1rem;">MVVM</span> – разделение логики и представления</li>
-                        <li><span class="badge" style="font-size: 1rem;">JSON.NET</span> – хранение конфигураций уроков</li>
-                        <li><span class="badge" style="font-size: 1rem;">SkiaSharp</span> – отрисовка подсказок</li>
-                    </ul>
-                </div>
-                <div style="flex: 1; background: rgba(13,13,13,0.6); border-radius: 28px; padding: 1.5rem;">
-                    <h3 style="font-size: 1.8rem; margin-bottom: 1rem;"><i class="fas fa-question-circle"></i> Для чего</h3>
-                    <ul style="font-size: 1.3rem; list-style: none; padding-left: 0;">
-                        <li>✅ Создание десктопного приложения под Windows</li>
-                        <li>✅ Отображение подсказок поверх всех окон</li>
-                        <li>✅ Распознавание кнопок, меню, иконок на экране</li>
-                        <li>✅ Чистая архитектура и тестируемость кода</li>
-                        <li>✅ Гибкое хранение сценариев уроков</li>
-                        <li>✅ Визуализация стрелок, затемнения, рамок</li>
-                    </ul>
-                </div>
-            </div>
-            <div style="background: rgba(33,150,243,0.08); border-radius: 32px; padding: 1.5rem; border-left: 6px solid var(--primary); margin-bottom: 1.5rem;">
-                <h3 style="font-size: 1.8rem; margin-bottom: 1rem;"><i class="fas fa-project-diagram"></i> Алгоритм работы (взаимодействие модулей)</h3>
-                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.8rem;">
-                    <div style="background: var(--surface); border-radius: 60px; padding: 0.6rem 1.2rem; text-align: center; flex: 1; min-width: 140px;">
-                        <i class="fas fa-camera"></i> 1. Захват экрана
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <div class="slide-content" style="text-align: center;">
+                    <div data-aos="fade-down" data-aos-duration="800">
+                        <span class="badge" style="font-size: 1.2rem;">Выпускная квалификационная работа</span>
                     </div>
-                    <i class="fas fa-arrow-right" style="font-size: 1.8rem; color: var(--primary);"></i>
-                    <div style="background: var(--surface); border-radius: 60px; padding: 0.6rem 1.2rem; text-align: center; flex: 1; min-width: 140px;">
-                        <i class="fas fa-search"></i> 2. Поиск шаблона
+                    <h1 data-aos="zoom-in" data-aos-duration="1000" data-aos-delay="200">DigitalEducation</h1>
+                    <p data-aos="fade-up" data-aos-duration="800" data-aos-delay="400" style="font-size: 1.8rem; margin: 1.5rem 0; color: var(--text-secondary);">
+                        Приложение для формирования базовых цифровых компетенций<br>у начинающих пользователей
+                    </p>
+                    <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="600" style="margin: 2rem 0;">
+                        <span class="badge" style="font-size: 1.1rem;"><i class="fas fa-desktop"></i> WPF + .NET 8</span>
+                        <span class="badge" style="font-size: 1.1rem;"><i class="fas fa-eye"></i> OpenCvSharp</span>
+                        <span class="badge" style="font-size: 1.1rem;"><i class="fas fa-brain"></i> Computer Vision</span>
                     </div>
-                    <i class="fas fa-arrow-right" style="font-size: 1.8rem; color: var(--primary);"></i>
-                    <div style="background: var(--surface); border-radius: 60px; padding: 0.6rem 1.2rem; text-align: center; flex: 1; min-width: 140px;">
-                        <i class="fas fa-clipboard-check"></i> 3. Валидация
-                    </div>
-                    <i class="fas fa-arrow-right" style="font-size: 1.8rem; color: var(--primary);"></i>
-                    <div style="background: var(--surface); border-radius: 60px; padding: 0.6rem 1.2rem; text-align: center; flex: 1; min-width: 140px;">
-                        <i class="fas fa-chalkboard"></i> 4. Визуальная подсказка
+                    <p data-aos="fade-up" data-aos-duration="800" data-aos-delay="800" style="margin-top: 2rem; font-size: 1.2rem;">
+                        <strong>Студенты:</strong> Богданов Д.Р., Туктаров А.Р. &nbsp;|&nbsp;
+                        <strong>Руководитель:</strong> Кильдибаева С.Р.
+                    </p>
+                    <p data-aos="fade-up" data-aos-duration="800" data-aos-delay="1000" style="margin-top: 2rem; font-size: 1.1rem;">2026</p>
+                </div>
+            </div>
+
+            <div class="swiper-slide">
+                <div class="slide-content">
+                    <h2 data-aos="fade-right" data-aos-duration="800">Актуальность</h2>
+                    <div class="card-grid">
+                        <div class="card" data-aos="flip-left" data-aos-duration="800" data-aos-delay="200">
+                            <i class="fas fa-chart-line"></i>
+                            <h4>Социальная значимость</h4>
+                            <p>Низкий уровень цифровой грамотности у большинства населения.</p>
+                        </div>
+                        <div class="card" data-aos="flip-left" data-aos-duration="800" data-aos-delay="400">
+                            <i class="fas fa-tools"></i>
+                            <h4>Дефицит инструментов</h4>
+                            <p>Большинство существующих ресурсов ориентированы только на теорию.</p>
+                        </div>
+                        <div class="card" data-aos="flip-left" data-aos-duration="800" data-aos-delay="600">
+                            <i class="fas fa-school"></i>
+                            <h4>Практическая востребованность</h4>
+                            <p>Внедрение в школы, колледжи, вузы, центры занятости.</p>
+                        </div>
                     </div>
                 </div>
-                <p style="font-size: 1.3rem; margin-top: 1rem; text-align: center;">🔁 Цикл повторяется на каждом шаге урока до его завершения</p>
+            </div>
+
+            <div class="swiper-slide">
+                <div class="slide-content">
+                    <h2 data-aos="fade-right" data-aos-duration="800">Цель и задачи</h2>
+                    <div class="two-columns">
+                        <div class="col" data-aos="zoom-in-right" data-aos-duration="800">
+                            <i class="fas fa-flag-checkered" style="font-size: 3rem; color: var(--accent-primary);"></i>
+                            <h3 style="margin-top: 0.8rem;">Цель</h3>
+                            <p>Создание интерактивной платформы, позволяющей повысить эффективность освоения цифровой грамотности за счёт автоматической валидации практических действий в реальной среде Windows.</p>
+                        </div>
+                        <div class="col" data-aos="zoom-in-left" data-aos-duration="800">
+                            <h3>Задачи</h3>
+                            <ul style="margin-left: 1.5rem;">
+                                <li>Разработать алгоритм анализа экрана</li>
+                                <li>Создать редактор уроков на основе JSON и PNG-шаблонов</li>
+                                <li>Реализовать несколько типов визуальных подсказок</li>
+                                <li>Внедрить сбор статистики обучения</li>
+                                <li>Разработать конструктор, позволяющий создавать и редактировать пользовательские уроки</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swiper-slide">
+                <div class="slide-content">
+                    <h2 data-aos="fade-right" data-aos-duration="800">Целевая аудитория</h2>
+                    <div class="card-grid">
+                        <div class="card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                            <i class="fas fa-school"></i>
+                            <h4>Школьники и студенты</h4>
+                            <p>Освоение ПК, файловой системы, Windows.</p>
+                        </div>
+                        <div class="card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="250">
+                            <i class="fas fa-chalkboard"></i>
+                            <h4>Преподаватели</h4>
+                            <p>Создание курсов, отслеживание прогресса обучения.</p>
+                        </div>
+                        <div class="card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
+                            <i class="fas fa-user-graduate"></i>
+                            <h4>Люди старшего возраста</h4>
+                            <p>Адаптивные подсказки, низкий порог входа.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swiper-slide">
+                <div class="slide-content">
+                    <h2 data-aos="fade-right" data-aos-duration="800">Обзор аналогов</h2>
+                    <div class="analog-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                        <h4>«Азбука Интернета»</h4>
+                        <div class="org">СФР + Ростелеком</div>
+                        <p>Электронный учебник, курсы для пенсионеров. Формат: текст + видео. ❌ Нет проверки реальных действий.</p>
+                    </div>
+                    <div class="analog-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="250">
+                        <h4>«Цифровой ликбез» / «Урок цифры»</h4>
+                        <div class="org">АНО «Цифровая экономика»</div>
+                        <p>Видеоуроки и методички для школьников. Формат: видео + тесты. ❌ Нет интерактивной проверки в ОС.</p>
+                    </div>
+                    <div class="analog-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
+                        <h4>Stepik / Foxford</h4>
+                        <div class="org">Онлайн-школы</div>
+                        <p>Курсы по цифровой грамотности с видео и тестами. ❌ Не анализируют реальные действия пользователя.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swiper-slide">
+                <div class="slide-content">
+                    <h2 data-aos="fade-right" data-aos-duration="800">Архитектура и технологии</h2>
+                    <div style="display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                        <div style="flex: 1; background: var(--bg-card); border-radius: 24px; padding: 1.5rem; border: 1px solid var(--border-card);"
+                            data-aos="fade-up" data-aos-duration="800">
+                            <h3 style="font-size: 1.6rem; margin-bottom: 1rem;"><i class="fas fa-cogs"></i> Технологии</h3>
+                            <ul style="font-size: 1.1rem; list-style: none; padding-left: 0;">
+                                <li><span class="badge">C# / .NET 8</span> – основной язык и платформа</li>
+                                <li><span class="badge">WPF</span> – графический интерфейс, оверлейные окна</li>
+                                <li><span class="badge">OpenCvSharp</span> – компьютерное зрение</li>
+                                <li><span class="badge">MVVM</span> – разделение логики и представления</li>
+                                <li><span class="badge">JSON.NET</span> – хранение конфигураций уроков</li>
+                                <li><span class="badge">SkiaSharp</span> – отрисовка подсказок</li>
+                            </ul>
+                        </div>
+                        <div style="flex: 1; background: var(--bg-card); border-radius: 24px; padding: 1.5rem; border: 1px solid var(--border-card);"
+                            data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                            <h3 style="font-size: 1.6rem; margin-bottom: 1rem;"><i class="fas fa-question-circle"></i> Для чего</h3>
+                            <ul style="font-size: 1.1rem; list-style: none; padding-left: 0;">
+                                <li>✅ Создание десктопного приложения под Windows</li>
+                                <li>✅ Отображение подсказок поверх всех окон</li>
+                                <li>✅ Распознавание кнопок, меню, иконок на экране</li>
+                                <li>✅ Чистая архитектура и тестируемость кода</li>
+                                <li>✅ Гибкое хранение сценариев уроков</li>
+                                <li>✅ Визуализация стрелок, затемнения, рамок</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="background: var(--bg-card); border-radius: 24px; padding: 1.5rem; border-left: 5px solid var(--accent-primary);"
+                        data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
+                        <h3 style="font-size: 1.6rem; margin-bottom: 1rem;"><i class="fas fa-project-diagram"></i> Алгоритм работы</h3>
+                        <div class="process-chain">
+                            <div class="process-step"><i class="fas fa-camera"></i> 1. Захват экрана</div>
+                            <i class="fas fa-arrow-right process-arrow"></i>
+                            <div class="process-step"><i class="fas fa-search"></i> 2. Поиск шаблона</div>
+                            <i class="fas fa-arrow-right process-arrow"></i>
+                            <div class="process-step"><i class="fas fa-clipboard-check"></i> 3. Валидация</div>
+                            <i class="fas fa-arrow-right process-arrow"></i>
+                            <div class="process-step"><i class="fas fa-chalkboard"></i> 4. Визуальная подсказка</div>
+                        </div>
+                        <p style="font-size: 1.1rem; margin-top: 1rem; text-align: center; color: var(--text-secondary);">
+                            🔁 Цикл повторяется на каждом шаге урока до его завершения
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swiper-slide">
+                <div class="slide-content">
+                    <h2 data-aos="fade-right" data-aos-duration="800">Демонстрация работы приложения</h2>
+                    <div class="video-wrapper" data-aos="zoom-in" data-aos-duration="1000">
+                        <video id="demoVideo" width="100%" preload="metadata">
+                            <source src="demo.mp4" type="video/mp4">
+                            Ваш браузер не поддерживает видео.
+                        </video>
+                        <div class="custom-controls">
+                            <button class="play-pause-btn" id="playPauseBtn">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <div class="progress-bar" id="progressBar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+                            <button class="fullscreen-btn" id="fullscreenBtn" title="На весь экран">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swiper-slide">
+                <div class="slide-content">
+                    <h2 data-aos="fade-right" data-aos-duration="800">Перспективы развития</h2>
+                    <div class="card-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="col" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">
+                            <i class="fas fa-users" style="font-size: 3rem; color: var(--accent-primary);"></i>
+                            <h4 style="margin-top: 1rem;">Многопользовательский режим</h4>
+                            <p style="font-size: 1.1rem;">Платформа для публикации, просмотра и обмена готовыми уроками между пользователями.</p>
+                        </div>
+                        <div class="col" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="300">
+                            <i class="fas fa-brain" style="font-size: 3rem; color: var(--accent-primary);"></i>
+                            <h4 style="margin-top: 1rem;">ИИ для компьютерного зрения</h4>
+                            <p style="font-size: 1.1rem;">Нейросетевое распознавание элементов интерфейса для повышения точности и устойчивости.</p>
+                        </div>
+                        <div class="col" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="500">
+                            <i class="fas fa-globe" style="font-size: 3rem; color: var(--accent-primary);"></i>
+                            <h4 style="margin-top: 1rem;">Веб-версия</h4>
+                            <p style="font-size: 1.1rem;">Кроссплатформенный доступ через браузер.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="swiper-slide">
+                <div class="slide-content">
+                    <h2 data-aos="fade-right" data-aos-duration="800">Заключение</h2>
+                    <div style="background: var(--bg-card); border-radius: 32px; padding: 1.5rem; margin: 1.5rem 0;"
+                        data-aos="fade-up" data-aos-duration="800">
+                        <p style="font-size: 1.5rem; font-weight: 600;">
+                            <span class="highlight">DigitalEducation</span> – эффективный инструмент для практического обучения цифровой грамотности, не имеющий явных аналогов в РФ.
+                        </p>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; margin: 2rem 0;">
+                        <div style="background: var(--bg-card); border-radius: 24px; padding: 1.2rem 2rem; min-width: 200px; text-align: center;"
+                            data-aos="flip-left" data-aos-duration="800" data-aos-delay="200">
+                            <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--accent-primary);"></i>
+                            <p style="font-size: 1.1rem; margin-top: 0.5rem;">Автоматическая валидация действий</p>
+                        </div>
+                        <div style="background: var(--bg-card); border-radius: 24px; padding: 1.2rem 2rem; min-width: 200px; text-align: center;"
+                            data-aos="flip-left" data-aos-duration="800" data-aos-delay="400">
+                            <i class="fas fa-pen-ruler" style="font-size: 2rem; color: var(--accent-primary);"></i>
+                            <p style="font-size: 1.1rem; margin-top: 0.5rem;">Конструктор уроков</p>
+                        </div>
+                        <div style="background: var(--bg-card); border-radius: 24px; padding: 1.2rem 2rem; min-width: 200px; text-align: center;"
+                            data-aos="flip-left" data-aos-duration="800" data-aos-delay="600">
+                            <i class="fas fa-magic" style="font-size: 2rem; color: var(--accent-primary);"></i>
+                            <p style="font-size: 1.1rem; margin-top: 0.5rem;">4 типа визуальных подсказок</p>
+                        </div>
+                    </div>
+                    <footer data-aos="fade-up" data-aos-duration="800" data-aos-delay="800">
+                        <p style="font-size: 1.4rem;">Благодарим за внимание!</p>
+                    </footer>
+                </div>
             </div>
         </div>
+        <div class="swiper-pagination"></div>
     </div>
 
-    <div class="slide">
-        <div class="container">
-            <h2>Демонстрация: главное окно</h2>
-            <div class="screenshot-mock" style="padding: 0; overflow: hidden;">
-                <img src="1.png" alt="Главное окно DigitalEducation" style="width: 100%; height: auto; display: block;">
-            </div>
-        </div>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: false,
+            mirror: false,
+            offset: 120,
+            duration: 800,
+        });
 
-    <div class="slide">
-        <div class="container">
-            <h2>Демонстрация работы урока</h2>
-            <div class="screenshot-mock" style="padding: 0; overflow: hidden;">
-                <img src="2.png" alt="Работа урока: визуальная подсказка" style="width: 100%; height: auto; display: block;">
-            </div>
-        </div>
-    </div>
+        const swiper = new Swiper('.swiper', {
+            direction: 'horizontal',
+            loop: false,
+            speed: 600,
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            keyboard: {
+                enabled: true,
+                onlyInViewport: false,
+            },
+            mousewheel: {
+                forceToAxis: true,
+                sensitivity: 0.8,
+            },
+            on: {
+                slideChangeTransitionStart: function () {
+                    AOS.refresh();
+                    const video = document.getElementById('demoVideo');
+                    if (video) video.pause();
+                },
+            },
+        });
 
-    <div class="slide">
-        <div class="container">
-            <h2>Демонстрация работы урока</h2>
-            <div class="screenshot-mock" style="padding: 0; overflow: hidden;">
-                <img src="3.png" alt="Работа урока: визуальная подсказка" style="width: 100%; height: auto; display: block;">
-            </div>
-        </div>
-    </div>
+        const themeToggle = document.getElementById('themeToggle');
+        const icon = themeToggle.querySelector('i');
+        const body = document.body;
 
-    <div class="slide">
-        <div class="container">
-            <h2>Типы визуальных подсказок (1/2)</h2>
-            <div style="display: flex; gap: 2rem; justify-content: center; align-items: center; flex-wrap: wrap;">
-                <div style="flex: 1; text-align: center;">
-                    <img src="5.png" alt="Затемнение (dim)" style="width: 100%; max-width: 600px; border-radius: 20px; border: 1px solid var(--surface-border);">
-                    <p style="margin-top: 0.5rem; font-size: 1.2rem; color: var(--primary-light);">Затемнение</p>
-                </div>
-                <div style="flex: 1; text-align: center;">
-                    <img src="6.png" alt="Стрелка (arrow)" style="width: 100%; max-width: 600px; border-radius: 20px; border: 1px solid var(--surface-border);">
-                    <p style="margin-top: 0.5rem; font-size: 1.2rem; color: var(--primary-light);">Угол</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            if (body.classList.contains('light-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                themeToggle.title = 'Тёмная тема';
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                themeToggle.title = 'Светлая тема';
+            }
+        });
 
-    <div class="slide">
-        <div class="container">
-            <h2>Типы визуальных подсказок (2/2)</h2>
-            <div style="display: flex; gap: 2rem; justify-content: center; align-items: center; flex-wrap: wrap;">
-                <div style="flex: 1; text-align: center;">
-                    <img src="7.png" alt="Рамка (rectangle)" style="width: 100%; max-width: 600px; border-radius: 20px; border: 1px solid var(--surface-border);">
-                    <p style="margin-top: 0.5rem; font-size: 1.2rem; color: var(--primary-light);">Стрелка</p>
-                </div>
-                <div style="flex: 1; text-align: center;">
-                    <img src="8.png" alt="Свечение (highlight)" style="width: 100%; max-width: 600px; border-radius: 20px; border: 1px solid var(--surface-border);">
-                    <p style="margin-top: 0.5rem; font-size: 1.2rem; color: var(--primary-light);">Рамка</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        const video = document.getElementById('demoVideo');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
 
-    <div class="slide">
-        <div class="container">
-            <h2>Перспективы развития</h2>
-            <div class="card-grid" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="col" style="background: var(--surface); border-radius: 28px; padding: 1.8rem; text-align: center;">
-                    <i class="fas fa-users" style="font-size: 3rem; color: var(--primary);"></i>
-                    <h4 style="margin-top: 1rem;">Многопользовательский режим</h4>
-                    <p style="font-size: 1.2rem;">Платформа для публикации, просмотра и обмена готовыми уроками между пользователями.</p>
-                </div>
-                <div class="col" style="background: var(--surface); border-radius: 28px; padding: 1.8rem; text-align: center;">
-                    <i class="fas fa-brain" style="font-size: 3rem; color: var(--primary);"></i>
-                    <h4 style="margin-top: 1rem;">ИИ для компьютерного зрения</h4>
-                    <p style="font-size: 1.2rem;">Нейросетевое распознавание элементов интерфейса для повышения точности и устойчивости.</p>
-                </div>
-                <div class="col" style="background: var(--surface); border-radius: 28px; padding: 1.8rem; text-align: center;">
-                    <i class="fas fa-globe" style="font-size: 3rem; color: var(--primary);"></i>
-                    <h4 style="margin-top: 1rem;">Веб-версия</h4>
-                    <p style="font-size: 1.2rem;">Кроссплатформенный доступ через браузер.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
 
-    <div class="slide">
-        <div class="container">
-            <h2>Заключение</h2>
-            <div style="background: linear-gradient(135deg, rgba(33,150,243,0.15), rgba(33,150,243,0.02)); border-radius: 40px; padding: 1.5rem; margin: 1.5rem 0;">
-                <p style="font-size: 1.6rem; font-weight: 600;"><span class="highlight">DigitalEducation</span> – эффективный инструмент для практического обучения цифровой грамотности, не имеющий явных аналогов в РФ.</p>
-            </div>
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; margin: 2rem 0;">
-                <div style="background: rgba(33,150,243,0.08); border-radius: 28px; padding: 1rem 1.8rem; min-width: 200px;">
-                    <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--primary);"></i>
-                    <p style="font-size: 1.2rem; margin-top: 0.5rem;">Автоматическая валидация действий</p>
-                </div>
-                <div style="background: rgba(33,150,243,0.08); border-radius: 28px; padding: 1rem 1.8rem; min-width: 200px;">
-                    <i class="fas fa-pen-ruler" style="font-size: 2rem; color: var(--primary);"></i>
-                    <p style="font-size: 1.2rem; margin-top: 0.5rem;">Конструктор уроков</p>
-                </div>
-                <div style="background: rgba(33,150,243,0.08); border-radius: 28px; padding: 1rem 1.8rem; min-width: 200px;">
-                    <i class="fas fa-magic" style="font-size: 2rem; color: var(--primary);"></i>
-                    <p style="font-size: 1.2rem; margin-top: 0.5rem;">4 типа визуальных подсказок</p>
-                </div>
-            </div>
-            <footer style="margin-top: 2rem;">
-                <p style="font-size: 1.5rem;">Благодарим за внимание!</p>
-            </footer>
-        </div>
-    </div>
-</div>
+        function updateProgress() {
+            const percent = (video.currentTime / video.duration) * 100;
+            progressFill.style.width = percent + '%';
+            timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+        }
 
-<script>
-    const container = document.getElementById('slidesContainer');
-</script>
+        function togglePlay() {
+            if (video.paused) {
+                video.play();
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                video.pause();
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+
+        playPauseBtn.addEventListener('click', togglePlay);
+        video.addEventListener('click', togglePlay);
+
+        video.addEventListener('timeupdate', updateProgress);
+        video.addEventListener('loadedmetadata', updateProgress);
+
+        progressBar.addEventListener('click', (e) => {
+            const rect = progressBar.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            video.currentTime = pos * video.duration;
+        });
+
+        video.addEventListener('ended', () => {
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } else if (video.webkitRequestFullscreen) {
+                    video.webkitRequestFullscreen();
+                } else if (video.msRequestFullscreen) {
+                    video.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            } else {
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        });
+        document.addEventListener('webkitfullscreenchange', () => {
+            if (document.webkitFullscreenElement) {
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            } else {
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        });
+        document.addEventListener('msfullscreenchange', () => {
+            if (document.msFullscreenElement) {
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            } else {
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        });
+    </script>
 </body>
 </html>
