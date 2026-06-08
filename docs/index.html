@@ -465,6 +465,21 @@
             text-align: right;
         }
 
+        .nav-area {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 60px;
+            z-index: 999;
+            cursor: pointer;
+        }
+        .nav-area-left {
+            left: 0;
+        }
+        .nav-area-right {
+            right: 0;
+        }
+
         @media (max-width: 800px) {
             .swiper-slide {
                 padding: 20px;
@@ -744,6 +759,9 @@
         <div class="swiper-pagination"></div>
     </div>
 
+    <div class="nav-area nav-area-left" id="navLeft"></div>
+    <div class="nav-area nav-area-right" id="navRight"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
@@ -782,6 +800,9 @@
                 },
             },
         });
+
+        document.getElementById('navLeft').addEventListener('click', () => swiper.slidePrev());
+        document.getElementById('navRight').addEventListener('click', () => swiper.slideNext());
 
         const themeToggle = document.getElementById('themeToggle');
         const icon = themeToggle.querySelector('i');
