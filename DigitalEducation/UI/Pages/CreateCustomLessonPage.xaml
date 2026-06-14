@@ -96,7 +96,7 @@
     </UserControl.Resources>
 
     <Grid x:Name="MainGrid">
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="40,20">
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" Padding="40,20">
             <StackPanel UseLayoutRounding="True">
 
                 <Grid Margin="0,0,0,32" UseLayoutRounding="True">

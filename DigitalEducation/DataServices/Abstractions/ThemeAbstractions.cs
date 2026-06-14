@@ -136,7 +136,8 @@ namespace DigitalEducation
             ["Layers"] = "Layers",
             ["Layout"] = "Layout",
             ["Maximize"] = "Maximize",
-            ["Image"] = "Image"
+            ["Image"] = "Image",
+            ["Loader"] = "Loader",
         };
 
         public BitmapImage GetIcon(string iconName, bool isDarkTheme)

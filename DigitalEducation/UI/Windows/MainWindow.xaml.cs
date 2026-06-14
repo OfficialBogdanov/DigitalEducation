@@ -27,6 +27,22 @@ namespace DigitalEducation
 
             InitializeComponent();
 
+            this.Loaded += (s, e) =>
+            {
+                var splash = new SplashWindow();
+                splash.Owner = null;         
+                splash.Topmost = true;        
+                splash.Show();
+
+                var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
+                timer.Tick += (sender, args) =>
+                {
+                    timer.Stop();
+                    splash.Close();
+                };
+                timer.Start();
+            };
+
             _navigationService = new AppNavigationService(MainLayout);
             _navigationService.CategoryAction += OnCategoryAction;
             _navigationService.CourseAction += OnCourseAction;

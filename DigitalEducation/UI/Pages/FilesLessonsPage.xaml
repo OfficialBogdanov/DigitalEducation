@@ -4,7 +4,7 @@
              Background="Transparent"
              UseLayoutRounding="True">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="40,20">
+    <ScrollViewer VerticalScrollBarVisibility="Hidden" Padding="40,20">
         <StackPanel UseLayoutRounding="True">
             <Border Style="{DynamicResource CardStyle}"
                     Margin="0,0,0,32"

@@ -4,7 +4,7 @@
              Background="Transparent"
              UseLayoutRounding="True">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="40">
+    <ScrollViewer VerticalScrollBarVisibility="Hidden" Padding="40">
         <Grid UseLayoutRounding="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
