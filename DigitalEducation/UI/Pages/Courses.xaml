@@ -1,0 +1,326 @@
+﻿<Window x:Class="DigitalEducation.UI.Pages.Courses"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:components="clr-namespace:DigitalEducation.UI.Components"
+        mc:Ignorable="d"
+        Title="DigitalEducation — Курсы"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        Height="1080"
+        Width="1920">
+
+    <Grid>
+        <components:Background x:Name="BackgroundControl"/>
+
+        <Grid x:Name="ContentContainer">
+            <Grid.Effect>
+                <BlurEffect x:Name="ContentBlur"
+                            Radius="0"
+                            KernelType="Gaussian"/>
+            </Grid.Effect>
+
+            <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                          HorizontalScrollBarVisibility="Disabled"
+                          CanContentScroll="False"
+                          Margin="400,0,400,0">
+
+                <StackPanel Margin="0,100,0,0">
+
+                    <StackPanel Margin="0,0,0,32">
+                        <TextBlock Text="Обучение"
+                                   Style="{StaticResource BadgeText}"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="Курсы"
+                                   Style="{StaticResource PageHeaderTitle}"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="Выберите курс и начните осваивать цифровые навыки"
+                                   Style="{StaticResource BodyTextLarge}"/>
+                    </StackPanel>
+
+                    <Grid Margin="0,0,0,32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0"
+                                Background="{DynamicResource BgSurfaceGlass}"
+                                BorderBrush="{DynamicResource BorderSubtle}"
+                                BorderThickness="1"
+                                CornerRadius="{DynamicResource CornerRadiusLg}"
+                                Padding="16,12"
+                                HorizontalAlignment="Stretch">
+
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock x:Name="StatTotal"
+                                           Text="0"
+                                           Style="{StaticResource Heading3}"
+                                           Foreground="{DynamicResource TextPrimary}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="Всего курсов"
+                                           Style="{StaticResource BodyTextSmall}"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2"
+                                Background="{DynamicResource BgSurfaceGlass}"
+                                BorderBrush="{DynamicResource BorderSubtle}"
+                                BorderThickness="1"
+                                CornerRadius="{DynamicResource CornerRadiusLg}"
+                                Padding="16,12"
+                                HorizontalAlignment="Stretch">
+
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock x:Name="StatInProgress"
+                                           Text="0"
+                                           Style="{StaticResource Heading3}"
+                                           Foreground="{DynamicResource TextPrimary}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="В процессе"
+                                           Style="{StaticResource BodyTextSmall}"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="4"
+                                Background="{DynamicResource BgSurfaceGlass}"
+                                BorderBrush="{DynamicResource BorderSubtle}"
+                                BorderThickness="1"
+                                CornerRadius="{DynamicResource CornerRadiusLg}"
+                                Padding="16,12"
+                                HorizontalAlignment="Stretch">
+
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock x:Name="StatCompleted"
+                                           Text="0"
+                                           Style="{StaticResource Heading3}"
+                                           Foreground="{DynamicResource TextPrimary}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="Завершено"
+                                           Style="{StaticResource BodyTextSmall}"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="6"
+                                Background="{DynamicResource BgSurfaceGlass}"
+                                BorderBrush="{DynamicResource BorderSubtle}"
+                                BorderThickness="1"
+                                CornerRadius="{DynamicResource CornerRadiusLg}"
+                                Padding="16,12"
+                                HorizontalAlignment="Stretch">
+
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock x:Name="StatNotStarted"
+                                           Text="0"
+                                           Style="{StaticResource Heading3}"
+                                           Foreground="{DynamicResource TextPrimary}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="Не начато"
+                                           Style="{StaticResource BodyTextSmall}"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Border Background="{DynamicResource BgSurfaceGlass}"
+                            BorderBrush="{DynamicResource BorderSubtle}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource CornerRadiusLg}"
+                            Padding="30,25"
+                            Margin="0,0,0,32">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox x:Name="SearchInput"
+                                     Grid.Column="0"
+                                     Style="{StaticResource {x:Type TextBox}}"
+                                     Height="40"
+                                     Padding="40,10,16,10"
+                                     VerticalContentAlignment="Center"
+                                     TextChanged="SearchInput_TextChanged">
+
+                                <TextBox.Template>
+                                    <ControlTemplate TargetType="TextBox">
+                                        <Grid>
+                                            <Border x:Name="border"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="{DynamicResource CornerRadiusMd}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Viewbox Grid.Column="0"
+                                                             Width="18"
+                                                             Height="18"
+                                                             Margin="14,0,0,0"
+                                                             HorizontalAlignment="Left"
+                                                             VerticalAlignment="Center">
+                                                        <Canvas Width="24"
+                                                                Height="24">
+                                                            <Path Data="M11 19a8 8 0 100-16 8 8 0 000 16z M21 21l-4.35-4.35"
+                                                                  Stroke="{DynamicResource TextTertiary}"
+                                                                  StrokeThickness="2"
+                                                                  StrokeLineJoin="Round"
+                                                                  StrokeStartLineCap="Round"
+                                                                  StrokeEndLineCap="Round"/>
+                                                        </Canvas>
+                                                    </Viewbox>
+
+                                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                                  Grid.Column="1"
+                                                                  Margin="{TemplateBinding Padding}"
+                                                                  VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border x:Name="focusBorder"
+                                                    BorderBrush="{DynamicResource Accent1}"
+                                                    BorderThickness="2"
+                                                    CornerRadius="{DynamicResource CornerRadiusMd}"
+                                                    Opacity="0"
+                                                    IsHitTestVisible="False"/>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource BorderStrong}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsFocused" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Accent1}"/>
+                                                <Setter TargetName="focusBorder" Property="Opacity" Value="1"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </TextBox.Template>
+                            </TextBox>
+
+                            <StackPanel Grid.Column="1"
+                                        Orientation="Horizontal"
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Center">
+
+                                <RadioButton x:Name="FilterAll"
+                                             Content="Все"
+                                             Style="{StaticResource ThemeRadioButton}"
+                                             Height="40"
+                                             Padding="20,10"
+                                             Margin="0,0,4,0"
+                                             Checked="Filter_Checked"
+                                             Tag="all"/>
+
+                                <RadioButton x:Name="FilterInProgress"
+                                             Content="В процессе"
+                                             Style="{StaticResource ThemeRadioButton}"
+                                             Height="40"
+                                             Padding="20,10"
+                                             Margin="0,0,4,0"
+                                             Checked="Filter_Checked"
+                                             Tag="in-progress"/>
+
+                                <RadioButton x:Name="FilterCompleted"
+                                             Content="Завершённые"
+                                             Style="{StaticResource ThemeRadioButton}"
+                                             Height="40"
+                                             Padding="20,10"
+                                             Margin="0,0,4,0"
+                                             Checked="Filter_Checked"
+                                             Tag="completed"/>
+
+                                <RadioButton x:Name="FilterNotStarted"
+                                             Content="Не начатые"
+                                             Style="{StaticResource ThemeRadioButton}"
+                                             Height="40"
+                                             Padding="20,10"
+                                             Margin="0,0,4,0"
+                                             Checked="Filter_Checked"
+                                             Tag="not-started"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <StackPanel x:Name="CoursesList"
+                                Margin="0,0,0,40"/>
+
+                    <Border x:Name="EmptyState"
+                            Visibility="Collapsed"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Margin="0,0,0,40">
+
+                        <StackPanel HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="48,20">
+
+                            <Viewbox Width="48"
+                                     Height="48"
+                                     Margin="0,0,0,12"
+                                     Opacity="0.5">
+                                <Canvas Width="24"
+                                        Height="24">
+                                    <Path Data="M11 19a8 8 0 100-16 8 8 0 000 16z M21 21l-4.35-4.35 M8 11h6"
+                                          Stroke="{DynamicResource TextTertiary}"
+                                          StrokeThickness="1.5"
+                                          StrokeLineJoin="Round"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"/>
+                                </Canvas>
+                            </Viewbox>
+
+                            <TextBlock Text="Ничего не найдено"
+                                       Style="{StaticResource BodyText}"
+                                       Foreground="{DynamicResource TextTertiary}"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="© 2026 DigitalEducation • версия 2.0"
+                               Style="{StaticResource CaptionSmall}"
+                               Margin="0,30,0,28"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource TextTertiary}"/>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <Border x:Name="Overlay"
+                Background="#000000"
+                Opacity="0"
+                Visibility="Collapsed"
+                Panel.ZIndex="50"/>
+
+        <Grid x:Name="SidebarContainer"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Stretch"
+              Width="300"
+              Margin="-300,0,0,0"
+              Panel.ZIndex="60">
+            <components:Sidebar x:Name="SidebarControl"
+                                CurrentPage="courses"/>
+        </Grid>
+
+        <Button x:Name="MenuToggle"
+                Style="{StaticResource MenuToggleStyle}"/>
+
+        <components:Modal x:Name="ModalWindow"
+                          Panel.ZIndex="1000"/>
+    </Grid>
+</Window>

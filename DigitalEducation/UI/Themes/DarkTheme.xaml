@@ -1,0 +1,47 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <SolidColorBrush x:Key="BgPrimary" Color="#0A0C12"/>
+    <SolidColorBrush x:Key="BgSurface" Color="#14182A"/>
+    <SolidColorBrush x:Key="BgElevated" Color="#1C2138"/>
+    <SolidColorBrush x:Key="BgOverlay" Color="#24294A"/>
+    <SolidColorBrush x:Key="BgHover" Color="#2A315C"/>
+    <SolidColorBrush x:Key="BgActive" Color="#3A4278"/>
+    <SolidColorBrush x:Key="BgSurfaceGlass" Color="#14182A" Opacity="0.4"/>
+
+    <SolidColorBrush x:Key="TextPrimary" Color="#F0F2F5"/>
+    <SolidColorBrush x:Key="TextSecondary" Color="#A0A8C0"/>
+    <SolidColorBrush x:Key="TextTertiary" Color="#6E7890"/>
+    <SolidColorBrush x:Key="TextDisabled" Color="#3D4560"/>
+    <SolidColorBrush x:Key="TextInverse" Color="#0A0C12"/>
+
+    <SolidColorBrush x:Key="BorderSubtle" Color="#2A315C"/>
+    <SolidColorBrush x:Key="BorderDefault" Color="#3A4278"/>
+    <SolidColorBrush x:Key="BorderStrong" Color="#5A66A0"/>
+
+    <SolidColorBrush x:Key="ShadowColor" Color="#000000"/>
+    <sys:Double x:Key="ShadowOpacity">0.3</sys:Double>
+    <sys:Double x:Key="ShadowOpacityMd">0.4</sys:Double>
+    <sys:Double x:Key="ShadowOpacityLg">0.5</sys:Double>
+
+    <Color x:Key="BorderDefaultColor">#3A4278</Color>
+    <Color x:Key="SuccessColor">#4CAF50</Color>
+
+    <SolidColorBrush x:Key="LogoutBgHover" Color="#F396C9" Opacity="0.15"/>
+    <SolidColorBrush x:Key="LogoutBgActive" Color="#F396C9" Opacity="0.25"/>
+    <SolidColorBrush x:Key="LogoutTextHover" Color="#F396C9"/>
+
+    <LinearGradientBrush x:Key="GradientSuccess" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#4CAF50" Offset="0"/>
+        <GradientStop Color="#2E7D32" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="GradientWarning" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FAC53F" Offset="0"/>
+        <GradientStop Color="#F23E42" Offset="1"/>
+    </LinearGradientBrush>
+
+    <SolidColorBrush x:Key="ShadowFocus" Color="#8CA2F1"/>
+
+</ResourceDictionary>

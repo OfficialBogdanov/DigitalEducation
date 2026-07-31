@@ -1,32 +1,21 @@
 ﻿<Application x:Class="DigitalEducation.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="UI/Windows/MainWindow.xaml">
+             StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Assets/Themes/LightTheme.xaml"/>
+                <ResourceDictionary Source="/UI/Styles/Shared/Base.xaml"/>
+                <ResourceDictionary Source="/UI/Styles/Shared/Typography.xaml"/>
+                <ResourceDictionary Source="/UI/Styles/Shared/Animations.xaml"/>
+                <ResourceDictionary Source="/UI/Styles/Buttons.xaml"/>
+                <ResourceDictionary Source="/UI/Styles/Navigation.xaml"/>
+                <ResourceDictionary Source="/UI/Styles/Inputs.xaml"/>
+                <ResourceDictionary Source="/UI/Styles/Containers.xaml"/>
+                <ResourceDictionary Source="/UI/Styles/Feedback.xaml"/>
+                <ResourceDictionary Source="/UI/Styles/Selection.xaml"/>
+                <ResourceDictionary Source="/UI/Styles/Labels.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <Style TargetType="Control">
-                <Setter Property="FontFamily" Value="Segoe UI"/>
-                <Setter Property="FontSize" Value="14"/>
-            </Style>
-            <Style TargetType="TextBlock">
-                <Setter Property="FontFamily" Value="Segoe UI"/>
-                <Setter Property="FontSize" Value="14"/>
-            </Style>
-            <Style TargetType="TextBox">
-                <Setter Property="FontFamily" Value="Segoe UI"/>
-                <Setter Property="FontSize" Value="14"/>
-            </Style>
-            <Style TargetType="Button">
-                <Setter Property="FontFamily" Value="Segoe UI"/>
-                <Setter Property="FontSize" Value="14"/>
-            </Style>
-            <Style TargetType="Label">
-                <Setter Property="FontFamily" Value="Segoe UI"/>
-                <Setter Property="FontSize" Value="14"/>
-            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

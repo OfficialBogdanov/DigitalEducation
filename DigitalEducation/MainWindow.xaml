@@ -1,0 +1,173 @@
+﻿<Window x:Class="DigitalEducation.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:components="clr-namespace:DigitalEducation.UI.Components"
+        mc:Ignorable="d"
+        Title="DigitalEducation — загрузка"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized">
+
+    <Grid>
+        <components:Background x:Name="BackgroundControl"/>
+
+        <StackPanel VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+
+            <Grid Margin="0,0,0,32"
+                  HorizontalAlignment="Center">
+                <Grid.RenderTransform>
+                    <TranslateTransform x:Name="LogoTranslate"/>
+                </Grid.RenderTransform>
+
+                <Ellipse x:Name="GlowEllipse"
+                         Width="160"
+                         Height="160"
+                         Fill="{DynamicResource AccentGlow}"
+                         Opacity="0.08"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center">
+                    <Ellipse.Effect>
+                        <BlurEffect Radius="40"/>
+                    </Ellipse.Effect>
+                    <Ellipse.RenderTransform>
+                        <ScaleTransform x:Name="GlowScale"/>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+
+                <Border Width="120"
+                        Height="120"
+                        CornerRadius="32"
+                        Background="{DynamicResource GradientPrimary}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#B293DB"
+                                          BlurRadius="25"
+                                          Opacity="0.2"/>
+                    </Border.Effect>
+                    <Viewbox Margin="28">
+                        <Canvas Width="24"
+                                Height="24">
+                            <Path Stroke="White"
+                                  StrokeThickness="1.5"
+                                  StrokeLineJoin="Round">
+                                <Path.Data>
+                                    <PathGeometry Figures="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/>
+                                </Path.Data>
+                            </Path>
+                        </Canvas>
+                    </Viewbox>
+                </Border>
+            </Grid>
+
+            <TextBlock Text="DigitalEducation"
+                       Style="{StaticResource Heading1}"
+                       Margin="0,0,0,8"
+                       HorizontalAlignment="Center"
+                       Foreground="{DynamicResource GradientAccent}"/>
+
+            <TextBlock x:Name="SubTitle"
+                       Text="ваш помощник в цифровой грамотности"
+                       Style="{StaticResource BodyText}"
+                       Margin="0,0,0,12"
+                       HorizontalAlignment="Center"/>
+
+            <Border Height="1"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,32">
+                <Border.Background>
+                    <DrawingBrush Stretch="Fill"
+                                  TileMode="Tile"
+                                  Viewport="0,0,4,1"
+                                  ViewportUnits="Absolute">
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="{DynamicResource TextTertiary}"
+                                                 Geometry="M0,0 L2,0 L2,1 L0,1 Z"/>
+                                <GeometryDrawing Brush="{DynamicResource TextTertiary}"
+                                                 Geometry="M4,0 L6,0 L6,1 L4,1 Z"/>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Border.Background>
+                <Border.Width>
+                    <Binding ElementName="SubTitle"
+                             Path="ActualWidth"/>
+                </Border.Width>
+            </Border>
+
+            <StackPanel Width="280"
+                        HorizontalAlignment="Center">
+                <ProgressBar x:Name="ProgressFill"
+                             Height="4"
+                             Value="0"
+                             Maximum="100"/>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,16,0,0">
+                    <TextBlock x:Name="LoadingMessage"
+                               Text="Загрузка ресурсов"
+                               Style="{StaticResource Caption}"
+                               HorizontalAlignment="Right"/>
+
+                    <UniformGrid Rows="1"
+                                 Columns="3"
+                                 Width="30"
+                                 Height="12"
+                                 Margin="10,0,0,0"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Left">
+                        <Ellipse x:Name="Dot1"
+                                 Width="6"
+                                 Height="6"
+                                 Fill="{DynamicResource AccentGlow}"
+                                 Opacity="0.2"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center">
+                            <Ellipse.RenderTransform>
+                                <ScaleTransform ScaleX="0.8"
+                                                ScaleY="0.8"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                        <Ellipse x:Name="Dot2"
+                                 Width="6"
+                                 Height="6"
+                                 Fill="{DynamicResource AccentGlow}"
+                                 Opacity="0.2"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center">
+                            <Ellipse.RenderTransform>
+                                <ScaleTransform ScaleX="0.8"
+                                                ScaleY="0.8"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                        <Ellipse x:Name="Dot3"
+                                 Width="6"
+                                 Height="6"
+                                 Fill="{DynamicResource AccentGlow}"
+                                 Opacity="0.2"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center">
+                            <Ellipse.RenderTransform>
+                                <ScaleTransform ScaleX="0.8"
+                                                ScaleY="0.8"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </UniformGrid>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <TextBlock Text="© 2026 DigitalEducation • версия 2.0"
+                   Style="{StaticResource CaptionSmall}"
+                   VerticalAlignment="Bottom"
+                   Margin="0,0,0,28"
+                   HorizontalAlignment="Center"/>
+    </Grid>
+</Window>

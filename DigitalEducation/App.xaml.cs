@@ -1,76 +1,46 @@
-﻿using System;
-using System.IO;
+﻿using DigitalEducation.Core.Managers;
+using DigitalEducation.Core.Services;
 using System.Windows;
 
 namespace DigitalEducation
 {
     public partial class App : Application
     {
+        private AppSettings _settingsService;
+        private FontSize _fontSize;
+        private ICourseLoader _courseLoader;
+
         protected override void OnStartup(StartupEventArgs e)
         {
-            AppThemeManager.Initialize();
-
-            string savedTheme = AppThemeManager.GetCurrentTheme();
-            if (!string.IsNullOrEmpty(savedTheme))
-            {
-                ApplyThemeOnStartup(savedTheme);
-            }
-
-            CheckVisionTemplatesFolder();
-
             base.OnStartup(e);
+
+            _settingsService = new AppSettings();
+            _courseLoader = new CourseLoader();
+
+            Theme.Initialize(_settingsService);
+            Palette.Initialize(_settingsService);
+            _fontSize = new FontSize(_settingsService);
         }
 
-        private void CheckVisionTemplatesFolder()
+        public AppSettings GetSettingsService()
         {
-            string templatesPath = GetTemplatesPath();
-
-            if (!Directory.Exists(templatesPath))
-            {
-                try
-                {
-                    Directory.CreateDirectory(templatesPath);
-                    Directory.CreateDirectory(Path.Combine(templatesPath, "Desktop"));
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Не удалось создать папку шаблонов: {ex.Message}");
-                }
-            }
+            return _settingsService;
         }
 
-        public static string GetTemplatesPath()
+        public FontSize GetFontSizeService()
         {
-            return Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
-                "Learning",
-                "Engine",
-                "Templates"
-            );
+            return _fontSize;
         }
 
-        private void ApplyThemeOnStartup(string themeName)
+        public ICourseLoader GetCourseLoader()
         {
-            try
-            {
-                Resources.MergedDictionaries.Clear();
+            return _courseLoader;
+        }
 
-                ResourceDictionary newTheme = new ResourceDictionary();
-
-                if (themeName == "Dark")
-                {
-                    newTheme.Source = new Uri("Assets/Themes/DarkTheme.xaml", UriKind.Relative);
-                }
-                else
-                {
-                    newTheme.Source = new Uri("Assets/Themes/LightTheme.xaml", UriKind.Relative);
-                }
-
-                Resources.MergedDictionaries.Add(newTheme);
-            }
-            catch (Exception ex)
-            {
-            }
+        protected override void OnExit(ExitEventArgs e)
+        {
+            _settingsService?.Save();
+            base.OnExit(e);
         }
     }
 }

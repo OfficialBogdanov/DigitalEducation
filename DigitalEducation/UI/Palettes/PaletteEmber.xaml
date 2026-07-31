@@ -1,0 +1,36 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="Accent1" Color="#FF1744"/>
+    <SolidColorBrush x:Key="Accent2" Color="#FF6D00"/>
+    <SolidColorBrush x:Key="Accent3" Color="#FFAB00"/>
+    <SolidColorBrush x:Key="AccentGlow" Color="#FF6D00"/>
+
+    <Color x:Key="Accent1Color">#FF1744</Color>
+    <Color x:Key="Accent2Color">#FF6D00</Color>
+    <Color x:Key="Accent3Color">#FFAB00</Color>
+    <Color x:Key="AccentGlowColor">#FF6D00</Color>
+
+    <LinearGradientBrush x:Key="GradientPrimary" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF1744" Offset="0"/>
+        <GradientStop Color="#FF6D00" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="GradientSecondary" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FFAB00" Offset="0"/>
+        <GradientStop Color="#FF6D00" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="GradientAccent" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#FF1744" Offset="0"/>
+        <GradientStop Color="#FF6D00" Offset="0.5"/>
+        <GradientStop Color="#FFAB00" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="GradientProgress" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#FF1744" Offset="0"/>
+        <GradientStop Color="#FF6D00" Offset="0.5"/>
+        <GradientStop Color="#FFAB00" Offset="1"/>
+    </LinearGradientBrush>
+
+</ResourceDictionary>

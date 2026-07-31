@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\OpenCvSharp4.runtime.win.4.8.0.20230708\build\netstandard\OpenCvSharp4.runtime.win.props" Condition="Exists('..\packages\OpenCvSharp4.runtime.win.4.8.0.20230708\build\netstandard\OpenCvSharp4.runtime.win.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -17,25 +16,6 @@
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>D:\DigitalEducationPublish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://localhost:8080/</InstallUrl>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
-    <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>2</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -57,73 +37,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>638237F8C9FD71A7027E2AD603E9081816D45E03</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>DigitalEducation_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>true</SignManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>DigitalEducation.App</StartupObject>
+    <ApplicationIcon>icon-color.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.10.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=10.0.0.10, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.10.0.10\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="OpenCvSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenCvSharp4.4.8.0.20230708\lib\netstandard2.0\OpenCvSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpVectors.Converters.Wpf, Version=1.8.5.0, Culture=neutral, PublicKeyToken=b532964b8548be77, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpVectors.1.8.5\lib\net47\SharpVectors.Converters.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpVectors.Core, Version=1.8.5.0, Culture=neutral, PublicKeyToken=7407205e337c98ef, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpVectors.1.8.5\lib\net47\SharpVectors.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpVectors.Css, Version=1.8.5.0, Culture=neutral, PublicKeyToken=7a46e3f532fdb787, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpVectors.1.8.5\lib\net47\SharpVectors.Css.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpVectors.Dom, Version=1.8.5.0, Culture=neutral, PublicKeyToken=517340b6277b1a7a, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpVectors.1.8.5\lib\net47\SharpVectors.Dom.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpVectors.Model, Version=1.8.5.0, Culture=neutral, PublicKeyToken=2236cfc76b505845, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpVectors.1.8.5\lib\net47\SharpVectors.Model.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpVectors.Rendering.Gdi, Version=1.8.5.0, Culture=neutral, PublicKeyToken=03902092284347e3, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpVectors.1.8.5\lib\net47\SharpVectors.Rendering.Gdi.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpVectors.Rendering.Wpf, Version=1.8.5.0, Culture=neutral, PublicKeyToken=d0902381100df30e, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpVectors.1.8.5\lib\net47\SharpVectors.Rendering.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpVectors.Runtime.Wpf, Version=1.8.5.0, Culture=neutral, PublicKeyToken=d16e717f0a981fb9, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpVectors.1.8.5\lib\net47\SharpVectors.Runtime.Wpf.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
     </Reference>
-    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Common, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.7.0.0\lib\net462\System.Drawing.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.IO.Log" />
-    <Reference Include="System.IO.Pipelines, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.Pipelines.10.0.0\lib\net462\System.IO.Pipelines.dll</HintPath>
+    <Reference Include="System.IO.Pipelines, Version=10.0.0.10, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Pipelines.10.0.10\lib\net462\System.IO.Pipelines.dll</HintPath>
     </Reference>
     <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
@@ -135,16 +64,16 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-    <Reference Include="System.Text.Encodings.Web, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encodings.Web.10.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
+    <Reference Include="System.Text.Encodings.Web, Version=10.0.0.10, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.10.0.10\lib\net462\System.Text.Encodings.Web.dll</HintPath>
     </Reference>
-    <Reference Include="System.Text.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Json.10.0.0\lib\net462\System.Text.Json.dll</HintPath>
+    <Reference Include="System.Text.Json, Version=10.0.0.10, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.10.0.10\lib\net462\System.Text.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.6.3\lib\net462\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.ValueTuple" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -154,8 +83,6 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="UIAutomationClient" />
-    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -165,106 +92,46 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DataServices\Abstractions\ILessonLogger.cs" />
-    <Compile Include="Learning\Engine\VisionRecognitionResult.cs" />
-    <Compile Include="Learning\Engine\ScreenCapturerService.cs" />
-    <Compile Include="Learning\Engine\VisionTemplateInfo.cs" />
-    <Compile Include="Learning\Engine\VisionTemplateMatcher.cs" />
-    <Compile Include="Learning\Engine\ComputerVisionService.cs" />
-    <Compile Include="DataServices\Services\DebugLessonLogger.cs" />
-    <Compile Include="DataServices\Services\VisualTreeHelperExtensions.cs" />
-    <Compile Include="UI\Pages\SystemLessonPage.xaml.cs">
-      <DependentUpon>SystemLessonPage.xaml</DependentUpon>
+    <Compile Include="Core\Managers\AppSettings.cs" />
+    <Compile Include="Core\Managers\FontSize.cs" />
+    <Compile Include="Core\Managers\Navigation.cs" />
+    <Compile Include="Core\Managers\Palette.cs" />
+    <Compile Include="Core\Managers\Theme.cs" />
+    <Compile Include="Core\Models\AppSettingsModel.cs" />
+    <Compile Include="Core\Models\CourseData.cs" />
+    <Compile Include="Core\Services\CourseLoader.cs" />
+    <Compile Include="UI\Components\Background.xaml.cs">
+      <DependentUpon>Background.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Windows\ConfirmationDialog.xaml.cs">
-      <DependentUpon>ConfirmationDialog.xaml</DependentUpon>
+    <Compile Include="UI\Pages\Achievements.xaml.cs">
+      <DependentUpon>Achievements.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataServices\Abstractions\DialogAbstractions.cs" />
-    <Compile Include="DataServices\Services\AppDialogService.cs" />
-    <Compile Include="DataServices\Repositories\CustomLessonFileRepository.cs" />
-    <Compile Include="DataServices\Abstractions\ILessonRepository.cs" />
-    <Compile Include="DataServices\Abstractions\ILessonStorage.cs.cs" />
-    <Compile Include="Learning\Data\LessonDataModel.cs" />
-    <Compile Include="DataServices\Repositories\CustomLessonFileStorage.cs" />
-    <Compile Include="Learning\Data\LessonRegistry.cs" />
-    <Compile Include="DataServices\Abstractions\NavigationAbstractions.cs" />
-    <Compile Include="DataServices\Services\AppNavigationService.cs" />
-    <Compile Include="Learning\Data\LessonCourseIdResolver.cs" />
-    <Compile Include="DataServices\Services\ErrorMessagePresenter.cs" />
-    <Compile Include="Learning\Services\VisionHintRenderer.cs" />
-    <Compile Include="DataServices\Abstractions\IWindowManager.cs" />
-    <Compile Include="Learning\Data\LessonDataLoader.cs" />
-    <Compile Include="Learning\Data\LessonProgressSaver.cs" />
-    <Compile Include="Learning\Services\VisionServiceFactory.cs" />
-    <Compile Include="DataServices\Services\ProgressStatisticsCalculator.cs" />
-    <Compile Include="DataServices\Repositories\UserProgressFileRepository.cs" />
-    <Compile Include="DataServices\Abstractions\IProgressRepository.cs" />
-    <Compile Include="DataServices\Abstractions\IStatisticsCalculator.cs" />
-    <Compile Include="DataServices\Abstractions\ThemeAbstractions.cs" />
-    <Compile Include="DataServices\Services\AppThemeManager.cs" />
-    <Compile Include="Learning\Controllers\LessonOverlayController.cs" />
-    <Compile Include="Learning\Controllers\LessonVisionController.cs" />
-    <Compile Include="DataServices\Services\WindowMinimizeManager.cs" />
-    <Compile Include="UI\Pages\CoursesCatalogPage.xaml.cs">
-      <DependentUpon>CoursesCatalogPage.xaml</DependentUpon>
+    <Compile Include="UI\Pages\Base.cs" />
+    <Compile Include="UI\Pages\Course.xaml.cs">
+      <DependentUpon>Course.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Pages\CreateCustomLessonPage.xaml.cs">
-      <DependentUpon>CreateCustomLessonPage.xaml</DependentUpon>
+    <Compile Include="UI\Pages\Courses.xaml.cs">
+      <DependentUpon>Courses.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Pages\CustomLessonsPage.xaml.cs">
-      <DependentUpon>CustomLessonsPage.xaml</DependentUpon>
+    <Compile Include="UI\Pages\Main.xaml.cs">
+      <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Components\CustomLessonValidator.cs" />
-    <Compile Include="UI\Components\LessonStepCardFactory.cs" />
-    <Compile Include="Learning\Data\LessonStepCollection.cs" />
-    <Compile Include="DataServices\Abstractions\ILessonActionHandler.cs" />
-    <Compile Include="DataServices\Abstractions\ILessonCardFactory.cs" />
-    <Compile Include="DataServices\Abstractions\ILessonProvider.cs" />
-    <Compile Include="Learning\Controllers\CustomLessonActionsHandler.cs" />
-    <Compile Include="UI\Components\CustomLessonCardFactory.cs" />
-    <Compile Include="Learning\Data\LessonDataProvider.cs" />
-    <Compile Include="UI\Pages\FilesLessonsPage.xaml.cs">
-      <DependentUpon>FilesLessonsPage.xaml</DependentUpon>
+    <Compile Include="UI\Pages\Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Layout\AppLayout.xaml.cs">
-      <DependentUpon>AppLayout.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Pages\HomePage.xaml.cs">
-      <DependentUpon>HomePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Pages\SettingsPage.xaml.cs">
-      <DependentUpon>SettingsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="DataServices\Services\UserProgressManager.cs" />
-    <Compile Include="DataServices\Models\UserProgressModel.cs" />
-    <Compile Include="UI\Windows\SplashWindow.xaml.cs">
-      <DependentUpon>SplashWindow.xaml</DependentUpon>
-    </Compile>
-    <Page Include="UI\Pages\SystemLessonPage.xaml">
+    <Page Include="UI\Components\Background.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Windows\ConfirmationDialog.xaml">
+    <Page Include="UI\Components\Modal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Pages\CoursesCatalogPage.xaml">
+    <Page Include="UI\Components\Siebar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Pages\CreateCustomLessonPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Pages\CustomLessonsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Pages\FilesLessonsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\MainWindow.xaml">
+    <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -272,43 +139,102 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\Windows\MainWindow.xaml.cs">
+    <Compile Include="UI\Components\Modal.xaml.cs">
+      <DependentUpon>Modal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\Siebar.xaml.cs">
+      <DependentUpon>Siebar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UI\Windows\LessonOverlayWindow.xaml">
+    <Page Include="UI\Pages\Achievements.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Layout\AppLayout.xaml">
+    <Page Include="UI\Pages\Course.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Pages\HomePage.xaml">
+    <Page Include="UI\Pages\Courses.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Pages\SettingsPage.xaml">
+    <Page Include="UI\Pages\Main.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Assets\Themes\DarkTheme.xaml">
+    <Page Include="UI\Pages\Settings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Assets\Themes\LightTheme.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="UI\Palettes\PaletteDefault.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Windows\SplashWindow.xaml">
+    <Page Include="UI\Palettes\PaletteEmber.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Palettes\PaletteOcean.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Palettes\PaletteSunset.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Styles\Buttons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Styles\Containers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Styles\Feedback.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Styles\Inputs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Styles\Labels.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Styles\Navigation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Styles\Selection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Styles\Shared\Animations.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Styles\Shared\Base.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Styles\Shared\Typography.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Themes\DarkTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Themes\LightTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\Windows\LessonOverlayWindow.xaml.cs">
-      <DependentUpon>LessonOverlayWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -325,193 +251,98 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Resource Include="Assets\Fonts\Comfortaa\Comfortaa-Bold.ttf" />
-    <Resource Include="Assets\Fonts\Comfortaa\Comfortaa-Light.ttf" />
-    <Resource Include="Assets\Fonts\Comfortaa\Comfortaa-Medium.ttf" />
-    <Resource Include="Assets\Fonts\Comfortaa\Comfortaa-Regular.ttf" />
-    <Resource Include="Assets\Fonts\Comfortaa\Comfortaa-SemiBold.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-Black.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-BlackItalic.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-Bold.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-BoldItalic.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-ExtraBold.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-ExtraBoldItalic.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-Italic.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-Light.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-LightItalic.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-Medium.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-MediumItalic.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-Regular.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-SemiBold.ttf" />
-    <Resource Include="Assets\Fonts\Rubik\Rubik-SemiBoldItalic.ttf" />
-    <None Include="DataServices\Lessons\FilesLessons\FilesLesson3.json" />
-    <None Include="DataServices\Lessons\FilesLessons\FilesLesson4.json" />
-    <None Include="DataServices\Lessons\FilesLessons\FilesLesson1.json" />
-    <None Include="DataServices\Lessons\FilesLessons\FilesLesson5.json" />
-    <None Include="DataServices\Lessons\FilesLessons\FilesLesson6.json" />
-    <None Include="DataServices\Lessons\OsLessons\OsLesson1.json" />
-    <None Include="DataServices\Lessons\OsLessons\OsLesson2.json" />
-    <None Include="DataServices\Lessons\OsLessons\OsLesson3.json" />
-    <None Include="DataServices\Lessons\OsLessons\OsLesson4.json" />
-    <None Include="DataServices\Lessons\OsLessons\OsLesson5.json" />
-    <None Include="DataServices\Lessons\OsLessons\OsLesson6.json" />
-    <None Include="DataServices\Lessons\OsLessons\OsLesson7.json" />
+    <None Include="Data\Courses\files\course.json" />
+    <None Include="Data\Courses\files\Lessons\FilesLesson1.json" />
+    <None Include="Data\Courses\files\Lessons\FilesLesson2.json" />
+    <None Include="Data\Courses\files\Lessons\FilesLesson3.json" />
+    <None Include="Data\Courses\files\Lessons\FilesLesson4.json" />
+    <None Include="Data\Courses\files\Lessons\FilesLesson5.json" />
+    <None Include="Data\Courses\files\Lessons\FilesLesson6.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-Bold.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-BoldItalic.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-ExtraLight.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-ExtraLightItalic.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-Italic.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-Light.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-LightItalic.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-Medium.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-MediumItalic.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-Regular.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-SemiBold.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-SemiBoldItalic.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-Thin.ttf" />
+    <Resource Include="UI\Fonts\RobotoMono\RobotoMono-ThinItalic.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-Black.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-BlackItalic.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-Bold.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-BoldItalic.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-ExtraBold.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-ExtraBoldItalic.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-ExtraLight.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-ExtraLightItalic.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-Italic.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-Light.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-LightItalic.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-Medium.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-MediumItalic.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-Regular.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-SemiBold.ttf" />
+    <Resource Include="UI\Fonts\Nunito\Nunito-SemiBoldItalic.ttf" />
+    <Resource Include="UI\Fonts\Ubuntu\Ubuntu-Bold.ttf" />
+    <Resource Include="UI\Fonts\Ubuntu\Ubuntu-BoldItalic.ttf" />
+    <Resource Include="UI\Fonts\Ubuntu\Ubuntu-Italic.ttf" />
+    <Resource Include="UI\Fonts\Ubuntu\Ubuntu-Light.ttf" />
+    <Resource Include="UI\Fonts\Ubuntu\Ubuntu-LightItalic.ttf" />
+    <Resource Include="UI\Fonts\Ubuntu\Ubuntu-Medium.ttf" />
+    <Resource Include="UI\Fonts\Ubuntu\Ubuntu-MediumItalic.ttf" />
+    <Resource Include="UI\Fonts\Ubuntu\Ubuntu-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
+    <Resource Include="Assets\Base_dark.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DataServices\Lessons\CustomLessons\" />
+    <Resource Include="Assets\Ocean_dark.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Ocean_light.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Sunset_dark.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Sunset_light.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Base_light.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Ember_dark.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Ember_light.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Content Include="Assets\icon-color.svg" />
+    <Resource Include="icon-color.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\Icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\Black\Book.png" />
-    <Resource Include="Assets\Icons\Black\Chart.png" />
-    <Resource Include="Assets\Icons\Black\ChevronLeft.png" />
-    <Resource Include="Assets\Icons\Black\ChevronRight.png" />
-    <Resource Include="Assets\Icons\Black\Close.png" />
-    <Resource Include="Assets\Icons\Black\Document.png" />
-    <Resource Include="Assets\Icons\Black\Folder.png" />
-    <Resource Include="Assets\Icons\Black\Globe.png" />
-    <Resource Include="Assets\Icons\Black\Home.png" />
-    <Resource Include="Assets\Icons\Black\Info.png" />
-    <Resource Include="Assets\Icons\Black\List.png" />
-    <Resource Include="Assets\Icons\Black\Monitor.png" />
-    <Resource Include="Assets\Icons\Black\Moon.png" />
-    <Resource Include="Assets\Icons\Black\Refresh.png" />
-    <Resource Include="Assets\Icons\Black\Right.png" />
-    <Resource Include="Assets\Icons\Black\Settings.png" />
-    <Resource Include="Assets\Icons\Black\Success.png" />
-    <Resource Include="Assets\Icons\Black\Sun.png" />
-    <Resource Include="Assets\Icons\Black\Trash.png" />
-    <Resource Include="Assets\Icons\Black\TrendingUp.png" />
-    <Resource Include="Assets\Icons\Black\User.png" />
-    <Resource Include="Assets\Icons\Black\ZoomIn.png" />
-    <Resource Include="Assets\Icons\Black\ZoomOut.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\White\Book.png" />
-    <Resource Include="Assets\Icons\White\Chart.png" />
-    <Resource Include="Assets\Icons\White\ChevronLeft.png" />
-    <Resource Include="Assets\Icons\White\ChevronRight.png" />
-    <Resource Include="Assets\Icons\White\Close.png" />
-    <Resource Include="Assets\Icons\White\Document.png" />
-    <Resource Include="Assets\Icons\White\Folder.png" />
-    <Resource Include="Assets\Icons\White\Globe.png" />
-    <Resource Include="Assets\Icons\White\Home.png" />
-    <Resource Include="Assets\Icons\White\Info.png" />
-    <Resource Include="Assets\Icons\White\List.png" />
-    <Resource Include="Assets\Icons\White\Monitor.png" />
-    <Resource Include="Assets\Icons\White\Moon.png" />
-    <Resource Include="Assets\Icons\White\Refresh.png" />
-    <Resource Include="Assets\Icons\White\Right.png" />
-    <Resource Include="Assets\Icons\White\Settings.png" />
-    <Resource Include="Assets\Icons\White\Success.png" />
-    <Resource Include="Assets\Icons\White\Sun.png" />
-    <Resource Include="Assets\Icons\White\Trash.png" />
-    <Resource Include="Assets\Icons\White\TrendingUp.png" />
-    <Resource Include="Assets\Icons\White\User.png" />
-    <Resource Include="Assets\Icons\White\ZoomIn.png" />
-    <Resource Include="Assets\Icons\White\ZoomOut.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\Black\Search.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\White\Search.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 и x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\Black\Plus.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\White\Plus.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\Black\Edit.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\White\Edit.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Learning\Engine\Templates\creater_menu.png" />
-    <Resource Include="Learning\Engine\Templates\create_menu.png" />
-    <Resource Include="Learning\Engine\Templates\folder_menu_item.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\Black\Calendar.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\White\Calendar.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Learning\Engine\Templates\folder.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\Black\GitHub.png" />
-    <Resource Include="Assets\Icons\Black\Square.png" />
-    <Resource Include="Assets\Icons\Black\VK.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\White\GitHub.png" />
-    <Resource Include="Assets\Icons\White\Square.png" />
-    <Resource Include="Assets\Icons\White\VK.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\Black\Copy.png" />
-    <Resource Include="Assets\Icons\Black\Git.png" />
-    <Resource Include="Assets\Icons\Black\Image.png" />
-    <Resource Include="Assets\Icons\Black\Layers.png" />
-    <Resource Include="Assets\Icons\Black\Layout.png" />
-    <Resource Include="Assets\Icons\Black\Maximize.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\White\Copy.png" />
-    <Resource Include="Assets\Icons\White\Git.png" />
-    <Resource Include="Assets\Icons\White\Image.png" />
-    <Resource Include="Assets\Icons\White\Layers.png" />
-    <Resource Include="Assets\Icons\White\Layout.png" />
-    <Resource Include="Assets\Icons\White\Maximize.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\Black\Loader.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Icons\White\Loader.png" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets" Condition="Exists('..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets'))" />
-    <Error Condition="!Exists('..\packages\OpenCvSharp4.runtime.win.4.8.0.20230708\build\netstandard\OpenCvSharp4.runtime.win.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OpenCvSharp4.runtime.win.4.8.0.20230708\build\netstandard\OpenCvSharp4.runtime.win.props'))" />
+    <Error Condition="!Exists('..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets'))" />
   </Target>
-  <Import Project="..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets" Condition="Exists('..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" />
 </Project>

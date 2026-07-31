@@ -1,0 +1,42 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:Double x:Key="RadiusSm">4</sys:Double>
+    <sys:Double x:Key="RadiusMd">8</sys:Double>
+    <sys:Double x:Key="RadiusLg">12</sys:Double>
+    <sys:Double x:Key="RadiusXl">16</sys:Double>
+    <sys:Double x:Key="Radius2Xl">20</sys:Double>
+    <sys:Double x:Key="Radius3Xl">24</sys:Double>
+    <sys:Double x:Key="Radius4Xl">32</sys:Double>
+    <sys:Double x:Key="RadiusFull">9999</sys:Double>
+
+    <CornerRadius x:Key="CornerRadiusSm">4</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusMd">8</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusLg">12</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusXl">16</CornerRadius>
+    <CornerRadius x:Key="CornerRadius2Xl">20</CornerRadius>
+    <CornerRadius x:Key="CornerRadius3Xl">24</CornerRadius>
+    <CornerRadius x:Key="CornerRadius4Xl">32</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusFull">25</CornerRadius>
+
+    <sys:Double x:Key="Spacing1">4</sys:Double>
+    <sys:Double x:Key="Spacing2">8</sys:Double>
+    <sys:Double x:Key="Spacing3">12</sys:Double>
+    <sys:Double x:Key="Spacing4">16</sys:Double>
+    <sys:Double x:Key="Spacing5">20</sys:Double>
+    <sys:Double x:Key="Spacing6">24</sys:Double>
+    <sys:Double x:Key="Spacing8">32</sys:Double>
+    <sys:Double x:Key="Spacing10">40</sys:Double>
+    <sys:Double x:Key="Spacing12">48</sys:Double>
+    <sys:Double x:Key="Spacing16">64</sys:Double>
+
+    <Thickness x:Key="PaddingButton">30,0</Thickness>
+    <Thickness x:Key="PaddingButtonLarge">46,0</Thickness>
+    <Thickness x:Key="PaddingButtonSmall">22,0</Thickness>
+    <Thickness x:Key="PaddingInput">12,10</Thickness>
+    <Thickness x:Key="PaddingCard">24,28</Thickness>
+    <Thickness x:Key="PaddingCardSmall">16,20</Thickness>
+    <Thickness x:Key="PaddingFilterButton">20,8</Thickness>
+
+</ResourceDictionary>

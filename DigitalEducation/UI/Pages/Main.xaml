@@ -1,0 +1,92 @@
+﻿<Window x:Class="DigitalEducation.UI.Pages.Main"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:components="clr-namespace:DigitalEducation.UI.Components"
+        mc:Ignorable="d"
+        Title="DigitalEducation — Главная"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized">
+
+    <Grid>
+        <components:Background x:Name="BackgroundControl"/>
+
+        <Grid x:Name="ContentContainer">
+            <Grid.Effect>
+                <BlurEffect x:Name="ContentBlur"
+                            Radius="0"
+                            KernelType="Gaussian"/>
+            </Grid.Effect>
+
+            <StackPanel VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+
+                <TextBlock Text="Добро пожаловать"
+                           Style="{StaticResource BadgeText}"
+                           Margin="0,0,0,16"
+                           HorizontalAlignment="Center"/>
+
+                <TextBlock Style="{StaticResource Heading1}"
+                           Margin="0,0,0,24"
+                           TextAlignment="Center">
+                    <Run Text="Осваивайте цифровой"
+                         Foreground="{DynamicResource TextPrimary}"/>
+                    <LineBreak/>
+                    <Run Text="мир с уверенностью"
+                         Foreground="{DynamicResource GradientAccent}"/>
+                </TextBlock>
+
+                <TextBlock Text="DigitalEducation — ваш персональный гид в мире цифровых навыков. Начните обучение прямо сейчас или продолжите с того места, где остановились."
+                           Style="{StaticResource BodyText}"
+                           MaxWidth="540"
+                           Margin="0,0,0,32"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"/>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                    <Button Content="Начать обучение"
+                            Style="{StaticResource PrimaryButton}"
+                            Margin="0,0,12,0"
+                            Click="StartLearning_Click"/>
+
+                    <Button Content="Все курсы"
+                            Style="{StaticResource SecondaryButton}"
+                            Click="AllCourses_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <Border x:Name="Overlay"
+                Background="#000000"
+                Opacity="0"
+                Visibility="Collapsed"
+                Panel.ZIndex="50"/>
+
+        <Grid x:Name="SidebarContainer"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Stretch"
+              Width="300"
+              Margin="-300,0,0,0"
+              Panel.ZIndex="60">
+            <components:Sidebar x:Name="SidebarControl"
+                                CurrentPage="home"/>
+        </Grid>
+
+        <Button x:Name="MenuToggle"
+                Style="{StaticResource MenuToggleStyle}"/>
+
+        <TextBlock Text="© 2026 DigitalEducation • версия 2.0"
+                   Style="{StaticResource CaptionSmall}"
+                   VerticalAlignment="Bottom"
+                   Margin="0,0,0,28"
+                   HorizontalAlignment="Center"/>
+
+        <components:Modal x:Name="ModalWindow"
+                          Panel.ZIndex="1000"/>
+    </Grid>
+</Window>
