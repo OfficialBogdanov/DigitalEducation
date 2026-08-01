@@ -14,7 +14,6 @@ namespace DigitalEducation.UI.Pages
     public partial class Course : Window
     {
         private Base _baseLogic;
-        private ICourseLoader _courseLoader;
         private CourseData _course;
         private string _courseId;
         private FontSize _fontSize;
@@ -24,7 +23,6 @@ namespace DigitalEducation.UI.Pages
             InitializeComponent();
             _baseLogic = new Base(this, "courses");
             _courseId = courseId;
-            _courseLoader = new CourseLoader();
 
             App app = (App)Application.Current;
             _fontSize = app.GetFontSizeService();
@@ -44,7 +42,7 @@ namespace DigitalEducation.UI.Pages
 
         private void LoadCourseData()
         {
-            _course = _courseLoader.LoadCourse(_courseId);
+            _course = CourseLoader.Instance.GetCourse(_courseId);
 
             if (_course == null)
             {

@@ -13,7 +13,6 @@ namespace DigitalEducation.UI.Pages
     public partial class Courses : Window
     {
         private Base _baseLogic;
-        private ICourseLoader _courseLoader;
         private List<CourseData> _courses;
         private string _currentFilter = "all";
         private string _currentSearch = "";
@@ -23,7 +22,6 @@ namespace DigitalEducation.UI.Pages
         {
             InitializeComponent();
             _baseLogic = new Base(this, "courses");
-            _courseLoader = new CourseLoader();
 
             App app = (App)Application.Current;
             _fontSize = app.GetFontSizeService();
@@ -53,9 +51,8 @@ namespace DigitalEducation.UI.Pages
         {
             base.OnContentRendered(e);
 
-            _courses = _courseLoader.LoadAllCourses();
+            _courses = CourseLoader.Instance.GetAllCourses();
 
-            FilterAll.IsChecked = true;
             UpdateStats();
             ApplyFilters();
         }
@@ -83,7 +80,6 @@ namespace DigitalEducation.UI.Pages
 
             if (_currentFilter != "all")
             {
-                // Фильтрация по статусу (добавьте свою логику)
             }
 
             if (!string.IsNullOrWhiteSpace(_currentSearch))

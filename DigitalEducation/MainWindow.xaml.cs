@@ -1,8 +1,6 @@
-﻿using DigitalEducation.Core.Managers;
-using DigitalEducation.UI.Components;
-using System;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -32,7 +30,7 @@ namespace DigitalEducation
         {
             StartLogoAnimation();
             StartDotAnimations();
-            _ = SimulateLoading();
+            ProgressFill.Value = 0;
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -73,6 +71,7 @@ namespace DigitalEducation
             }
 
             LogoTranslate.Y = _currentOffset;
+
             double glowScale = 0.95 + (Math.Abs(_currentOffset) / 6) * 0.05;
             GlowScale.ScaleX = glowScale;
             GlowScale.ScaleY = glowScale;
@@ -146,81 +145,42 @@ namespace DigitalEducation
             };
         }
 
-        private async Task SimulateLoading()
+        public void UpdateLoadingMessage(string message)
         {
-            string[] messages = new string[]
+            Dispatcher.Invoke(() =>
             {
-                "Загрузка ресурсов",
-                "Инициализация модулей",
-                "Подготовка данных",
-                "Загрузка приложения"
-            };
-
-            double progress = 0;
-            double step = 100.0 / (messages.Length * 2);
-
-            for (int i = 0; i < messages.Length; i++)
-            {
-                await Dispatcher.InvokeAsync(() =>
+                if (LoadingMessage != null)
                 {
-                    LoadingMessage.Text = messages[i];
-                });
-
-                double targetProgress = Math.Min(progress + step * 2, 100);
-
-                while (progress < targetProgress)
-                {
-                    progress = Math.Min(progress + 2, targetProgress);
-
-                    await Dispatcher.InvokeAsync(() =>
-                    {
-                        ProgressFill.Value = progress;
-                    });
-
-                    await Task.Delay(20);
+                    LoadingMessage.Text = message;
                 }
-
-                if (i < messages.Length - 1)
-                {
-                    await Task.Delay(300);
-                }
-            }
-
-            await Task.Delay(500);
-
-            await Dispatcher.InvokeAsync(() =>
-            {
-                StopAllAnimations();
-                UI.Pages.Main mainWindow = new UI.Pages.Main();
-                mainWindow.Show();
-                Close();
             });
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        public void UpdateLoadingProgress(int percent)
         {
-            StopAllAnimations();
-            Close();
+            Dispatcher.Invoke(() =>
+            {
+                if (ProgressFill != null)
+                {
+                    DoubleAnimation animation = new DoubleAnimation
+                    {
+                        From = ProgressFill.Value,
+                        To = percent,
+                        Duration = TimeSpan.FromMilliseconds(250),
+                        EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+                    };
+
+                    ProgressFill.BeginAnimation(ProgressBar.ValueProperty, animation);
+                }
+            });
         }
 
         private void StopAllAnimations()
         {
-            if (_logoAnimationTimer != null)
-            {
-                _logoAnimationTimer.Stop();
-            }
-            if (_dot1Timer != null)
-            {
-                _dot1Timer.Stop();
-            }
-            if (_dot2Timer != null)
-            {
-                _dot2Timer.Stop();
-            }
-            if (_dot3Timer != null)
-            {
-                _dot3Timer.Stop();
-            }
+            _logoAnimationTimer?.Stop();
+            _dot1Timer?.Stop();
+            _dot2Timer?.Stop();
+            _dot3Timer?.Stop();
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)

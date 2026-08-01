@@ -259,6 +259,14 @@
     <None Include="Data\Courses\files\Lessons\FilesLesson4.json" />
     <None Include="Data\Courses\files\Lessons\FilesLesson5.json" />
     <None Include="Data\Courses\files\Lessons\FilesLesson6.json" />
+    <None Include="Data\Courses\os\course.json" />
+    <None Include="Data\Courses\os\Lessons\OsLesson1.json" />
+    <None Include="Data\Courses\os\Lessons\OsLesson2.json" />
+    <None Include="Data\Courses\os\Lessons\OsLesson3.json" />
+    <None Include="Data\Courses\os\Lessons\OsLesson4.json" />
+    <None Include="Data\Courses\os\Lessons\OsLesson5.json" />
+    <None Include="Data\Courses\os\Lessons\OsLesson6.json" />
+    <None Include="Data\Courses\os\Lessons\OsLesson7.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -4,55 +4,69 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace DigitalEducation.Core.Services
 {
     public interface ICourseLoader
     {
-        List<CourseData> LoadAllCourses();
-        CourseData LoadCourse(string courseId);
-        List<LessonData> LoadLessons(string courseId);
-        LessonData LoadLesson(string courseId, string lessonId);
-        void Reload();
+        Task LoadAllCoursesAsync();
+        List<CourseData> GetAllCourses();
+        CourseData GetCourse(string courseId);
+        List<LessonData> GetLessons(string courseId);
+        LessonData GetLesson(string courseId, string lessonId);
+        bool IsLoaded { get; }
+        event EventHandler LoadingCompleted;
+        event EventHandler<string> LoadingProgress;
     }
 
     public class CourseLoader : ICourseLoader
     {
+        private static CourseLoader _instance;
+        private static readonly object _lock = new object();
+
         private readonly string _coursesPath;
         private readonly JsonSerializerOptions _jsonOptions;
         private List<CourseData> _cachedCourses;
+        private bool _isLoaded = false;
 
-        public CourseLoader()
+        public bool IsLoaded => _isLoaded;
+
+        public event EventHandler LoadingCompleted;
+        public event EventHandler<string> LoadingProgress;
+
+        private CourseLoader()
         {
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
 
             string[] possiblePaths = new string[]
             {
-                Path.Combine(baseDir, "Data", "Courses"),
-                Path.Combine(baseDir, "..", "..", "..", "Data", "Courses"),
-                Path.Combine(baseDir, "..", "..", "Data", "Courses"),
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Courses")
+                Path.GetFullPath(Path.Combine(baseDir, "..", "..", "Data", "Courses")),
+                Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "Data", "Courses")),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Courses"),
+                Path.GetFullPath(Path.Combine(baseDir, "..", "Data", "Courses"))
             };
 
             string foundPath = null;
             foreach (string path in possiblePaths)
             {
-                string fullPath = Path.GetFullPath(path);
-                if (Directory.Exists(fullPath))
+                if (Directory.Exists(path))
                 {
-                    foundPath = fullPath;
+                    foundPath = path;
+                    System.Diagnostics.Debug.WriteLine($"[CourseLoader] Найден путь: {path}");
                     break;
                 }
             }
 
             if (foundPath == null)
             {
-                foundPath = Path.Combine(baseDir, "Data", "Courses");
-                Directory.CreateDirectory(foundPath);
+                foundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Courses");
+                System.Diagnostics.Debug.WriteLine($"[CourseLoader] ПАПКА НЕ НАЙДЕНА, используем: {foundPath}");
             }
 
             _coursesPath = foundPath;
-            System.Diagnostics.Debug.WriteLine($"[CourseLoader] Путь к курсам: {_coursesPath}");
+            System.Diagnostics.Debug.WriteLine($"[CourseLoader] ИТОГОВЫЙ ПУТЬ К КУРСАМ: {_coursesPath}");
 
             _jsonOptions = new JsonSerializerOptions
             {
@@ -63,86 +77,148 @@ namespace DigitalEducation.Core.Services
             };
         }
 
-        public List<CourseData> LoadAllCourses()
+        public static CourseLoader Instance
         {
-            if (_cachedCourses != null)
-                return _cachedCourses;
-
-            List<CourseData> courses = new List<CourseData>();
-
-            if (!Directory.Exists(_coursesPath))
+            get
             {
-                System.Diagnostics.Debug.WriteLine($"[CourseLoader] Папка не найдена: {_coursesPath}");
-                return courses;
-            }
-
-            string[] courseFolders = Directory.GetDirectories(_coursesPath);
-            System.Diagnostics.Debug.WriteLine($"[CourseLoader] Найдено папок курсов: {courseFolders.Length}");
-
-            foreach (string folder in courseFolders)
-            {
-                string courseJsonPath = Path.Combine(folder, "course.json");
-                System.Diagnostics.Debug.WriteLine($"[CourseLoader] Проверка: {courseJsonPath}");
-
-                if (File.Exists(courseJsonPath))
+                if (_instance == null)
                 {
-                    try
+                    lock (_lock)
                     {
-                        string json = File.ReadAllText(courseJsonPath);
-                        System.Diagnostics.Debug.WriteLine($"[CourseLoader] Загружен JSON: {json.Substring(0, Math.Min(100, json.Length))}...");
-
-                        CourseData course = System.Text.Json.JsonSerializer.Deserialize<CourseData>(json, _jsonOptions);
-
-                        if (course != null)
+                        if (_instance == null)
                         {
-                            string lessonsPath = Path.Combine(folder, "Lessons");
-                            if (Directory.Exists(lessonsPath))
-                            {
-                                course.Lessons = LoadLessonsFromFolder(lessonsPath);
-                            }
-                            courses.Add(course);
-                            System.Diagnostics.Debug.WriteLine($"[CourseLoader] Загружен курс: {course.Title}");
+                            _instance = new CourseLoader();
                         }
                     }
-                    catch (Exception ex)
+                }
+                return _instance;
+            }
+        }
+
+        public async Task LoadAllCoursesAsync()
+        {
+            if (_isLoaded)
+                return;
+
+            await Task.Run(() =>
+            {
+                try
+                {
+                    List<CourseData> courses = new List<CourseData>();
+
+                    System.Diagnostics.Debug.WriteLine($"[CourseLoader] Поиск курсов в: {_coursesPath}");
+
+                    if (!Directory.Exists(_coursesPath))
                     {
-                        System.Diagnostics.Debug.WriteLine($"[CourseLoader] Ошибка загрузки {folder}: {ex.Message}");
+                        System.Diagnostics.Debug.WriteLine($"[CourseLoader] ПАПКА НЕ НАЙДЕНА: {_coursesPath}");
+                        _cachedCourses = courses;
+                        _isLoaded = true;
+                        SafeRaiseProgress("Папка с курсами не найдена");
+                        SafeRaiseCompleted();
+                        return;
                     }
+
+                    string[] courseFolders = Directory.GetDirectories(_coursesPath);
+                    System.Diagnostics.Debug.WriteLine($"[CourseLoader] Найдено папок: {courseFolders.Length}");
+
+                    int total = courseFolders.Length;
+                    int current = 0;
+
+                    foreach (string folder in courseFolders)
+                    {
+                        current++;
+                        string folderName = Path.GetFileName(folder);
+                        SafeRaiseProgress($"Загрузка курса: {folderName} ({current}/{total})");
+
+                        string courseJsonPath = Path.Combine(folder, "course.json");
+
+                        if (File.Exists(courseJsonPath))
+                        {
+                            try
+                            {
+                                string json = File.ReadAllText(courseJsonPath);
+                                CourseData course = System.Text.Json.JsonSerializer.Deserialize<CourseData>(json, _jsonOptions);
+
+                                if (course != null)
+                                {
+                                    string lessonsPath = Path.Combine(folder, "Lessons");
+                                    if (Directory.Exists(lessonsPath))
+                                    {
+                                        course.Lessons = LoadLessonsFromFolder(lessonsPath);
+                                    }
+                                    courses.Add(course);
+                                    System.Diagnostics.Debug.WriteLine($"[CourseLoader] Загружен курс: {course.Title}");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"[CourseLoader] Ошибка загрузки {folder}: {ex.Message}");
+                            }
+                        }
+                    }
+
+                    _cachedCourses = courses;
+                    _isLoaded = true;
+                    SafeRaiseProgress($"Загружено {courses.Count} курсов");
+                    SafeRaiseCompleted();
+
+                    System.Diagnostics.Debug.WriteLine($"[CourseLoader] ИТОГО ЗАГРУЖЕНО КУРСОВ: {courses.Count}");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[CourseLoader] КРИТИЧЕСКАЯ ОШИБКА: {ex.Message}");
+                    _cachedCourses = new List<CourseData>();
+                    _isLoaded = true;
+                    SafeRaiseCompleted();
+                }
+            });
+        }
+        private void SafeRaiseProgress(string message)
+        {
+            try
+            {
+                if (Application.Current?.Dispatcher != null)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        LoadingProgress?.Invoke(this, message);
+                    });
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"[CourseLoader] course.json не найден в {folder}");
+                    LoadingProgress?.Invoke(this, message);
                 }
             }
-
-            _cachedCourses = courses;
-            return courses;
+            catch
+            {
+            }
         }
 
-        public CourseData LoadCourse(string courseId)
+        private void SafeRaiseCompleted()
         {
-            List<CourseData> allCourses = LoadAllCourses();
-            return allCourses.FirstOrDefault(c => c.Id == courseId);
-        }
-
-        public List<LessonData> LoadLessons(string courseId)
-        {
-            CourseData course = LoadCourse(courseId);
-            return course?.Lessons ?? new List<LessonData>();
-        }
-
-        public LessonData LoadLesson(string courseId, string lessonId)
-        {
-            List<LessonData> lessons = LoadLessons(courseId);
-            return lessons.FirstOrDefault(l => l.Id == lessonId);
+            try
+            {
+                if (Application.Current?.Dispatcher != null)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        LoadingCompleted?.Invoke(this, EventArgs.Empty);
+                    });
+                }
+                else
+                {
+                    LoadingCompleted?.Invoke(this, EventArgs.Empty);
+                }
+            }
+            catch
+            {
+            }
         }
 
         private List<LessonData> LoadLessonsFromFolder(string lessonsPath)
         {
             List<LessonData> lessons = new List<LessonData>();
             string[] lessonFiles = Directory.GetFiles(lessonsPath, "*.json");
-
-            System.Diagnostics.Debug.WriteLine($"[CourseLoader] Найдено файлов уроков: {lessonFiles.Length} в {lessonsPath}");
 
             foreach (string file in lessonFiles)
             {
@@ -154,7 +230,6 @@ namespace DigitalEducation.Core.Services
                     if (lesson != null)
                     {
                         lessons.Add(lesson);
-                        System.Diagnostics.Debug.WriteLine($"[CourseLoader] Загружен урок: {lesson.Title}");
                     }
                 }
                 catch (Exception ex)
@@ -166,9 +241,36 @@ namespace DigitalEducation.Core.Services
             return lessons.OrderBy(l => l.Order).ToList();
         }
 
+        public List<CourseData> GetAllCourses()
+        {
+            if (_cachedCourses == null)
+                return new List<CourseData>();
+            return _cachedCourses;
+        }
+
+        public CourseData GetCourse(string courseId)
+        {
+            if (_cachedCourses == null)
+                return null;
+            return _cachedCourses.FirstOrDefault(c => c.Id == courseId);
+        }
+
+        public List<LessonData> GetLessons(string courseId)
+        {
+            CourseData course = GetCourse(courseId);
+            return course?.Lessons ?? new List<LessonData>();
+        }
+
+        public LessonData GetLesson(string courseId, string lessonId)
+        {
+            List<LessonData> lessons = GetLessons(courseId);
+            return lessons.FirstOrDefault(l => l.Id == lessonId);
+        }
+
         public void Reload()
         {
             _cachedCourses = null;
+            _isLoaded = false;
         }
     }
 }
