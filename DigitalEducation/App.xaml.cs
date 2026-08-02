@@ -16,12 +16,18 @@ namespace DigitalEducation
         public FontSize FontSizeService => _fontSize;
         public CourseLoader CourseLoader => _courseLoader;
 
+        public App()
+        {
+            _courseLoader = CourseLoader.Instance;
+            _ = _courseLoader.LoadAllCoursesAsync();
+            System.Diagnostics.Debug.WriteLine("[App] Загрузка курсов запущена в конструкторе");
+        }
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
             _settingsService = new AppSettings();
-            _courseLoader = CourseLoader.Instance;
 
             _courseLoader.LoadingProgress += OnLoadingProgress;
             _courseLoader.LoadingCompleted += OnLoadingCompleted;
@@ -41,7 +47,24 @@ namespace DigitalEducation
             await AnimateProgress(splashWindow, 0, 30, 900);
 
             splashWindow.UpdateLoadingMessage("Инициализация модулей");
-            await _courseLoader.LoadAllCoursesAsync();
+
+            int waitCount = 0;
+            while (!_courseLoader.IsLoaded && waitCount < 30)
+            {
+                await Task.Delay(100);
+                waitCount++;
+            }
+
+            if (_courseLoader.IsLoaded)
+            {
+                var count = _courseLoader.GetAllCourses().Count;
+                System.Diagnostics.Debug.WriteLine($"[App] Загружено {count} курсов");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("[App] Курсы не загружены, но продолжаем");
+            }
+
             await AnimateProgress(splashWindow, 30, 60, 700);
 
             splashWindow.UpdateLoadingMessage("Подготовка данных");
@@ -51,32 +74,32 @@ namespace DigitalEducation
             await AnimateProgress(splashWindow, 85, 100, 500);
 
             double elapsedMs = (DateTime.Now - startTime).TotalMilliseconds;
-            int minimumSplashMs = 2500;
-
-            if (elapsedMs < minimumSplashMs)
+            if (elapsedMs < 2500)
             {
-                int remainingMs = (int)(minimumSplashMs - elapsedMs);
-                await Task.Delay(remainingMs);
+                await Task.Delay((int)(2500 - elapsedMs));
             }
 
             await Task.Delay(300);
 
             UI.Pages.Main mainWindow = new UI.Pages.Main();
             mainWindow.Show();
-
             splashWindow.Close();
         }
 
         private async Task AnimateProgress(MainWindow window, int from, int to, int durationMs)
         {
             int steps = 30;
-            int stepDelay = durationMs / steps;
-            double stepValue = (double)(to - from) / steps;
 
             for (int i = 0; i < steps; i++)
             {
-                int currentValue = (int)(from + (i * stepValue));
+                double t = (double)i / steps;
+                double eased = 1 - Math.Pow(1 - t, 2);
+                int currentValue = (int)(from + (to - from) * eased);
                 window.UpdateLoadingProgress(currentValue);
+
+                double delayMultiplier = 1 + 1.5 * Math.Pow(t, 2);
+                int stepDelay = (int)(durationMs / steps * delayMultiplier);
+
                 await Task.Delay(stepDelay);
             }
 

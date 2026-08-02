@@ -17,6 +17,8 @@ namespace DigitalEducation.UI.Pages
         private string _currentFilter = "all";
         private string _currentSearch = "";
         private FontSize _fontSize;
+        private bool _isDataLoaded = false;
+        private bool _isRendered = false;
 
         public Courses()
         {
@@ -30,6 +32,50 @@ namespace DigitalEducation.UI.Pages
             {
                 _fontSize.FontSizeChanged += OnFontSizeChanged;
             }
+
+            CourseLoader.Instance.LoadingCompleted += OnCoursesLoaded;
+
+            if (CourseLoader.Instance.IsLoaded)
+            {
+                LoadCoursesData();
+            }
+
+            this.Loaded += OnPageLoaded;
+        }
+
+        private void OnPageLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_isDataLoaded && !_isRendered)
+            {
+                RenderCourses(_courses);
+                _isRendered = true;
+            }
+        }
+
+        private void OnCoursesLoaded(object sender, EventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (!_isDataLoaded)
+                {
+                    LoadCoursesData();
+
+                    if (this.IsLoaded)
+                    {
+                        RenderCourses(_courses);
+                        _isRendered = true;
+                    }
+                }
+            });
+        }
+
+        private void LoadCoursesData()
+        {
+            if (_isDataLoaded) return;
+
+            _courses = CourseLoader.Instance.GetAllCourses();
+            UpdateStats();
+            _isDataLoaded = true;
         }
 
         protected override void OnClosed(EventArgs e)
@@ -38,23 +84,36 @@ namespace DigitalEducation.UI.Pages
             {
                 _fontSize.FontSizeChanged -= OnFontSizeChanged;
             }
+
+            CourseLoader.Instance.LoadingCompleted -= OnCoursesLoaded;
+            this.Loaded -= OnPageLoaded;
+
             _baseLogic.Cleanup();
             base.OnClosed(e);
         }
 
         private void OnFontSizeChanged(object sender, double size)
         {
-            ApplyFilters();
+            if (_isDataLoaded && _isRendered)
+            {
+                ApplyFilters();
+            }
         }
 
         protected override void OnContentRendered(EventArgs e)
         {
             base.OnContentRendered(e);
 
-            _courses = CourseLoader.Instance.GetAllCourses();
+            if (!_isDataLoaded)
+            {
+                LoadCoursesData();
+            }
 
-            UpdateStats();
-            ApplyFilters();
+            if (_isDataLoaded && !_isRendered)
+            {
+                RenderCourses(_courses);
+                _isRendered = true;
+            }
         }
 
         private void UpdateStats()
@@ -74,7 +133,7 @@ namespace DigitalEducation.UI.Pages
 
         private void ApplyFilters()
         {
-            if (_courses == null) return;
+            if (_courses == null || !_isDataLoaded) return;
 
             IEnumerable<CourseData> filtered = _courses.AsEnumerable();
 
@@ -155,7 +214,10 @@ namespace DigitalEducation.UI.Pages
             DockPanel.SetDock(iconBorder, Dock.Left);
             topDockPanel.Children.Add(iconBorder);
 
-            StackPanel contentPanel = new StackPanel();
+            StackPanel contentPanel = new StackPanel
+            {
+                VerticalAlignment = VerticalAlignment.Top
+            };
             topDockPanel.Children.Add(contentPanel);
 
             StackPanel headerPanel = new StackPanel
@@ -170,8 +232,7 @@ namespace DigitalEducation.UI.Pages
                 Style = (Style)FindResource("Heading4"),
                 Foreground = (Brush)FindResource("TextPrimary"),
                 Margin = new Thickness(0, 0, 12, 0),
-                SnapsToDevicePixels = true,
-                UseLayoutRounding = true
+                VerticalAlignment = VerticalAlignment.Center
             };
             headerPanel.Children.Add(titleText);
 
@@ -187,9 +248,7 @@ namespace DigitalEducation.UI.Pages
                 Text = "Новый",
                 Foreground = (Brush)FindResource("TextTertiary"),
                 FontSize = 12,
-                FontWeight = FontWeights.SemiBold,
-                SnapsToDevicePixels = true,
-                UseLayoutRounding = true
+                FontWeight = FontWeights.SemiBold
             };
             statusBadge.Child = statusText;
             headerPanel.Children.Add(statusBadge);
@@ -197,7 +256,6 @@ namespace DigitalEducation.UI.Pages
             contentPanel.Children.Add(headerPanel);
 
             double maxDescWidth = Math.Max(350, 600 - (fontSize - 16) * 10);
-            double maxDescHeight = Math.Max(40, fontSize * 3.5);
 
             TextBlock descText = new TextBlock
             {
@@ -207,11 +265,8 @@ namespace DigitalEducation.UI.Pages
                 TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(0, 0, 0, 8),
                 MaxWidth = maxDescWidth,
-                MaxHeight = maxDescHeight,
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 ToolTip = course.Description,
-                SnapsToDevicePixels = true,
-                UseLayoutRounding = true,
                 HorizontalAlignment = HorizontalAlignment.Left
             };
             contentPanel.Children.Add(descText);
@@ -270,9 +325,7 @@ namespace DigitalEducation.UI.Pages
             {
                 Text = "Прогресс",
                 Style = (Style)FindResource("CaptionSmall"),
-                Foreground = (Brush)FindResource("TextSecondary"),
-                SnapsToDevicePixels = true,
-                UseLayoutRounding = true
+                Foreground = (Brush)FindResource("TextSecondary")
             };
             Grid.SetColumn(progressLabel, 0);
             progressHeader.Children.Add(progressLabel);
@@ -283,9 +336,7 @@ namespace DigitalEducation.UI.Pages
                 Style = (Style)FindResource("CaptionSmall"),
                 Foreground = (Brush)FindResource("TextSecondary"),
                 FontWeight = FontWeights.SemiBold,
-                FontFamily = (FontFamily)FindResource("FontBodySemiBold"),
-                SnapsToDevicePixels = true,
-                UseLayoutRounding = true
+                FontFamily = (FontFamily)FindResource("FontBodySemiBold")
             };
             Grid.SetColumn(progressValue, 1);
             progressHeader.Children.Add(progressValue);
@@ -349,9 +400,7 @@ namespace DigitalEducation.UI.Pages
                 Stroke = (Brush)FindResource("TextTertiary"),
                 StrokeThickness = 1.5,
                 StrokeLineJoin = PenLineJoin.Round,
-                Data = Geometry.Parse(iconData),
-                SnapsToDevicePixels = true,
-                UseLayoutRounding = true
+                Data = Geometry.Parse(iconData)
             };
             iconViewbox.Child = path;
             stack.Children.Add(iconViewbox);
@@ -361,9 +410,7 @@ namespace DigitalEducation.UI.Pages
                 Text = text,
                 Style = (Style)FindResource("CaptionSmall"),
                 Foreground = (Brush)FindResource("TextSecondary"),
-                VerticalAlignment = VerticalAlignment.Center,
-                SnapsToDevicePixels = true,
-                UseLayoutRounding = true
+                VerticalAlignment = VerticalAlignment.Center
             };
             stack.Children.Add(textBlock);
 
@@ -377,9 +424,7 @@ namespace DigitalEducation.UI.Pages
             {
                 Stroke = new SolidColorBrush(color),
                 StrokeThickness = thickness,
-                StrokeLineJoin = PenLineJoin.Round,
-                SnapsToDevicePixels = true,
-                UseLayoutRounding = true
+                StrokeLineJoin = PenLineJoin.Round
             };
 
             string data = GetIconData(iconName);
